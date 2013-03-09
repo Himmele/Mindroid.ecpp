@@ -35,7 +35,6 @@ public:
 
 	virtual ~Message() {}
 
-	// Message::obtain must always be called from the same thread context for one and the same message object
     static bool obtain(Message& message, Handler& handler);
     static bool obtain(Message& message, Handler& handler, int32_t what);
     static bool obtain(Message& message, Handler& handler, int32_t what, int32_t arg1, int32_t arg2);

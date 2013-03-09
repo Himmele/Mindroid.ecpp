@@ -35,7 +35,6 @@ public:
 	Handler(Looper& looper);
 	virtual ~Handler();
 
-	// Handler::obtainMessage must always be called from the same thread context for one and the same message object
 	bool obtainMessage(Message& message) {
 		return Message::obtain(message, *this);
 	}

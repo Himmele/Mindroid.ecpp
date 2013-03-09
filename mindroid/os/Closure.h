@@ -366,7 +366,6 @@ private:
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure4)
 };
 
-// obtainClosure must always be called from the same thread context for one and the same closure object
 inline bool obtainClosure(FuncClosure0& closure, void (*func)()) {
 	if (closure.ready()) {
 		new (&closure) FuncClosure0(func);
