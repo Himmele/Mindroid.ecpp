@@ -9,8 +9,6 @@
 #include "mindroid/os/Thread.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Closure.h"
-#include "mindroid/os/AsyncTask.h"
-#include "mindroid/os/Semaphore.h"
 
 using namespace mindroid;
 
@@ -22,8 +20,6 @@ Handler* sHandler1 = NULL;
 Handler* sHandler2 = NULL;
 Handler3* sHandler3 = NULL;
 Handler4* sHandler4 = NULL;
-Semaphore sSemaphore1(0);
-Semaphore sSemaphore2(0);
 
 class Params
 {
@@ -37,94 +33,6 @@ public:
 	}
 
 	uint32_t values[ARRAY_SIZE];
-};
-
-class AsyncTask1 : public AsyncTask<Params*, int32_t, int32_t>
-{
-public:
-	~AsyncTask1() {
-		delete params();
-	}
-
-	virtual void onPreExecute() {
-		printf("AsyncTask1::onPreExecute on thread %d\n", (int32_t) pthread_self());
-	}
-
-	virtual int32_t doInBackground(Params* params) {
-		printf("AsyncTask1::doInBackground on thread %d with params %d\n", (int32_t) pthread_self(), params->values[0]);
-		Thread::sleep(250);
-		uint32_t sum = 0;
-		uint32_t i;
-		for (i = 0; i < Params::ARRAY_SIZE / 2; i++) {
-			sum += params->values[i];
-		}
-		publishProgress(sum);
-		Thread::sleep(250);
-		for (; i < Params::ARRAY_SIZE; i++) {
-			sum += params->values[i];
-		}
-		return sum;
-	}
-
-	virtual void onProgressUpdate(int32_t value) {
-		printf("AsyncTask1::onProgressUpdate on thread %d with value %d\n", (int32_t) pthread_self(), value);
-	}
-
-	virtual void onPostExecute(int32_t result) {
-		printf("AsyncTask1::onPostExecute on thread %d with result %d\n", (int32_t) pthread_self(), result);
-	}
-
-	virtual void onCancelled() {
-		printf("AsyncTask1::onCancelled on thread %d\n", (int32_t) pthread_self());
-	}
-};
-
-class AsyncTask2 : public AsyncTask<int32_t, int32_t, int32_t>
-{
-public:
-	virtual void onPreExecute() {
-		printf("AsyncTask2::onPreExecute on thread %d\n", (int32_t) pthread_self());
-	}
-
-	virtual int32_t doInBackground(int32_t param) {
-		printf("AsyncTask2::doInBackground on thread %d with params %d\n", (int32_t) pthread_self(), param);
-		Thread::sleep(100);
-		return 42;
-	}
-
-	virtual void onPostExecute(int32_t result) {
-		printf("AsyncTask2::onPostExecute on thread %d with result %d\n", (int32_t) pthread_self(), result);
-	}
-
-	virtual void onCancelled() {
-		printf("AsyncTask2::onCancelled on thread %d\n", (int32_t) pthread_self());
-	}
-};
-
-class Handler1 : public Handler
-{
-public:
-	static const uint32_t MSG_START_ASYNC_TASKS = 1;
-	static const uint32_t MSG_PRINT_INFO = 2;
-
-	virtual void handleMessage(Message& message) {
-		switch (message.what) {
-		case MSG_START_ASYNC_TASKS: {
-			AsyncTask1* asyncTask = new AsyncTask1();
-			asyncTask->execute(new Params());
-			(new AsyncTask2())->executeOnExecutor(AsyncTaskBase::THREAD_POOL_EXECUTOR, 1234567);
-			(new AsyncTask2())->executeOnExecutor(AsyncTaskBase::THREAD_POOL_EXECUTOR, 7654321);
-			break;
-		}
-		case MSG_PRINT_INFO:
-			printf("Handler1::handleMessage 0x%x with ID %d by Looper 0x%x\n",
-					&message, message.what, Looper::myLooper());
-			break;
-		default:
-			printf("Handler1::handleMessage: Oops, this message ID is not valid\n");
-			break;
-		}
-	}
 };
 
 class Handler2 : public Handler
@@ -170,10 +78,8 @@ public:
 	virtual void run() {
 		Looper::prepare();
 		sLooper1 = Looper::myLooper();
-		sHandler1 = new Handler1();
 		sHandler3 = new Handler3();
 		printf("Looper 1 uses thread %d\n", (int32_t) pthread_self());
-		sSemaphore1.signal();
 		Looper::loop();
 	}
 };
@@ -186,7 +92,6 @@ public:
 		sLooper2 = Looper::myLooper();
 		sHandler2 = new Handler2();
 		printf("Looper 2 uses thread %d\n", (int32_t) pthread_self());
-		sSemaphore2.signal();
 		Looper::loop();
 	}
 };
@@ -217,17 +122,11 @@ int main() {
 	sThread1.start();
 	sThread2.start();
 
-	sSemaphore1.wait();
-	sSemaphore2.wait();
+	Thread::sleep(200);
 
 	sHandler4 = new Handler4(*sLooper2);
 
 	while (true) {
-		Message& msg = sHandler1->obtainMessage(Handler1::MSG_PRINT_INFO);
-		sHandler1->sendMessage(msg);
-
-		sHandler1->obtainMessage(Handler1::MSG_START_ASYNC_TASKS).sendToTarget();
-
 		Runnable1* runnable1 = new Runnable1();
 		sHandler2->postDelayed(runnable1, 100);
 		sHandler2->removeCallbacks(runnable1);
