@@ -32,7 +32,8 @@
  */
 
 /**
- * Runnable* runnable = newRunnable(instance, &Test::test, 17)
+ * Closure1<Test, int32_t> closure1;
+ * Runnable* runnable = newRunnable<Test, int32_t>(closure1, test, &Test::test, 42);
  *
  * runnable->run();
  */
@@ -40,6 +41,7 @@
 #ifndef MINDROID_CLOSURE_H_
 #define MINDROID_CLOSURE_H_
 
+#include <new>
 #include "mindroid/os/Utils.h"
 #include "mindroid/os/Runnable.h"
 
@@ -50,50 +52,54 @@ class FuncClosure0 :
 {
 public:
 	typedef void (*FuncType)();
-	FuncClosure0(FuncType func, bool autoCleanup) :
-		mFunc(func),
-		mAutoCleanup(autoCleanup) {
+
+	FuncClosure0() : mFunc(NULL) {}
+
+	FuncClosure0(FuncType func) :
+		mFunc(func) {
 	}
+
 	virtual ~FuncClosure0() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		mFunc();
-		if (autoCleanup) delete this;
+		if (mFunc) {
+			mFunc();
+		}
 	}
 
 private:
 	FuncType mFunc;
-	bool mAutoCleanup;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(FuncClosure0)
 };
 
 template<typename Class>
-class MethodClosure0 :
+class Closure0 :
 	public Runnable
 {
 public:
 	typedef void (Class::*MethodType)();
-	MethodClosure0(Class& object, MethodType method, bool autoCleanup) :
+
+	Closure0() : mObject(NULL), mMethod(NULL) {}
+
+	Closure0(Class& object, MethodType method) :
 		mObject(&object),
-		mMethod(method),
-		mAutoCleanup(autoCleanup) {
+		mMethod(method) {
 	}
-	virtual ~MethodClosure0() {}
+
+	virtual ~Closure0() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		(mObject->*mMethod)();
-		if (autoCleanup) delete this;
+		if (mObject && mMethod) {
+			(mObject->*mMethod)();
+		}
 	}
 
 private:
 	 Class* mObject;
 	 MethodType mMethod;
-	 bool mAutoCleanup;
 
-	 NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MethodClosure0)
+	 NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure0)
 };
 
 template<typename Arg1>
@@ -102,54 +108,58 @@ class FuncClosure1 :
 {
 public:
 	typedef void (*FuncType)(Arg1 arg1);
-	FuncClosure1(FuncType func, bool autoCleanup, Arg1 arg1) :
+
+	FuncClosure1() : mFunc(NULL) {}
+
+	FuncClosure1(FuncType func, Arg1 arg1) :
 		mFunc(func),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1)	{
 	}
+
 	virtual ~FuncClosure1() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		mFunc(mArg1);
-		if (autoCleanup) delete this;
+		if (mFunc) {
+			mFunc(mArg1);
+		}
 	}
 
 private:
 	FuncType mFunc;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(FuncClosure1)
 };
 
 template<typename Class, typename Arg1>
-class MethodClosure1 :
+class Closure1 :
 	public Runnable
 {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1);
-	MethodClosure1(Class& object, MethodType method, bool autoCleanup, Arg1 arg1) :
+
+	Closure1() : mObject(NULL), mMethod(NULL) {}
+
+	Closure1(Class& object, MethodType method, Arg1 arg1) :
 		mObject(&object),
 		mMethod(method),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1)	{
 	}
-	virtual ~MethodClosure1() {}
+
+	virtual ~Closure1() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		(mObject->*mMethod)(mArg1);
-		if (autoCleanup) delete this;
+		if (mObject && mMethod) {
+			(mObject->*mMethod)(mArg1);
+		}
 	}
 
 private:
 	Class* mObject;
 	MethodType mMethod;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MethodClosure1)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure1)
 };
 
 template<typename Arg1, typename Arg2>
@@ -158,23 +168,25 @@ class FuncClosure2 :
 {
 public:
 	typedef void (*FuncType)(Arg1 arg1, Arg2 arg2);
-	FuncClosure2(FuncType func, bool autoCleanup, Arg1 arg1, Arg2 arg2) :
+
+	FuncClosure2() : mFunc(NULL) {}
+
+	FuncClosure2(FuncType func, Arg1 arg1, Arg2 arg2) :
 		mFunc(func),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1),
 		mArg2(arg2) {
 	}
+
 	virtual ~FuncClosure2() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		mFunc(mArg1, mArg2);
-		if (autoCleanup) delete this;
+		if (mFunc) {
+			mFunc(mArg1, mArg2);
+		}
 	}
 
 private:
 	FuncType mFunc;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 	Arg2 mArg2;
 
@@ -182,34 +194,36 @@ private:
 };
 
 template<typename Class, typename Arg1, typename Arg2>
-class MethodClosure2 :
+class Closure2 :
 	public Runnable
 {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2);
-	MethodClosure2(Class& object, MethodType method, bool autoCleanup, Arg1 arg1, Arg2 arg2) :
+
+	Closure2() : mObject(NULL), mMethod(NULL) {}
+
+	Closure2(Class& object, MethodType method, Arg1 arg1, Arg2 arg2) :
 		mObject(&object),
 		mMethod(method),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1),
 		mArg2(arg2) {
 	}
-	virtual ~MethodClosure2() {}
+
+	virtual ~Closure2() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		(mObject->*mMethod)(mArg1, mArg2);
-		if (autoCleanup) delete this;
+		if (mObject && mMethod) {
+			(mObject->*mMethod)(mArg1, mArg2);
+		}
 	}
 
 private:
 	Class* mObject;
 	MethodType mMethod;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 	Arg2 mArg2;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MethodClosure2)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure2)
 };
 
 template<typename Arg1, typename Arg2, typename Arg3>
@@ -218,24 +232,26 @@ class FuncClosure3 :
 {
 public:
 	typedef void (*FuncType)(Arg1 arg1, Arg2 arg2, Arg3 arg3);
-	FuncClosure3(FuncType func, bool autoCleanup, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
+
+	FuncClosure3() : mFunc(NULL) {}
+
+	FuncClosure3(FuncType func, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
 		mFunc(func),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1),
 		mArg2(arg2),
 		mArg3(arg3) {
 	}
+
 	virtual ~FuncClosure3() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		mFunc(mArg1, mArg2, mArg3);
-		if (autoCleanup) delete this;
+		if (mFunc) {
+			mFunc(mArg1, mArg2, mArg3);
+		}
 	}
 
 private:
 	FuncType mFunc;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 	Arg2 mArg2;
 	Arg3 mArg3;
@@ -244,36 +260,38 @@ private:
 };
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3>
-class MethodClosure3 :
+class Closure3 :
 	public Runnable
 {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2, Arg3 arg3);
-	MethodClosure3(Class& object, MethodType method, bool autoCleanup, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
+
+	Closure3() : mObject(NULL), mMethod(NULL) {}
+
+	Closure3(Class& object, MethodType method, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
 		mObject(&object),
 		mMethod(method),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1),
 		mArg2(arg2),
 		mArg3(arg3) {
 	}
-	virtual ~MethodClosure3() {}
+
+	virtual ~Closure3() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		(mObject->*mMethod)(mArg1, mArg2, mArg3);
-		if (autoCleanup) delete this;
+		if (mObject && mMethod) {
+			(mObject->*mMethod)(mArg1, mArg2, mArg3);
+		}
 	}
 
 private:
 	Class* mObject;
 	MethodType mMethod;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 	Arg2 mArg2;
 	Arg3 mArg3;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MethodClosure3)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure3)
 };
 
 template<typename Arg1, typename Arg2, typename Arg3, typename Arg4>
@@ -282,25 +300,27 @@ class FuncClosure4 :
 {
 public:
 	typedef void (*FuncType)(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4);
-	FuncClosure4(FuncType func, bool autoCleanup, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
+
+	FuncClosure4() : mFunc(NULL) {}
+
+	FuncClosure4(FuncType func, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
 		mFunc(func),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1),
 		mArg2(arg2),
 		mArg3(arg3),
 		mArg4(arg4) {
 	}
+
 	virtual ~FuncClosure4() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		mFunc(mArg1, mArg2, mArg3, mArg4);
-		if (autoCleanup) delete this;
+		if (mFunc) {
+			mFunc(mArg1, mArg2, mArg3, mArg4);
+		}
 	}
 
 private:
 	FuncType mFunc;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 	Arg2 mArg2;
 	Arg3 mArg3;
@@ -310,137 +330,89 @@ private:
 };
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-class MethodClosure4 :
+class Closure4 :
 	public Runnable
 {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4);
-	MethodClosure4(Class& object, MethodType method, bool autoCleanup, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
+
+	Closure4() : mObject(NULL), mMethod(NULL) {}
+
+	Closure4(Class& object, MethodType method, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
 		mObject(&object),
 		mMethod(method),
-		mAutoCleanup(autoCleanup),
 		mArg1(arg1),
 		mArg2(arg2),
 		mArg3(arg3),
 		mArg4(arg4) {
 	}
-	virtual ~MethodClosure4() {}
+
+	virtual ~Closure4() {}
 
 	virtual void run() {
-		bool autoCleanup = mAutoCleanup;
-		(mObject->*mMethod)(mArg1, mArg2, mArg3, mArg4);
-		if (autoCleanup) delete this;
+		if (mObject && mMethod) {
+			(mObject->*mMethod)(mArg1, mArg2, mArg3, mArg4);
+		}
 	}
 
 private:
 	Class* mObject;
 	MethodType mMethod;
-	bool mAutoCleanup;
 	Arg1 mArg1;
 	Arg2 mArg2;
 	Arg3 mArg3;
 	Arg4 mArg4;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MethodClosure4)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure4)
 };
 
-inline Runnable* newRunnable(void (*func)()) {
-	return new FuncClosure0(func, true);
-}
-
-inline Runnable* newPermanentRunnable(void (*func)()) {
-	return new FuncClosure0(func, false);
+inline Runnable* newRunnable(FuncClosure0& closure, void (*func)()) {
+	return new (&closure) FuncClosure0(func);
 }
 
 template<typename Class>
-inline Runnable* newRunnable(Class& object, void (Class::*method)()) {
-	return new MethodClosure0<Class>(object, method, true);
-}
-
-template<typename Class>
-inline Runnable* newPermanentRunnable(Class& object, void (Class::*method)()) {
-	return new MethodClosure0<Class>(object, method, false);
+inline Runnable* newRunnable(Closure0<Class>& closure, Class& object, void (Class::*method)()) {
+	return new (&closure) Closure0<Class>(object, method);
 }
 
 template<typename Arg1>
-inline Runnable* newRunnable(void (*func)(Arg1), Arg1 arg1) {
-	return new FuncClosure1<Arg1>(func, true, arg1);
-}
-
-template<typename Arg1>
-inline Runnable* newPermanentRunnable(void (*func)(Arg1), Arg1 arg1) {
-	return new FuncClosure1<Arg1>(func, false, arg1);
+inline Runnable* newRunnable(FuncClosure1<Arg1>& closure, void (*func)(Arg1), Arg1 arg1) {
+	return new (&closure) FuncClosure1<Arg1>(func, arg1);
 }
 
 template<typename Class, typename Arg1>
-inline Runnable* newRunnable(Class& object, void (Class::*method)(Arg1), Arg1 arg1) {
-	return new MethodClosure1<Class, Arg1>(object, method, true, arg1);
-}
-
-template<typename Class, typename Arg1>
-inline Runnable* newPermanentRunnable(Class& object, void (Class::*method)(Arg1), Arg1 arg1) {
-	return new MethodClosure1<Class, Arg1>(object, method, false, arg1);
+inline Runnable* newRunnable(Closure1<Class, Arg1>& closure, Class& object, void (Class::*method)(Arg1), Arg1 arg1) {
+	return new (&closure) Closure1<Class, Arg1>(object, method, arg1);
 }
 
 template<typename Arg1, typename Arg2>
-inline Runnable* newRunnable(void (*func)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
-	return new FuncClosure2<Arg1, Arg2>(func, true, arg1, arg2);
-}
-
-template<typename Arg1, typename Arg2>
-inline Runnable* newPermanentRunnable(void (*func)(Arg1, Arg2), Arg1 arg1, Arg2 arg2)
-{
-	return new FuncClosure2<Arg1, Arg2>(func, false, arg1, arg2);
+inline Runnable* newRunnable(FuncClosure2<Arg1, Arg2>& closure, void (*func)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
+	return new (&closure) FuncClosure2<Arg1, Arg2>(func, arg1, arg2);
 }
 
 template<typename Class, typename Arg1, typename Arg2>
-inline Runnable* newRunnable(Class& object, void (Class::*method)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
-	return new MethodClosure2<Class, Arg1, Arg2>(object, method, true, arg1, arg2);
-}
-
-template<typename Class, typename Arg1, typename Arg2>
-inline Runnable* newPermanentRunnable(Class& object, void (Class::*method)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
-	return new MethodClosure2<Class, Arg1, Arg2>(object, method, false, arg1, arg2);
+inline Runnable* newRunnable(Closure2<Class, Arg1, Arg2>& closure, Class& object, void (Class::*method)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
+	return new (&closure) Closure2<Class, Arg1, Arg2>(object, method, arg1, arg2);
 }
 
 template<typename Arg1, typename Arg2, typename Arg3>
-inline Runnable* newRunnable(void (*func)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-	return new FuncClosure3<Arg1, Arg2, Arg3>(func, true, arg1, arg2, arg3);
-}
-
-template<typename Arg1, typename Arg2, typename Arg3>
-inline Runnable* newPermanentRunnable(void (*func)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-	return new FuncClosure3<Arg1, Arg2, Arg3>(func, false, arg1, arg2, arg3);
+inline Runnable* newRunnable(FuncClosure3<Arg1, Arg2, Arg3>& closure, void (*func)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+	return new (&closure) FuncClosure3<Arg1, Arg2, Arg3>(func, arg1, arg2, arg3);
 }
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3>
-inline Runnable* newRunnable(Class& object, void (Class::*method)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-	return new MethodClosure3<Class, Arg1, Arg2, Arg3>(object, method, true, arg1, arg2, arg3);
-}
-
-template<typename Class, typename Arg1, typename Arg2, typename Arg3>
-inline Runnable* newPermanentRunnable(Class& object, void (Class::*method)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-	return new MethodClosure3<Class, Arg1, Arg2, Arg3>(object, method, false, arg1, arg2, arg3);
+inline Runnable* newRunnable(Closure3<Class, Arg1, Arg2, Arg3>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+	return new (&closure) Closure3<Class, Arg1, Arg2, Arg3>(object, method,  arg1, arg2, arg3);
 }
 
 template<typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-inline Runnable* newRunnable(void (*func)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-	return new FuncClosure4<Arg1, Arg2, Arg3, Arg4>(func, true, arg1, arg2, arg3, arg4);
-}
-
-template<typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-inline Runnable* newPermanentRunnable(void (*func)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-	return new FuncClosure4<Arg1, Arg2, Arg3, Arg4>(func, false, arg1, arg2, arg3, arg4);
+inline Runnable* newRunnable(FuncClosure4<Arg1, Arg2, Arg3, Arg4>& closure, void (*func)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+	return new (&closure) FuncClosure4<Arg1, Arg2, Arg3, Arg4>(func, arg1, arg2, arg3, arg4);
 }
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-inline Runnable* newRunnable(Class& object, void (Class::*method)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-	return new MethodClosure4<Class, Arg1, Arg2, Arg3, Arg4>(object, method, true, arg1, arg2, arg3, arg4);
-}
-
-template<typename Class, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-inline Runnable* newPermanentRunnable(Class& object, void (Class::*method)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-	return new MethodClosure4<Class, Arg1, Arg2, Arg3, Arg4>(object, method, false, arg1, arg2, arg3, arg4);
+inline Runnable* newRunnable(Closure4<Class, Arg1, Arg2, Arg3, Arg4>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+	return new (&closure) Closure4<Class, Arg1, Arg2, Arg3, Arg4>(object, method, arg1, arg2, arg3, arg4);
 }
 
 } /* namespace mindroid */

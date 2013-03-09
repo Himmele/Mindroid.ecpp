@@ -105,7 +105,7 @@ public:
 	}
 };
 
-class Closure1
+class Test
 {
 public:
 	void test(int32_t value) {
@@ -116,7 +116,7 @@ public:
 
 Thread1 sThread1;
 Thread2 sThread2;
-Closure1 sClosure1;
+Test sTest;
 
 int main() {
 	sThread1.start();
@@ -125,12 +125,14 @@ int main() {
 	Thread::sleep(200);
 
 	sHandler4 = new Handler4(*sLooper2);
+	Closure1<Test, int32_t> closure1;
+	newRunnable<Test, int32_t>(closure1, sTest, &Test::test, 42);
 
 	while (true) {
 		Runnable1* runnable1 = new Runnable1();
 		sHandler2->postDelayed(runnable1, 100);
 		sHandler2->removeCallbacks(runnable1);
-		sHandler2->postDelayed(newRunnable(sClosure1, &Closure1::test, 42), 500);
+		sHandler2->postDelayed(&closure1, 500);
 
 		sHandler3->test();
 		sHandler4->test();
