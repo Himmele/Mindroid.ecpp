@@ -33,11 +33,10 @@ MessageQueue::~MessageQueue() {
 }
 
 bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
+	AutoLock autoLock(mCondVarLock);
 	if (message.mExecTimestamp != 0) {
 		return false;
 	}
-
-	AutoLock autoLock(mCondVarLock);
 	if (mLockMessageQueue) {
 		return false;
 	} else if (message.mHandler == NULL) {
@@ -110,7 +109,6 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 		foundMessage = true;
 		Message* nextMessage = curMessage->mNextMessage;
 		mHeadMessage = nextMessage;
-		delete curMessage->mCallback;
 		curMessage->recycle();
 		curMessage = nextMessage;
 	}
@@ -122,7 +120,6 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 			if (nextMessage->mHandler == handler && nextMessage->what == what) {
 				foundMessage = true;
 				Message* nextButOneMessage = nextMessage->mNextMessage;
-				delete nextMessage->mCallback;
 				nextMessage->recycle();
 				curMessage->mNextMessage = nextButOneMessage;
 				continue;
@@ -151,7 +148,6 @@ bool MessageQueue::removeCallbacks(Handler* handler, Runnable* runnable) {
 		foundRunnable = true;
 		Message* nextMessage = curMessage->mNextMessage;
 		mHeadMessage = nextMessage;
-		delete curMessage->mCallback;
 		curMessage->recycle();
 		curMessage = nextMessage;
 	}
@@ -163,7 +159,6 @@ bool MessageQueue::removeCallbacks(Handler* handler, Runnable* runnable) {
 			if (nextMessage->mHandler == handler && nextMessage->mCallback == runnable) {
 				foundRunnable = true;
 				Message* nextButOneMessage = nextMessage->mNextMessage;
-				delete nextMessage->mCallback;
 				nextMessage->recycle();
 				curMessage->mNextMessage = nextButOneMessage;
 				continue;
@@ -192,7 +187,6 @@ bool MessageQueue::removeCallbacksAndMessages(Handler* handler) {
 		foundSomething = true;
 		Message* nextMessage = curMessage->mNextMessage;
 		mHeadMessage = nextMessage;
-		delete curMessage->mCallback;
 		curMessage->recycle();
 		curMessage = nextMessage;
 	}
@@ -204,7 +198,6 @@ bool MessageQueue::removeCallbacksAndMessages(Handler* handler) {
 			if (nextMessage->mHandler == handler) {
 				foundSomething = true;
 				Message* nextButOneMessage = nextMessage->mNextMessage;
-				delete nextMessage->mCallback;
 				nextMessage->recycle();
 				curMessage->mNextMessage = nextButOneMessage;
 				continue;

@@ -29,9 +29,6 @@ public:
 	Lock();
 	~Lock();
 	bool lock();
-#ifndef __ANDROID__
-	bool lock(uint32_t timeout);
-#endif
 	void unlock();
 
 private:
@@ -46,7 +43,7 @@ class AutoLock
 {
 public:
 	AutoLock(Lock& lock) :
-		mLock(lock) {
+			mLock(lock) {
 		mLock.lock();
 	}
 

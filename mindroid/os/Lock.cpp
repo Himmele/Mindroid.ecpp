@@ -32,17 +32,6 @@ bool Lock::lock() {
 	return (pthread_mutex_lock(&mMutex) == 0);
 }
 
-#ifndef __ANDROID__
-bool Lock::lock(uint32_t timeout) {
-	timespec tsAbsTimeout;
-	clock_gettime(CLOCK_REALTIME, &tsAbsTimeout);
-	uint64_t absTimeout = ((uint64_t)tsAbsTimeout.tv_nsec) + (uint64_t)(timeout * 1000000LL);
-	tsAbsTimeout.tv_sec += absTimeout / 1000000000LL;
-	tsAbsTimeout.tv_nsec = absTimeout % 1000000000LL;
-	return (pthread_mutex_timedlock(&mMutex, &tsAbsTimeout) == 0);
-}
-#endif
-
 void Lock::unlock() {
 	pthread_mutex_unlock(&mMutex);
 }

@@ -61,31 +61,19 @@ bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
 	return mMessageQueue->enqueueMessage(message, execTimestamp);
 }
 
-bool Handler::post(Runnable* runnable) {
-	if (runnable != NULL) {
-		Message& message = getPostMessage(*runnable);
-		return sendMessage(message);
-	} else {
-		return false;
-	}
+bool Handler::post(Runnable& runnable) {
+	Message& message = getPostMessage(runnable);
+	return sendMessage(message);
 }
 
-bool Handler::postDelayed(Runnable* runnable, uint32_t delay) {
-	if (runnable != NULL) {
-		Message& message = getPostMessage(*runnable);
-		return sendMessageDelayed(message, delay);
-	} else {
-		return false;
-	}
+bool Handler::postDelayed(Runnable& runnable, uint32_t delay) {
+	Message& message = getPostMessage(runnable);
+	return sendMessageDelayed(message, delay);
 }
 
-bool Handler::postAtTime(Runnable* runnable, uint64_t execTimestamp) {
-	if (runnable != NULL) {
-		Message& message = getPostMessage(*runnable);
-		return sendMessageAtTime(message, execTimestamp);
-	} else {
-		return false;
-	}
+bool Handler::postAtTime(Runnable& runnable, uint64_t execTimestamp) {
+	Message& message = getPostMessage(runnable);
+	return sendMessageAtTime(message, execTimestamp);
 }
 
 Message& Handler::getPostMessage(Runnable& runnable) {

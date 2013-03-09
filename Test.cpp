@@ -127,12 +127,14 @@ int main() {
 	sHandler4 = new Handler4(*sLooper2);
 	Closure1<Test, int32_t> closure1;
 	newRunnable<Test, int32_t>(closure1, sTest, &Test::test, 42);
+	Runnable1 runnable1;
+
+	//TODO: Repost in handleMessage callback
 
 	while (true) {
-		Runnable1* runnable1 = new Runnable1();
 		sHandler2->postDelayed(runnable1, 100);
-		sHandler2->removeCallbacks(runnable1);
-		sHandler2->postDelayed(&closure1, 500);
+		sHandler2->removeCallbacks(&runnable1);
+		sHandler2->postDelayed(closure1, 500);
 
 		sHandler3->test();
 		sHandler4->test();

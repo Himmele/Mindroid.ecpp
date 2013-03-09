@@ -30,7 +30,7 @@ class Looper
 public:
 	virtual ~Looper();
 	static bool prepare();
-	static bool prepare(Runnable* onLooperReadyRunnable);
+	static bool prepare(Runnable& onLooperReadyRunnable);
 	static Looper* myLooper();
 	static void loop();
 	void quit();

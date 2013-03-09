@@ -63,11 +63,11 @@ bool Looper::prepare() {
 	}
 }
 
-bool Looper::prepare(Runnable* onLooperReadyRunnable) {
+bool Looper::prepare(Runnable& onLooperReadyRunnable) {
 	if (prepare()) {
 		Looper* me = myLooper();
 		if (me != NULL) {
-			me->mOnLooperReadyRunnable = onLooperReadyRunnable;
+			me->mOnLooperReadyRunnable = &onLooperReadyRunnable;
 		}
 		return true;
 	}

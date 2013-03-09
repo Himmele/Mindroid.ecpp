@@ -55,9 +55,9 @@ public:
 	bool sendMessage(Message& message);
 	bool sendMessageDelayed(Message& message, uint32_t delay);
 	bool sendMessageAtTime(Message& message, uint64_t execTimestamp);
-	bool post(Runnable* runnable);
-	bool postDelayed(Runnable* runnable, uint32_t delay);
-	bool postAtTime(Runnable* runnable, uint64_t execTimestamp);
+	bool post(Runnable& runnable);
+	bool postDelayed(Runnable& runnable, uint32_t delay);
+	bool postAtTime(Runnable& runnable, uint64_t execTimestamp);
 	bool removeMessages(int32_t what);
 	bool removeCallbacks(Runnable* runnable);
 	bool removeCallbacksAndMessages();
