@@ -9,6 +9,7 @@
 #include "mindroid/os/Thread.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Closure.h"
+#include "mindroid/os/Clock.h"
 
 using namespace mindroid;
 
@@ -47,29 +48,42 @@ public:
 class Handler3 : public Handler
 {
 public:
+	Handler3() {
+		obtainMessage(mMessage, 3);
+	}
+
 	virtual void handleMessage(Message& message) {
 		printf("Handler3::handleMessage 0x%x with ID %d by Looper 0x%x\n",
 				&message, message.what, Looper::myLooper());
 	}
 
 	void test() {
-		sendMessage(obtainMessage(3));
+		sendMessage(mMessage);
 	}
+
+private:
+	Message mMessage;
 };
 
 class Handler4 : public Handler
 {
 public:
-	Handler4(Looper& looper) : Handler(looper) {}
+	Handler4(Looper& looper) : Handler(looper), mMessage(*this, 4) {}
 
 	virtual void handleMessage(Message& message) {
 		printf("Handler4::handleMessage 0x%x with ID %d by Looper 0x%x\n",
 				&message, message.what, Looper::myLooper());
+		sendMessageDelayed(message, 4000);
+		printf("Time: %lld\n", Clock::monotonicTime());
 	}
 
 	void test() {
-		sendMessageDelayed(obtainMessage(4), 1000);
+		bool rc = sendMessageDelayed(mMessage, 1000);
+//		printf("Handler4: %s\n", rc ? "ok" : "error");
 	}
+
+private:
+	Message mMessage;
 };
 
 class Thread1 : public Thread
@@ -126,20 +140,25 @@ int main() {
 
 	sHandler4 = new Handler4(*sLooper2);
 	Closure1<Test, int32_t> closure1;
-	newRunnable<Test, int32_t>(closure1, sTest, &Test::test, 42);
 	Runnable1 runnable1;
 
 	//TODO: Repost in handleMessage callback
 
+	sHandler4->test();
+	int i = 0;
 	while (true) {
+		bool abc = obtainClosure<Test, int32_t>(closure1, sTest, &Test::test, i++);
+//		if (!abc) {
+//			printf("Error\n");
+//		}
 		sHandler2->postDelayed(runnable1, 100);
-		sHandler2->removeCallbacks(&runnable1);
+		sHandler2->removeCallbacks(runnable1);
 		sHandler2->postDelayed(closure1, 500);
 
-		sHandler3->test();
-		sHandler4->test();
 
-		Thread::sleep(2000);
+		sHandler3->test();
+
+		Thread::sleep(1000);
 	}
 
 	sLooper1->quit();

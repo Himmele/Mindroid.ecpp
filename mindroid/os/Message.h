@@ -27,21 +27,42 @@ class Handler;
 
 class Message {
 public:
+    Message();
+	Message(Handler& handler);
+	Message(Handler& handler, int32_t what);
+	Message(Handler& handler, int32_t what, int32_t arg1, int32_t arg2);
+	Message(Handler& handler, Runnable& callback);
+
 	virtual ~Message() {}
-    static Message& obtain();
-    static Message& obtain(Handler& handler);
-    static Message& obtain(Handler& handler, int32_t what);
-    static Message& obtain(Handler& handler, int32_t what, int32_t arg1, int32_t arg2);
-    static Message& obtain(Handler& handler, Runnable& callback);
 
-    /* you must not touch a Message object after calling recycle */
-    virtual void recycle();
-    void clear();
+	// Message::obtain must always be called from the same thread context for one and the same message object
+    static bool obtain(Message& message, Handler& handler);
+    static bool obtain(Message& message, Handler& handler, int32_t what);
+    static bool obtain(Message& message, Handler& handler, int32_t what, int32_t arg1, int32_t arg2);
+    static bool obtain(Message& message, Handler& handler, Runnable& callback);
 
-    uint64_t getExecTimestamp() const;
-    void setHandler(Handler& handler);
-    Handler* getHandler();
-    Runnable* getCallback();
+    void setHandler(Handler& handler) {
+    	mHandler = &handler;
+    }
+
+    Handler* getHandler() {
+    	return mHandler;
+    }
+
+    Runnable* getCallback() {
+    	return mCallback;
+    }
+
+    bool ready() {
+    	AutoLock autoLock(mLock);
+    	return mExecTimestamp == 0;
+    }
+
+    void setExecTimestamp(uint64_t execTimestamp) {
+		AutoLock autoLock(mLock);
+		mExecTimestamp = execTimestamp;
+	}
+
     bool sendToTarget();
 
     int32_t what;
@@ -50,22 +71,18 @@ public:
     void* obj;
 
 protected:
-    Message();
+    Message(bool quitMessage);
+    void clear();
 
 private:
-	static const uint32_t MAX_MESSAGE_POOL_SIZE = 10;
-
+    Lock mLock;
     uint64_t mExecTimestamp; // nanoseconds
     Handler* mHandler;
     Runnable* mCallback;
     Message* mNextMessage;
-	static Message* sMessagePool;
-	static uint32_t sMessagePoolSize;
-	static Lock sMessagePoolLock;
 
     friend class MessageQueue;
     friend class Looper;
-    friend class Handler;
 };
 
 } /* namespace mindroid */

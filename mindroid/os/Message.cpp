@@ -16,78 +16,112 @@
 
 #include <stddef.h>
 #include <assert.h>
+#include <new>
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Lock.h"
 
 namespace mindroid {
 
-Message* Message::sMessagePool = NULL;
-uint32_t Message::sMessagePoolSize = 0;
-Lock Message::sMessagePoolLock;
-
 Message::Message() :
-	what(0),
-	arg1(0),
-	arg2(0),
-	mExecTimestamp(0),
-	mHandler(NULL),
-	mCallback(NULL),
-	mNextMessage(NULL) {
+		what(0),
+		arg1(0),
+		arg2(0),
+		obj(NULL),
+		mExecTimestamp(0),
+		mHandler(NULL),
+		mCallback(NULL),
+		mNextMessage(NULL) {
 }
 
-Message& Message::obtain() {
-	AutoLock autoLock(Message::sMessagePoolLock);
-	if (sMessagePool != NULL) {
-		Message* message = sMessagePool;
-		sMessagePool = message->mNextMessage;
-		message->mNextMessage = NULL;
-		sMessagePoolSize--;
-		return *message;
-	}
-	Message* message = new Message();
-	assert(message != NULL);
-	return *message;
+Message::Message(bool quitMessage) :
+		what(0),
+		arg1(0),
+		arg2(0),
+		obj(NULL),
+		mExecTimestamp(0),
+		mHandler(NULL),
+		mCallback(NULL),
+		mNextMessage(NULL) {
 }
 
-Message& Message::obtain(Handler& handler) {
-	Message& message = obtain();
-	message.mHandler = &handler;
-	return message;
+Message::Message(Handler& handler) :
+		what(0),
+		arg1(0),
+		arg2(0),
+		obj(NULL),
+		mExecTimestamp(0),
+		mHandler(&handler),
+		mCallback(NULL),
+		mNextMessage(NULL) {
 }
 
-Message& Message::obtain(Handler& handler, int32_t what) {
-	Message& message = obtain();
-	message.mHandler = &handler;
-	message.what = what;
-	return message;
+Message::Message(Handler& handler, int32_t what) :
+		what(what),
+		arg1(0),
+		arg2(0),
+		obj(NULL),
+		mExecTimestamp(0),
+		mHandler(&handler),
+		mCallback(NULL),
+		mNextMessage(NULL) {
 }
 
-Message& Message::obtain(Handler& handler, int32_t what, int32_t arg1, int32_t arg2) {
-	Message& message = obtain();
-	message.mHandler = &handler;
-	message.what = what;
-	message.arg1 = arg1;
-	message.arg2 = arg2;
-	return message;
+Message::Message(Handler& handler, int32_t what, int32_t arg1, int32_t arg2) :
+		what(what),
+		arg1(arg1),
+		arg2(arg2),
+		obj(NULL),
+		mExecTimestamp(0),
+		mHandler(&handler),
+		mCallback(NULL),
+		mNextMessage(NULL) {
 }
 
-Message& Message::obtain(Handler& handler, Runnable& callback) {
-	Message& message = obtain();
-	message.mHandler = &handler;
-	message.mCallback = &callback;
-	return message;
+Message::Message(Handler& handler, Runnable& callback) :
+		what(what),
+		arg1(0),
+		arg2(0),
+		obj(NULL),
+		mExecTimestamp(0),
+		mHandler(&handler),
+		mCallback(&callback),
+		mNextMessage(NULL) {
 }
 
-void Message::recycle() {
-	AutoLock autoLock(Message::sMessagePoolLock);
-	if (sMessagePoolSize < MAX_MESSAGE_POOL_SIZE) {
-		clear();
-		mNextMessage = sMessagePool;
-		sMessagePool = this;
-		sMessagePoolSize++;
+bool Message::obtain(Message& message, Handler& handler) {
+	if (message.ready()) {
+		new (&message) Message(handler);
+		return true;
 	} else {
-		delete this;
+		return false;
+	}
+}
+
+bool Message::obtain(Message& message, Handler& handler, int32_t what) {
+	if (message.ready()) {
+		new (&message) Message(handler, what);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Message::obtain(Message& message, Handler& handler, int32_t what, int32_t arg1, int32_t arg2) {
+	if (message.ready()) {
+		new (&message) Message(handler, what, arg1, arg2);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Message::obtain(Message& message, Handler& handler, Runnable& callback) {
+	if (message.ready()) {
+		new (&message) Message(handler, callback);
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -95,25 +129,11 @@ void Message::clear() {
 	what = 0;
 	arg1 = 0;
 	arg2 = 0;
-	mExecTimestamp = 0;
+	obj = NULL;
+	setExecTimestamp(0);
 	mHandler = NULL;
 	mCallback = NULL;
-}
-
-uint64_t Message::getExecTimestamp() const {
-	return mExecTimestamp;
-}
-
-void Message::setHandler(Handler& handler) {
-	mHandler = &handler;
-}
-
-Handler* Message::getHandler() {
-	return mHandler;
-}
-
-Runnable* Message::getCallback() {
-	return mCallback;
+	mNextMessage = NULL;
 }
 
 bool Message::sendToTarget() {

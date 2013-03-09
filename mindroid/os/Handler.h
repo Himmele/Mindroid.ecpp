@@ -26,6 +26,7 @@ namespace mindroid {
 
 class Looper;
 class MessageQueue;
+class Lock;
 
 class Handler
 {
@@ -34,20 +35,21 @@ public:
 	Handler(Looper& looper);
 	virtual ~Handler();
 
-	Message& obtainMessage() {
-		return Message::obtain(*this);
+	// Handler::obtainMessage must always be called from the same thread context for one and the same message object
+	bool obtainMessage(Message& message) {
+		return Message::obtain(message, *this);
 	}
 
-	Message& obtainMessage(int32_t what) {
-		return Message::obtain(*this, what);
+	bool obtainMessage(Message& message, int32_t what) {
+		return Message::obtain(message, *this, what);
 	}
 
-	Message& obtainMessage(int32_t what, int32_t arg1, int32_t arg2) {
-		return Message::obtain(*this, what, arg1, arg2);
+	bool obtainMessage(Message& message, int32_t what, int32_t arg1, int32_t arg2) {
+		return Message::obtain(message, *this, what, arg1, arg2);
 	}
 
-	Message& obtainMessage(Runnable& callback) {
-		return Message::obtain(*this, callback);
+	bool obtainMessage(Message& message, Runnable& callback) {
+		return Message::obtain(message, *this, callback);
 	}
 
 	void dispatchMessage(Message& message);
@@ -59,14 +61,12 @@ public:
 	bool postDelayed(Runnable& runnable, uint32_t delay);
 	bool postAtTime(Runnable& runnable, uint64_t execTimestamp);
 	bool removeMessages(int32_t what);
-	bool removeCallbacks(Runnable* runnable);
+	bool removeCallbacks(Runnable& runnable);
 	bool removeCallbacksAndMessages();
 
 private:
-	Message& getPostMessage(Runnable& runnable);
-
 	void handleCallback(Message& message) {
-		message.mCallback->run();
+		message.getCallback()->run();
     }
 
 	MessageQueue* mMessageQueue;

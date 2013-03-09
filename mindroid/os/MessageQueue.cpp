@@ -34,7 +34,7 @@ MessageQueue::~MessageQueue() {
 
 bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 	AutoLock autoLock(mCondVarLock);
-	if (message.mExecTimestamp != 0) {
+	if (!message.ready()) {
 		return false;
 	}
 	if (mLockMessageQueue) {
@@ -42,7 +42,7 @@ bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 	} else if (message.mHandler == NULL) {
 		mLockMessageQueue = true;
 	}
-	message.mExecTimestamp = execTimestamp;
+	message.setExecTimestamp(execTimestamp);
 	Message* curMessage = mHeadMessage;
 	if (curMessage == NULL || execTimestamp == 0 || execTimestamp < curMessage->mExecTimestamp) {
 		message.mNextMessage = curMessage;
@@ -109,7 +109,7 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 		foundMessage = true;
 		Message* nextMessage = curMessage->mNextMessage;
 		mHeadMessage = nextMessage;
-		curMessage->recycle();
+		curMessage->setExecTimestamp(0);
 		curMessage = nextMessage;
 	}
 
@@ -120,7 +120,7 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 			if (nextMessage->mHandler == handler && nextMessage->what == what) {
 				foundMessage = true;
 				Message* nextButOneMessage = nextMessage->mNextMessage;
-				nextMessage->recycle();
+				nextMessage->setExecTimestamp(0);
 				curMessage->mNextMessage = nextButOneMessage;
 				continue;
 			}
@@ -148,7 +148,7 @@ bool MessageQueue::removeCallbacks(Handler* handler, Runnable* runnable) {
 		foundRunnable = true;
 		Message* nextMessage = curMessage->mNextMessage;
 		mHeadMessage = nextMessage;
-		curMessage->recycle();
+		curMessage->setExecTimestamp(0);
 		curMessage = nextMessage;
 	}
 
@@ -159,7 +159,7 @@ bool MessageQueue::removeCallbacks(Handler* handler, Runnable* runnable) {
 			if (nextMessage->mHandler == handler && nextMessage->mCallback == runnable) {
 				foundRunnable = true;
 				Message* nextButOneMessage = nextMessage->mNextMessage;
-				nextMessage->recycle();
+				nextMessage->setExecTimestamp(0);
 				curMessage->mNextMessage = nextButOneMessage;
 				continue;
 			}
@@ -187,7 +187,7 @@ bool MessageQueue::removeCallbacksAndMessages(Handler* handler) {
 		foundSomething = true;
 		Message* nextMessage = curMessage->mNextMessage;
 		mHeadMessage = nextMessage;
-		curMessage->recycle();
+		curMessage->setExecTimestamp(0);
 		curMessage = nextMessage;
 	}
 
@@ -198,7 +198,7 @@ bool MessageQueue::removeCallbacksAndMessages(Handler* handler) {
 			if (nextMessage->mHandler == handler) {
 				foundSomething = true;
 				Message* nextButOneMessage = nextMessage->mNextMessage;
-				nextMessage->recycle();
+				nextMessage->setExecTimestamp(0);
 				curMessage->mNextMessage = nextButOneMessage;
 				continue;
 			}

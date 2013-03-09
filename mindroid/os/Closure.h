@@ -56,7 +56,7 @@ public:
 	FuncClosure0() : mFunc(NULL) {}
 
 	FuncClosure0(FuncType func) :
-		mFunc(func) {
+			mFunc(func) {
 	}
 
 	virtual ~FuncClosure0() {}
@@ -83,8 +83,8 @@ public:
 	Closure0() : mObject(NULL), mMethod(NULL) {}
 
 	Closure0(Class& object, MethodType method) :
-		mObject(&object),
-		mMethod(method) {
+			mObject(&object),
+			mMethod(method) {
 	}
 
 	virtual ~Closure0() {}
@@ -112,8 +112,8 @@ public:
 	FuncClosure1() : mFunc(NULL) {}
 
 	FuncClosure1(FuncType func, Arg1 arg1) :
-		mFunc(func),
-		mArg1(arg1)	{
+			mFunc(func),
+			mArg1(arg1)	{
 	}
 
 	virtual ~FuncClosure1() {}
@@ -141,9 +141,9 @@ public:
 	Closure1() : mObject(NULL), mMethod(NULL) {}
 
 	Closure1(Class& object, MethodType method, Arg1 arg1) :
-		mObject(&object),
-		mMethod(method),
-		mArg1(arg1)	{
+			mObject(&object),
+			mMethod(method),
+			mArg1(arg1)	{
 	}
 
 	virtual ~Closure1() {}
@@ -172,9 +172,9 @@ public:
 	FuncClosure2() : mFunc(NULL) {}
 
 	FuncClosure2(FuncType func, Arg1 arg1, Arg2 arg2) :
-		mFunc(func),
-		mArg1(arg1),
-		mArg2(arg2) {
+			mFunc(func),
+			mArg1(arg1),
+			mArg2(arg2) {
 	}
 
 	virtual ~FuncClosure2() {}
@@ -203,10 +203,10 @@ public:
 	Closure2() : mObject(NULL), mMethod(NULL) {}
 
 	Closure2(Class& object, MethodType method, Arg1 arg1, Arg2 arg2) :
-		mObject(&object),
-		mMethod(method),
-		mArg1(arg1),
-		mArg2(arg2) {
+			mObject(&object),
+			mMethod(method),
+			mArg1(arg1),
+			mArg2(arg2) {
 	}
 
 	virtual ~Closure2() {}
@@ -236,10 +236,10 @@ public:
 	FuncClosure3() : mFunc(NULL) {}
 
 	FuncClosure3(FuncType func, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
-		mFunc(func),
-		mArg1(arg1),
-		mArg2(arg2),
-		mArg3(arg3) {
+			mFunc(func),
+			mArg1(arg1),
+			mArg2(arg2),
+			mArg3(arg3) {
 	}
 
 	virtual ~FuncClosure3() {}
@@ -269,11 +269,11 @@ public:
 	Closure3() : mObject(NULL), mMethod(NULL) {}
 
 	Closure3(Class& object, MethodType method, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
-		mObject(&object),
-		mMethod(method),
-		mArg1(arg1),
-		mArg2(arg2),
-		mArg3(arg3) {
+			mObject(&object),
+			mMethod(method),
+			mArg1(arg1),
+			mArg2(arg2),
+			mArg3(arg3) {
 	}
 
 	virtual ~Closure3() {}
@@ -304,11 +304,11 @@ public:
 	FuncClosure4() : mFunc(NULL) {}
 
 	FuncClosure4(FuncType func, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
-		mFunc(func),
-		mArg1(arg1),
-		mArg2(arg2),
-		mArg3(arg3),
-		mArg4(arg4) {
+			mFunc(func),
+			mArg1(arg1),
+			mArg2(arg2),
+			mArg3(arg3),
+			mArg4(arg4) {
 	}
 
 	virtual ~FuncClosure4() {}
@@ -339,12 +339,12 @@ public:
 	Closure4() : mObject(NULL), mMethod(NULL) {}
 
 	Closure4(Class& object, MethodType method, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
-		mObject(&object),
-		mMethod(method),
-		mArg1(arg1),
-		mArg2(arg2),
-		mArg3(arg3),
-		mArg4(arg4) {
+			mObject(&object),
+			mMethod(method),
+			mArg1(arg1),
+			mArg2(arg2),
+			mArg3(arg3),
+			mArg4(arg4) {
 	}
 
 	virtual ~Closure4() {}
@@ -366,53 +366,104 @@ private:
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure4)
 };
 
-inline Runnable* newRunnable(FuncClosure0& closure, void (*func)()) {
-	return new (&closure) FuncClosure0(func);
+// obtainClosure must always be called from the same thread context for one and the same closure object
+inline bool obtainClosure(FuncClosure0& closure, void (*func)()) {
+	if (closure.ready()) {
+		new (&closure) FuncClosure0(func);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Class>
-inline Runnable* newRunnable(Closure0<Class>& closure, Class& object, void (Class::*method)()) {
-	return new (&closure) Closure0<Class>(object, method);
+inline bool obtainClosure(Closure0<Class>& closure, Class& object, void (Class::*method)()) {
+	if (closure.ready()) {
+		new (&closure) Closure0<Class>(object, method);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Arg1>
-inline Runnable* newRunnable(FuncClosure1<Arg1>& closure, void (*func)(Arg1), Arg1 arg1) {
-	return new (&closure) FuncClosure1<Arg1>(func, arg1);
+inline bool obtainClosure(FuncClosure1<Arg1>& closure, void (*func)(Arg1), Arg1 arg1) {
+	if (closure.ready()) {
+		new (&closure) FuncClosure1<Arg1>(func, arg1);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Class, typename Arg1>
-inline Runnable* newRunnable(Closure1<Class, Arg1>& closure, Class& object, void (Class::*method)(Arg1), Arg1 arg1) {
-	return new (&closure) Closure1<Class, Arg1>(object, method, arg1);
+inline bool obtainClosure(Closure1<Class, Arg1>& closure, Class& object, void (Class::*method)(Arg1), Arg1 arg1) {
+	if (closure.ready()) {
+		new (&closure) Closure1<Class, Arg1>(object, method, arg1);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Arg1, typename Arg2>
-inline Runnable* newRunnable(FuncClosure2<Arg1, Arg2>& closure, void (*func)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
-	return new (&closure) FuncClosure2<Arg1, Arg2>(func, arg1, arg2);
+inline bool obtainClosure(FuncClosure2<Arg1, Arg2>& closure, void (*func)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
+	if (closure.ready()) {
+		new (&closure) FuncClosure2<Arg1, Arg2>(func, arg1, arg2);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Class, typename Arg1, typename Arg2>
-inline Runnable* newRunnable(Closure2<Class, Arg1, Arg2>& closure, Class& object, void (Class::*method)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
-	return new (&closure) Closure2<Class, Arg1, Arg2>(object, method, arg1, arg2);
+inline bool obtainClosure(Closure2<Class, Arg1, Arg2>& closure, Class& object, void (Class::*method)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
+	if (closure.ready()) {
+		new (&closure) Closure2<Class, Arg1, Arg2>(object, method, arg1, arg2);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Arg1, typename Arg2, typename Arg3>
-inline Runnable* newRunnable(FuncClosure3<Arg1, Arg2, Arg3>& closure, void (*func)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-	return new (&closure) FuncClosure3<Arg1, Arg2, Arg3>(func, arg1, arg2, arg3);
+inline bool obtainClosure(FuncClosure3<Arg1, Arg2, Arg3>& closure, void (*func)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+	if (closure.ready()) {
+		new (&closure) FuncClosure3<Arg1, Arg2, Arg3>(func, arg1, arg2, arg3);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3>
-inline Runnable* newRunnable(Closure3<Class, Arg1, Arg2, Arg3>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
-	return new (&closure) Closure3<Class, Arg1, Arg2, Arg3>(object, method,  arg1, arg2, arg3);
+inline bool obtainClosure(Closure3<Class, Arg1, Arg2, Arg3>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+	if (closure.ready()) {
+		new (&closure) Closure3<Class, Arg1, Arg2, Arg3>(object, method,  arg1, arg2, arg3);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-inline Runnable* newRunnable(FuncClosure4<Arg1, Arg2, Arg3, Arg4>& closure, void (*func)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-	return new (&closure) FuncClosure4<Arg1, Arg2, Arg3, Arg4>(func, arg1, arg2, arg3, arg4);
+inline bool obtainClosure(FuncClosure4<Arg1, Arg2, Arg3, Arg4>& closure, void (*func)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+	if (closure.ready()) {
+		new (&closure) FuncClosure4<Arg1, Arg2, Arg3, Arg4>(func, arg1, arg2, arg3, arg4);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-inline Runnable* newRunnable(Closure4<Class, Arg1, Arg2, Arg3, Arg4>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
-	return new (&closure) Closure4<Class, Arg1, Arg2, Arg3, Arg4>(object, method, arg1, arg2, arg3, arg4);
+inline bool obtainClosure(Closure4<Class, Arg1, Arg2, Arg3, Arg4>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+	if (closure.ready()) {
+		new (&closure) Closure4<Class, Arg1, Arg2, Arg3, Arg4>(object, method, arg1, arg2, arg3, arg4);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 } /* namespace mindroid */

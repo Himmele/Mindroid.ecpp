@@ -38,7 +38,7 @@ Handler::~Handler() {
 }
 
 void Handler::dispatchMessage(Message& message) {
-	if (message.mCallback != NULL) {
+	if (message.getCallback() != NULL) {
 		handleCallback(message);
 	} else {
 		handleMessage(message);
@@ -57,37 +57,43 @@ bool Handler::sendMessageDelayed(Message& message, uint32_t delay) {
 }
 
 bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
-	message.mHandler = this;
-	return mMessageQueue->enqueueMessage(message, execTimestamp);
+	if (message.getHandler() == this) {
+		return mMessageQueue->enqueueMessage(message, execTimestamp);
+	} else {
+		return false;
+	}
 }
 
 bool Handler::post(Runnable& runnable) {
-	Message& message = getPostMessage(runnable);
-	return sendMessage(message);
+	if (obtainMessage(runnable.mWrapperMessage, runnable)) {
+		return sendMessage(runnable.mWrapperMessage);
+	} else {
+		return false;
+	}
 }
 
 bool Handler::postDelayed(Runnable& runnable, uint32_t delay) {
-	Message& message = getPostMessage(runnable);
-	return sendMessageDelayed(message, delay);
+	if (obtainMessage(runnable.mWrapperMessage, runnable)) {
+		return sendMessageDelayed(runnable.mWrapperMessage, delay);
+	} else {
+		return false;
+	}
 }
 
 bool Handler::postAtTime(Runnable& runnable, uint64_t execTimestamp) {
-	Message& message = getPostMessage(runnable);
-	return sendMessageAtTime(message, execTimestamp);
-}
-
-Message& Handler::getPostMessage(Runnable& runnable) {
-	Message& message = Message::obtain();
-	message.mCallback = &runnable;
-	return message;
+	if (obtainMessage(runnable.mWrapperMessage, runnable)) {
+		return sendMessageAtTime(runnable.mWrapperMessage, execTimestamp);
+	} else {
+		return false;
+	}
 }
 
 bool Handler::removeMessages(int32_t what) {
 	return mMessageQueue->removeMessages(this, what);
 }
 
-bool Handler::removeCallbacks(Runnable* runnable) {
-	return mMessageQueue->removeCallbacks(this, runnable);
+bool Handler::removeCallbacks(Runnable& runnable) {
+	return mMessageQueue->removeCallbacks(this, &runnable);
 }
 
 bool Handler::removeCallbacksAndMessages() {

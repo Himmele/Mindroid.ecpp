@@ -19,6 +19,7 @@
 
 #include <pthread.h>
 #include "mindroid/os/Utils.h"
+#include "mindroid/os/Message.h"
 #include "mindroid/os/MessageQueue.h"
 
 namespace mindroid {
@@ -28,25 +29,26 @@ class Runnable;
 class Looper
 {
 public:
-	virtual ~Looper();
+	virtual ~Looper() {}
 	static bool prepare();
-	static bool prepare(Runnable& onLooperReadyRunnable);
 	static Looper* myLooper();
 	static void loop();
 	void quit();
-	MessageQueue& myMessageQueue() {
-		return *mMessageQueue;
-	}
 
 private:
 	Looper();
 	static void init();
 	static void finalize(void* looper);
+	MessageQueue& myMessageQueue() {
+		return mMessageQueue;
+	}
 
-	MessageQueue* mMessageQueue;
-	Runnable* mOnLooperReadyRunnable;
+	MessageQueue mMessageQueue;
+	Message mQuitMessage;
 	static pthread_once_t sTlsOneTimeInitializer;
 	static pthread_key_t sTlsKey;
+
+	friend class Handler;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Looper)
 };

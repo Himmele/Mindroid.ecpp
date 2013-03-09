@@ -24,12 +24,7 @@ pthread_once_t Looper::sTlsOneTimeInitializer = PTHREAD_ONCE_INIT;
 pthread_key_t Looper::sTlsKey;
 
 Looper::Looper() :
-	mOnLooperReadyRunnable(NULL) {
-	mMessageQueue = new MessageQueue();
-}
-
-Looper::~Looper() {
-	delete mMessageQueue;
+	mQuitMessage(true) {
 }
 
 void Looper::init()
@@ -63,17 +58,6 @@ bool Looper::prepare() {
 	}
 }
 
-bool Looper::prepare(Runnable& onLooperReadyRunnable) {
-	if (prepare()) {
-		Looper* me = myLooper();
-		if (me != NULL) {
-			me->mOnLooperReadyRunnable = &onLooperReadyRunnable;
-		}
-		return true;
-	}
-	return false;
-}
-
 Looper* Looper::myLooper() {
 	pthread_once(&sTlsOneTimeInitializer, Looper::init);
 	Looper* looper = (Looper*) pthread_getspecific(sTlsKey);
@@ -83,26 +67,20 @@ Looper* Looper::myLooper() {
 void Looper::loop() {
 	Looper* me = myLooper();
 	if (me != NULL) {
-		MessageQueue* mq = me->mMessageQueue;
-		if (me->mOnLooperReadyRunnable != NULL) {
-			me->mOnLooperReadyRunnable->run();
-			me->mOnLooperReadyRunnable = NULL;
-		}
+		MessageQueue& mq = me->mMessageQueue;
 		while (true) {
-			Message& message = mq->dequeueMessage();
+			Message& message = mq.dequeueMessage();
 			if (message.mHandler == NULL) {
-				message.recycle();
 				return;
 			}
+			message.setExecTimestamp(0);
 			message.mHandler->dispatchMessage(message);
-			message.recycle();
 		}
 	}
 }
 
 void Looper::quit() {
-	Message& message = Message::obtain();
-	mMessageQueue->enqueueMessage(message, 0);
+	mMessageQueue.enqueueMessage(mQuitMessage, 0);
 }
 
 } /* namespace mindroid */

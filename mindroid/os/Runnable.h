@@ -18,6 +18,7 @@
 #define MINDROID_RUNNABLE_H_
 
 #include <stdint.h>
+#include "mindroid/os/Message.h"
 
 namespace mindroid {
 
@@ -26,6 +27,15 @@ class Runnable
 public:
 	virtual ~Runnable() {}
 	virtual void run() = 0;
+
+	bool ready() {
+		return mWrapperMessage.ready();
+	}
+
+protected:
+	Message mWrapperMessage;
+
+	friend class Handler;
 };
 
 } /* namespace mindroid */
