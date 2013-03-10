@@ -36,9 +36,8 @@ public:
 	~MessageQueue();
 	bool enqueueMessage(Message& message, uint64_t execTimestamp);
 	Message& dequeueMessage();
-	bool removeMessages(Handler* handler, int32_t what);
-	bool removeCallbacks(Handler* handler, Runnable* runnable);
-	bool removeCallbacksAndMessages(Handler* handler);
+	bool removeMessage(Handler* handler, Message* message);
+	bool removeMessages(Handler* handler, int16_t what);
 
 private:
 	Message* getNextMessage(uint64_t now);

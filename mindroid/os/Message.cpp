@@ -30,18 +30,6 @@ Message::Message() :
 		obj(NULL),
 		mExecTimestamp(0),
 		mHandler(NULL),
-		mCallback(NULL),
-		mNextMessage(NULL) {
-}
-
-Message::Message(bool quitMessage) :
-		what(0),
-		arg1(0),
-		arg2(0),
-		obj(NULL),
-		mExecTimestamp(0),
-		mHandler(NULL),
-		mCallback(NULL),
 		mNextMessage(NULL) {
 }
 
@@ -52,40 +40,46 @@ Message::Message(Handler& handler) :
 		obj(NULL),
 		mExecTimestamp(0),
 		mHandler(&handler),
-		mCallback(NULL),
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, int32_t what) :
+Message::Message(Handler& handler, int16_t what) :
 		what(what),
 		arg1(0),
 		arg2(0),
 		obj(NULL),
 		mExecTimestamp(0),
 		mHandler(&handler),
-		mCallback(NULL),
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, int32_t what, int32_t arg1, int32_t arg2) :
+Message::Message(Handler& handler, int16_t what, int32_t arg1, int32_t arg2) :
 		what(what),
 		arg1(arg1),
 		arg2(arg2),
 		obj(NULL),
 		mExecTimestamp(0),
 		mHandler(&handler),
-		mCallback(NULL),
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, Runnable& callback) :
+Message::Message(Handler& handler, int16_t what, void* obj) :
 		what(what),
 		arg1(0),
 		arg2(0),
-		obj(NULL),
+		obj(obj),
 		mExecTimestamp(0),
 		mHandler(&handler),
-		mCallback(&callback),
+		mNextMessage(NULL) {
+}
+
+Message::Message(const Message& message) :
+		what(message.what),
+		arg1(message.arg1),
+		arg2(message.arg2),
+		obj(message.obj),
+		mExecTimestamp(message.mExecTimestamp),
+		mHandler(message.mHandler),
 		mNextMessage(NULL) {
 }
 
@@ -98,7 +92,7 @@ bool Message::obtain(Message& message, Handler& handler) {
 	}
 }
 
-bool Message::obtain(Message& message, Handler& handler, int32_t what) {
+bool Message::obtain(Message& message, Handler& handler, int16_t what) {
 	if (message.ready()) {
 		new (&message) Message(handler, what);
 		return true;
@@ -107,7 +101,7 @@ bool Message::obtain(Message& message, Handler& handler, int32_t what) {
 	}
 }
 
-bool Message::obtain(Message& message, Handler& handler, int32_t what, int32_t arg1, int32_t arg2) {
+bool Message::obtain(Message& message, Handler& handler, int16_t what, int32_t arg1, int32_t arg2) {
 	if (message.ready()) {
 		new (&message) Message(handler, what, arg1, arg2);
 		return true;
@@ -116,9 +110,9 @@ bool Message::obtain(Message& message, Handler& handler, int32_t what, int32_t a
 	}
 }
 
-bool Message::obtain(Message& message, Handler& handler, Runnable& callback) {
+bool Message::obtain(Message& message, Handler& handler, int16_t what, void* obj) {
 	if (message.ready()) {
-		new (&message) Message(handler, callback);
+		new (&message) Message(handler, what, obj);
 		return true;
 	} else {
 		return false;
@@ -132,7 +126,6 @@ void Message::clear() {
 	obj = NULL;
 	setExecTimestamp(0);
 	mHandler = NULL;
-	mCallback = NULL;
 	mNextMessage = NULL;
 }
 

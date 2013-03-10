@@ -39,9 +39,18 @@ public:
 class Handler2 : public Handler
 {
 public:
-	virtual void handleMessage(Message& message) {
-		printf("Handler2::handleMessage 0x%x with ID %d by Looper 0x%x\n",
-				&message, message.what, Looper::myLooper());
+	virtual void handleMessage(const Message& message) {
+		switch (message.what) {
+		case 4:
+		case 5: {
+			Runnable* runnable = (Runnable*) message.obj;
+			runnable->run();
+			break;
+		}
+		default:
+			printf("Handler2::handleMessage 0x%x with ID %d by Looper 0x%x\n",
+					&message, message.what, Looper::myLooper());
+		}
 	}
 };
 
@@ -52,7 +61,7 @@ public:
 		obtainMessage(mMessage, 3);
 	}
 
-	virtual void handleMessage(Message& message) {
+	virtual void handleMessage(const Message& message) {
 		printf("Handler3::handleMessage 0x%x with ID %d by Looper 0x%x\n",
 				&message, message.what, Looper::myLooper());
 	}
@@ -70,10 +79,10 @@ class Handler4 : public Handler
 public:
 	Handler4(Looper& looper) : Handler(looper), mMessage(*this, 4) {}
 
-	virtual void handleMessage(Message& message) {
+	virtual void handleMessage(const Message& message) {
 		printf("Handler4::handleMessage 0x%x with ID %d by Looper 0x%x\n",
 				&message, message.what, Looper::myLooper());
-		sendMessageDelayed(message, 4000);
+		sendMessageDelayed(mMessage, 4000);
 		printf("Time: %lld\n", Clock::monotonicTime());
 	}
 
@@ -140,7 +149,11 @@ int main() {
 
 	sHandler4 = new Handler4(*sLooper2);
 	Closure1<Test, int32_t> closure1;
+	Message message1;
+	sHandler2->obtainMessage(message1, 4, &closure1);
 	Runnable1 runnable1;
+	Message message2;
+	sHandler2->obtainMessage(message2, 5, &runnable1);
 
 	//TODO: Repost in handleMessage callback
 
@@ -151,14 +164,13 @@ int main() {
 //		if (!abc) {
 //			printf("Error\n");
 //		}
-		sHandler2->postDelayed(runnable1, 100);
-		sHandler2->removeCallbacks(runnable1);
-		sHandler2->postDelayed(closure1, 500);
-
+		sHandler2->sendMessageDelayed(message2, 100);
+		sHandler2->removeMessage(message2);
+		sHandler2->sendMessageDelayed(message1, 500);
 
 		sHandler3->test();
 
-		Thread::sleep(1000);
+		Thread::sleep(1);
 	}
 
 	sLooper1->quit();

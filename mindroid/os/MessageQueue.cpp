@@ -94,7 +94,48 @@ Message* MessageQueue::getNextMessage(uint64_t now) {
 	return NULL;
 }
 
-bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
+bool MessageQueue::removeMessage(Handler* handler, Message* message) {
+	if (handler == NULL || message == NULL) {
+		return false;
+	}
+
+	bool foundMessage = false;
+
+	mCondVarLock.lock();
+
+	Message* curMessage = mHeadMessage;
+	// remove a matching message at the front of the message queue.
+	if (curMessage != NULL && curMessage->mHandler == handler && curMessage == message) {
+		foundMessage = true;
+		Message* nextMessage = curMessage->mNextMessage;
+		mHeadMessage = nextMessage;
+		curMessage->recycle();
+		curMessage = nextMessage;
+	}
+
+	// remove a matching message after the front of the message queue.
+	if (!foundMessage) {
+		while (curMessage != NULL) {
+			Message* nextMessage = curMessage->mNextMessage;
+			if (nextMessage != NULL) {
+				if (nextMessage->mHandler == handler && nextMessage == message) {
+					foundMessage = true;
+					Message* nextButOneMessage = nextMessage->mNextMessage;
+					nextMessage->recycle();
+					curMessage->mNextMessage = nextButOneMessage;
+					break;
+				}
+			}
+			curMessage = nextMessage;
+		}
+	}
+
+	mCondVarLock.unlock();
+
+	return foundMessage;
+}
+
+bool MessageQueue::removeMessages(Handler* handler, int16_t what) {
 	if (handler == NULL) {
 		return false;
 	}
@@ -131,84 +172,6 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 	mCondVarLock.unlock();
 
 	return foundMessage;
-}
-
-bool MessageQueue::removeCallbacks(Handler* handler, Runnable* runnable) {
-	if (handler == NULL || runnable == NULL) {
-		return false;
-	}
-
-	bool foundRunnable = false;
-
-	mCondVarLock.lock();
-
-	Message* curMessage = mHeadMessage;
-	// remove all matching messages at the front of the message queue.
-	while (curMessage != NULL && curMessage->mHandler == handler && curMessage->mCallback == runnable) {
-		foundRunnable = true;
-		Message* nextMessage = curMessage->mNextMessage;
-		mHeadMessage = nextMessage;
-		curMessage->recycle();
-		curMessage = nextMessage;
-	}
-
-	// remove all matching messages after the front of the message queue.
-	while (curMessage != NULL) {
-		Message* nextMessage = curMessage->mNextMessage;
-		if (nextMessage != NULL) {
-			if (nextMessage->mHandler == handler && nextMessage->mCallback == runnable) {
-				foundRunnable = true;
-				Message* nextButOneMessage = nextMessage->mNextMessage;
-				nextMessage->recycle();
-				curMessage->mNextMessage = nextButOneMessage;
-				continue;
-			}
-		}
-		curMessage = nextMessage;
-	}
-
-	mCondVarLock.unlock();
-
-	return foundRunnable;
-}
-
-bool MessageQueue::removeCallbacksAndMessages(Handler* handler) {
-	if (handler == NULL) {
-		return false;
-	}
-
-	bool foundSomething = false;
-
-	mCondVarLock.lock();
-
-	Message* curMessage = mHeadMessage;
-	// remove all matching messages at the front of the message queue.
-	while (curMessage != NULL && curMessage->mHandler == handler) {
-		foundSomething = true;
-		Message* nextMessage = curMessage->mNextMessage;
-		mHeadMessage = nextMessage;
-		curMessage->recycle();
-		curMessage = nextMessage;
-	}
-
-	// remove all matching messages after the front of the message queue.
-	while (curMessage != NULL) {
-		Message* nextMessage = curMessage->mNextMessage;
-		if (nextMessage != NULL) {
-			if (nextMessage->mHandler == handler) {
-				foundSomething = true;
-				Message* nextButOneMessage = nextMessage->mNextMessage;
-				nextMessage->recycle();
-				curMessage->mNextMessage = nextButOneMessage;
-				continue;
-			}
-		}
-		curMessage = nextMessage;
-	}
-
-	mCondVarLock.unlock();
-
-	return foundSomething;
 }
 
 } /* namespace mindroid */

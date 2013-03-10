@@ -23,8 +23,7 @@ namespace mindroid {
 pthread_once_t Looper::sTlsOneTimeInitializer = PTHREAD_ONCE_INIT;
 pthread_key_t Looper::sTlsKey;
 
-Looper::Looper() :
-	mQuitMessage(true) {
+Looper::Looper() {
 }
 
 void Looper::init()
@@ -73,9 +72,11 @@ void Looper::loop() {
 			if (message.mHandler == NULL) {
 				return;
 			}
-			//FIXME
+			Handler* handler = message.mHandler;
+			Message cloneMessage(message);
+			cloneMessage.mHandler = NULL;
 			message.recycle();
-			message.mHandler->dispatchMessage(message);
+			handler->dispatchMessage(cloneMessage);
 		}
 	}
 }

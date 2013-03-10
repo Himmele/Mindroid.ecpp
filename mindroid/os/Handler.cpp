@@ -37,15 +37,7 @@ Handler::Handler(Looper& looper) {
 Handler::~Handler() {
 }
 
-void Handler::dispatchMessage(Message& message) {
-	if (message.getCallback() != NULL) {
-		handleCallback(message);
-	} else {
-		handleMessage(message);
-	}
-}
-
-void Handler::handleMessage(Message& message) {
+void Handler::handleMessage(const Message& message) {
 }
 
 bool Handler::sendMessage(Message& message) {
@@ -64,40 +56,12 @@ bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
 	}
 }
 
-bool Handler::post(Runnable& runnable) {
-	if (obtainMessage(runnable.mWrapperMessage, runnable)) {
-		return sendMessage(runnable.mWrapperMessage);
-	} else {
-		return false;
-	}
+bool Handler::removeMessage(Message& message) {
+	return mMessageQueue->removeMessage(this, &message);
 }
 
-bool Handler::postDelayed(Runnable& runnable, uint32_t delay) {
-	if (obtainMessage(runnable.mWrapperMessage, runnable)) {
-		return sendMessageDelayed(runnable.mWrapperMessage, delay);
-	} else {
-		return false;
-	}
-}
-
-bool Handler::postAtTime(Runnable& runnable, uint64_t execTimestamp) {
-	if (obtainMessage(runnable.mWrapperMessage, runnable)) {
-		return sendMessageAtTime(runnable.mWrapperMessage, execTimestamp);
-	} else {
-		return false;
-	}
-}
-
-bool Handler::removeMessages(int32_t what) {
+bool Handler::removeMessages(int16_t what) {
 	return mMessageQueue->removeMessages(this, what);
-}
-
-bool Handler::removeCallbacks(Runnable& runnable) {
-	return mMessageQueue->removeCallbacks(this, &runnable);
-}
-
-bool Handler::removeCallbacksAndMessages() {
-	return mMessageQueue->removeCallbacksAndMessages(this);
 }
 
 } /* namespace mindroid */

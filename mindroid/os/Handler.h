@@ -39,35 +39,30 @@ public:
 		return Message::obtain(message, *this);
 	}
 
-	bool obtainMessage(Message& message, int32_t what) {
+	bool obtainMessage(Message& message, int16_t what) {
 		return Message::obtain(message, *this, what);
 	}
 
-	bool obtainMessage(Message& message, int32_t what, int32_t arg1, int32_t arg2) {
+	bool obtainMessage(Message& message, int16_t what, int32_t arg1, int32_t arg2) {
 		return Message::obtain(message, *this, what, arg1, arg2);
 	}
 
-	bool obtainMessage(Message& message, Runnable& callback) {
-		return Message::obtain(message, *this, callback);
+	bool obtainMessage(Message& message, int16_t what, void* obj) {
+		return Message::obtain(message, *this, what, obj);
 	}
 
-	void dispatchMessage(Message& message);
-	virtual void handleMessage(Message& message);
+	void dispatchMessage(Message& message) {
+		handleMessage(message);
+	}
+
+	virtual void handleMessage(const Message& message);
 	bool sendMessage(Message& message);
 	bool sendMessageDelayed(Message& message, uint32_t delay);
 	bool sendMessageAtTime(Message& message, uint64_t execTimestamp);
-	bool post(Runnable& runnable);
-	bool postDelayed(Runnable& runnable, uint32_t delay);
-	bool postAtTime(Runnable& runnable, uint64_t execTimestamp);
-	bool removeMessages(int32_t what);
-	bool removeCallbacks(Runnable& runnable);
-	bool removeCallbacksAndMessages();
+	bool removeMessage(Message& message);
+	bool removeMessages(int16_t what);
 
 private:
-	void handleCallback(Message& message) {
-		message.getCallback()->run();
-    }
-
 	MessageQueue* mMessageQueue;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Handler)

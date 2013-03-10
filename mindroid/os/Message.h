@@ -29,59 +29,54 @@ class Message {
 public:
     Message();
 	Message(Handler& handler);
-	Message(Handler& handler, int32_t what);
-	Message(Handler& handler, int32_t what, int32_t arg1, int32_t arg2);
-	Message(Handler& handler, Runnable& callback);
+	Message(Handler& handler, int16_t what);
+	Message(Handler& handler, int16_t what, int32_t arg1, int32_t arg2);
+	Message(Handler& handler, int16_t what, void* obj);
+	Message(const Message& message);
 
 	virtual ~Message() {}
 
     static bool obtain(Message& message, Handler& handler);
-    static bool obtain(Message& message, Handler& handler, int32_t what);
-    static bool obtain(Message& message, Handler& handler, int32_t what, int32_t arg1, int32_t arg2);
-    static bool obtain(Message& message, Handler& handler, Runnable& callback);
-
-    void setHandler(Handler& handler) {
-    	mHandler = &handler;
-    }
+    static bool obtain(Message& message, Handler& handler, int16_t what);
+    static bool obtain(Message& message, Handler& handler, int16_t what, int32_t arg1, int32_t arg2);
+    static bool obtain(Message& message, Handler& handler, int16_t what, void* obj);
 
     Handler* getHandler() const {
     	return mHandler;
     }
 
-    Runnable* getCallback() const {
-    	return mCallback;
-    }
-
-    bool ready() const {
-    	AutoLock autoLock(mLock);
-    	return mExecTimestamp == 0;
-    }
-
-    void recycle() {
-    	setExecTimestamp(0);
-    }
-
     bool sendToTarget();
 
-    int32_t what;
+    int16_t what;
     int32_t arg1;
     int32_t arg2;
     void* obj;
 
 protected:
-    Message(bool quitMessage);
-    void clear();
+    void setHandler(Handler& handler) {
+		mHandler = &handler;
+	}
 
-private:
-    void setExecTimestamp(uint64_t execTimestamp) {
+    bool ready() const {
+		AutoLock autoLock(mLock);
+		return mExecTimestamp == 0;
+	}
+
+	void recycle() {
+		setExecTimestamp(0);
+	}
+
+	void setExecTimestamp(uint64_t execTimestamp) {
 		AutoLock autoLock(mLock);
 		mExecTimestamp = execTimestamp;
 	}
 
+    void clear();
+
+private:
     mutable Lock mLock;
     uint64_t mExecTimestamp; // nanoseconds
     Handler* mHandler;
-    Runnable* mCallback;
     Message* mNextMessage;
 
     friend class MessageQueue;
