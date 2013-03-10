@@ -143,7 +143,7 @@ int main() {
 	sHandler4->test();
 	int i = 0;
 	while (true) {
-		obtainClosure<Test, int32_t>(closure1, sTest, &Test::test, i++);
+		obtainClosure(closure1, sTest, &Test::test, i++);
 		sHandler2->sendMessageDelayed(message2, 100);
 		sHandler2->removeMessage(message2);
 		sHandler2->sendMessageDelayed(message1, 500);
