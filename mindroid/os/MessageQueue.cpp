@@ -34,7 +34,7 @@ MessageQueue::~MessageQueue() {
 
 bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 	AutoLock autoLock(mCondVarLock);
-	if (!message.ready()) {
+	if ((execTimestamp == 0) || !message.ready()) {
 		return false;
 	}
 	if (mLockMessageQueue) {
@@ -44,7 +44,7 @@ bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 	}
 	message.setExecTimestamp(execTimestamp);
 	Message* curMessage = mHeadMessage;
-	if (curMessage == NULL || execTimestamp == 0 || execTimestamp < curMessage->mExecTimestamp) {
+	if (curMessage == NULL || execTimestamp < curMessage->mExecTimestamp) {
 		message.mNextMessage = curMessage;
 		mHeadMessage = &message;
 		mCondVar.notify();

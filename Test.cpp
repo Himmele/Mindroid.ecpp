@@ -22,20 +22,6 @@ Handler* sHandler2 = NULL;
 Handler3* sHandler3 = NULL;
 Handler4* sHandler4 = NULL;
 
-class Params
-{
-public:
-	static const uint32_t ARRAY_SIZE = 32;
-
-	Params() {
-		for (uint32_t i = 0; i < ARRAY_SIZE; i++) {
-			values[i] = i;
-		}
-	}
-
-	uint32_t values[ARRAY_SIZE];
-};
-
 class Handler2 : public Handler
 {
 public:
@@ -88,7 +74,6 @@ public:
 
 	void test() {
 		bool rc = sendMessageDelayed(mMessage, 1000);
-//		printf("Handler4: %s\n", rc ? "ok" : "error");
 	}
 
 private:
@@ -155,22 +140,17 @@ int main() {
 	Message message2;
 	sHandler2->obtainMessage(message2, 5, &runnable1);
 
-	//TODO: Repost in handleMessage callback
-
 	sHandler4->test();
 	int i = 0;
 	while (true) {
-		bool abc = obtainClosure<Test, int32_t>(closure1, sTest, &Test::test, i++);
-//		if (!abc) {
-//			printf("Error\n");
-//		}
+		obtainClosure<Test, int32_t>(closure1, sTest, &Test::test, i++);
 		sHandler2->sendMessageDelayed(message2, 100);
 		sHandler2->removeMessage(message2);
 		sHandler2->sendMessageDelayed(message1, 500);
 
 		sHandler3->test();
 
-		Thread::sleep(1);
+		Thread::sleep(1000);
 	}
 
 	sLooper1->quit();

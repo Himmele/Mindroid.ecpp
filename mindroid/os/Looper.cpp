@@ -82,7 +82,7 @@ void Looper::loop() {
 }
 
 void Looper::quit() {
-	mMessageQueue.enqueueMessage(mQuitMessage, 0);
+	mMessageQueue.enqueueMessage(mQuitMessage, 1);
 }
 
 } /* namespace mindroid */
