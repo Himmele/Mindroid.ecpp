@@ -73,7 +73,8 @@ void Looper::loop() {
 			if (message.mHandler == NULL) {
 				return;
 			}
-			message.setExecTimestamp(0);
+			//FIXME
+			message.recycle();
 			message.mHandler->dispatchMessage(message);
 		}
 	}

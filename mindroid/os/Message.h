@@ -44,23 +44,22 @@ public:
     	mHandler = &handler;
     }
 
-    Handler* getHandler() {
+    Handler* getHandler() const {
     	return mHandler;
     }
 
-    Runnable* getCallback() {
+    Runnable* getCallback() const {
     	return mCallback;
     }
 
-    bool ready() {
+    bool ready() const {
     	AutoLock autoLock(mLock);
     	return mExecTimestamp == 0;
     }
 
-    void setExecTimestamp(uint64_t execTimestamp) {
-		AutoLock autoLock(mLock);
-		mExecTimestamp = execTimestamp;
-	}
+    void recycle() {
+    	setExecTimestamp(0);
+    }
 
     bool sendToTarget();
 
@@ -74,7 +73,12 @@ protected:
     void clear();
 
 private:
-    Lock mLock;
+    void setExecTimestamp(uint64_t execTimestamp) {
+		AutoLock autoLock(mLock);
+		mExecTimestamp = execTimestamp;
+	}
+
+    mutable Lock mLock;
     uint64_t mExecTimestamp; // nanoseconds
     Handler* mHandler;
     Runnable* mCallback;

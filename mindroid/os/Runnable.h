@@ -28,7 +28,7 @@ public:
 	virtual ~Runnable() {}
 	virtual void run() = 0;
 
-	bool ready() {
+	bool ready() const {
 		return mWrapperMessage.ready();
 	}
 
