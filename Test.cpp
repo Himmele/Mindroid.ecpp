@@ -12,7 +12,7 @@
 #include "mindroid/os/Clock.h"
 #include "mindroid/util/Buffer.h"
 #include "mindroid/util/CircularBuffer.h"
-#include "mindroid/util/TsLfSpScCircularBuffer.h"
+#include "mindroid/util/TsSpScCircularBuffer.h"
 #include "SQueue.h"
 #include "SLinkedList.h"
 
@@ -150,7 +150,7 @@ int main() {
 	rc = fifo.pop(&data2, sizeof(data2));
 	rc = fifo.pop(&data2, sizeof(data2));
 
-	TsLfSpScCircularBuffer<2048> fifo2;
+	TsSpScCircularBuffer<2048> fifo2;
 	rc = fifo2.push(&data1, sizeof(data1));
 	rc = fifo2.pop(&data2, sizeof(data2));
 	rc = fifo2.pop(&data2, sizeof(data2));

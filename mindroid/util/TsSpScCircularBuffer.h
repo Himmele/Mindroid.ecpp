@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef MINDROID_TSLFSPSCCIRCULARBUFFER_H_
-#define MINDROID_TSLFSPSCCIRCULARBUFFER_H_
+#ifndef MINDROID_TSSPSCCIRCULARBUFFER_H_
+#define MINDROID_TSSPSCCIRCULARBUFFER_H_
 
 #include <stdint.h>
 #include <string.h>
@@ -24,12 +24,12 @@
 
 namespace mindroid {
 
-// Thread-safe Lock-Free Single-Producer Single-Consumer Circular Buffer: http://www.codeproject.com/Articles/43510/Lock-Free-Single-Producer-Single-Consumer-Circular
+// Thread-safe (Lock-Free) Single-Producer Single-Consumer Circular Buffer: http://www.codeproject.com/Articles/43510/Lock-Free-Single-Producer-Single-Consumer-Circular
 template<uint16_t SIZE>
-class TsLfSpScCircularBuffer
+class TsSpScCircularBuffer
 {
 public:
-	TsLfSpScCircularBuffer() :
+	TsSpScCircularBuffer() :
 			mReadIndex(0),
 			mWriteIndex(0) {
 	}
@@ -54,11 +54,11 @@ private:
 	AtomicInteger<uint16_t> mReadIndex;
 	AtomicInteger<uint16_t> mWriteIndex;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(TsLfSpScCircularBuffer)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(TsSpScCircularBuffer)
 };
 
 template<uint16_t SIZE>
-bool TsLfSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
+bool TsSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
 	uint16_t readIndex = mReadIndex.get();
 	uint16_t writeIndex = mWriteIndex.get();
 
@@ -79,7 +79,7 @@ bool TsLfSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
 }
 
 template<uint16_t SIZE>
-bool TsLfSpScCircularBuffer<SIZE>::push(void* data, uint16_t size) {
+bool TsSpScCircularBuffer<SIZE>::push(void* data, uint16_t size) {
 	if ((size + 2) >= SIZE) {
 		return false;
 	}
@@ -106,7 +106,7 @@ bool TsLfSpScCircularBuffer<SIZE>::push(void* data, uint16_t size) {
 }
 
 template<uint16_t SIZE>
-void TsLfSpScCircularBuffer<SIZE>::readData(uint16_t readIndex, uint8_t* data, uint16_t size) {
+void TsSpScCircularBuffer<SIZE>::readData(uint16_t readIndex, uint8_t* data, uint16_t size) {
 	if (readIndex + size < SIZE) {
 		memcpy(data, mBuffer + readIndex, size);
 	} else {
@@ -117,7 +117,7 @@ void TsLfSpScCircularBuffer<SIZE>::readData(uint16_t readIndex, uint8_t* data, u
 }
 
 template<uint16_t SIZE>
-void TsLfSpScCircularBuffer<SIZE>::writeData(uint16_t writeIndex, uint8_t* data, uint16_t size) {
+void TsSpScCircularBuffer<SIZE>::writeData(uint16_t writeIndex, uint8_t* data, uint16_t size) {
 	if (writeIndex + size < SIZE) {
 		memcpy(mBuffer + writeIndex, data, size);
 	} else {
@@ -129,4 +129,4 @@ void TsLfSpScCircularBuffer<SIZE>::writeData(uint16_t writeIndex, uint8_t* data,
 
 } /* namespace mindroid */
 
-#endif /* MINDROID_TSLFSPSCCIRCULARBUFFER_H_ */
+#endif /* MINDROID_TSSPSCCIRCULARBUFFER_H_ */
