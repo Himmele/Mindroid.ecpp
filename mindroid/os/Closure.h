@@ -42,8 +42,8 @@
 #define MINDROID_CLOSURE_H_
 
 #include <new>
-#include "mindroid/os/Utils.h"
 #include "mindroid/os/Runnable.h"
+#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 

@@ -19,9 +19,9 @@
 
 #include <stdint.h>
 #include <pthread.h>
-#include "mindroid/os/Utils.h"
 #include "mindroid/os/Lock.h"
 #include "mindroid/os/CondVar.h"
+#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 

@@ -18,9 +18,9 @@
 #define MINDROID_LOOPER_H_
 
 #include <pthread.h>
-#include "mindroid/os/Utils.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/MessageQueue.h"
+#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 

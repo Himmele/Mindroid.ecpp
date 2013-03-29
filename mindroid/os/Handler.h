@@ -18,9 +18,9 @@
 #define MINDROID_HANDLER_H_
 
 #include <stdint.h>
-#include "mindroid/os/Utils.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Runnable.h"
+#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 

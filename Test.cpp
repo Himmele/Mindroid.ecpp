@@ -10,6 +10,11 @@
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Closure.h"
 #include "mindroid/os/Clock.h"
+#include "mindroid/util/Buffer.h"
+#include "mindroid/util/CircularBuffer.h"
+#include "mindroid/util/TsLfSpScCircularBuffer.h"
+#include "SQueue.h"
+#include "SLinkedList.h"
 
 using namespace mindroid;
 
@@ -126,11 +131,67 @@ Thread1 sThread1;
 Thread2 sThread2;
 Test sTest;
 
+class Abc : public SNode<Abc>
+{
+public:
+	int value;
+};
+
 int main() {
 	sThread1.start();
 	sThread2.start();
 
 	Thread::sleep(200);
+
+	CircularBuffer<2048> fifo;
+	int data1 = 42;
+	int data2;
+	bool rc = fifo.push(&data1, sizeof(data1));
+	rc = fifo.pop(&data2, sizeof(data2));
+	rc = fifo.pop(&data2, sizeof(data2));
+
+	TsLfSpScCircularBuffer<2048> fifo2;
+	rc = fifo2.push(&data1, sizeof(data1));
+	rc = fifo2.pop(&data2, sizeof(data2));
+	rc = fifo2.pop(&data2, sizeof(data2));
+
+	for (int j = 0; j < 20; j++) {
+		for (int i = 0; i < 341; i++) {
+			assert(fifo2.push(&data1, sizeof(data1)) == true);
+		}
+		for (int i = 0; i < 341; i++) {
+			assert(fifo2.push(&data1, sizeof(data1)) == false);
+		}
+
+		for (int i = 0; i < 341; i++) {
+			assert(fifo2.pop(&data2, sizeof(data2)) == true);
+		}
+		for (int i = 0; i < 341; i++) {
+			assert(fifo2.pop(&data2, sizeof(data2)) == false);
+		}
+	}
+
+	Buffer<16> buffer;
+	SQueue<int, 4> queue;
+	if (!queue.full()) {
+		int& a = queue.enqueue();
+		a = 42;
+		int& b = queue.dequeue();
+	}
+	bool empty = queue.empty();
+
+	SLinkedList<Abc> linkedList;
+	Abc abc;
+	abc.value = 1;
+	Abc def;
+	def.value = 2;
+	linkedList.push_back(abc);
+	linkedList.push_back(def);
+	Abc& front1 = linkedList.front();
+	linkedList.pop_front();
+	Abc& front2 = linkedList.front();
+	linkedList.pop_front();
+	empty = linkedList.empty();
 
 	sHandler4 = new Handler4(*sLooper2);
 	Closure1<Test, int32_t> closure1;

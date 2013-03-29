@@ -18,8 +18,8 @@
 #define MINDROID_THREAD_H_
 
 #include <pthread.h>
-#include "mindroid/os/Utils.h"
 #include "mindroid/os/Runnable.h"
+#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 

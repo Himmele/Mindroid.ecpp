@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 #include <pthread.h>
-#include "mindroid/os/Utils.h"
+#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 

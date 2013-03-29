@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 #include "time.h"
-#include "mindroid/os/Utils.h"
+#include "mindroid/util/Utils.h"
 
 #define CLOCK_REALTIME  0
 #define CLOCK_MONOTONIC 1

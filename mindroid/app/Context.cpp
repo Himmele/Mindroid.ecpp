@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Daniel Himmelein
+ * Copyright (C) 2013 Daniel Himmelein
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,16 @@
  * limitations under the License.
  */
 
-#ifndef MINDROID_CONDVAR_H_
-#define MINDROID_CONDVAR_H_
-
-#include <stdint.h>
-#include <pthread.h>
-#include "mindroid/util/Utils.h"
+#include "mindroid/app/Context.h"
+#include "mindroid/os/Handler.h"
 
 namespace mindroid {
 
-class Lock;
+Handler* Context::bindService(const char* name) {
+	return NULL;
+}
 
-class CondVar {
-public:
-	CondVar(Lock& lock);
-	~CondVar();
-	void wait();
-	void wait(uint32_t timeout);
-	void wait(timespec& absTimestamp);
-	void notify();
-	void notifyAll();
-
-private:
-	pthread_cond_t mCondVar;
-	pthread_condattr_t mCondVarAttributes;
-	Lock& mCondVarLock;
-
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(CondVar)
-};
+void Context::unbindService(const char* name) {
+}
 
 } /* namespace mindroid */
-
-#endif /* MINDROID_CONDVAR_H_ */
