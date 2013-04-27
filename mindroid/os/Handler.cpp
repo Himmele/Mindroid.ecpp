@@ -56,6 +56,10 @@ bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
 	}
 }
 
+bool Handler::removeMessages() {
+	return mMessageQueue->removeMessages(this);
+}
+
 bool Handler::removeMessage(Message& message) {
 	return mMessageQueue->removeMessage(this, &message);
 }

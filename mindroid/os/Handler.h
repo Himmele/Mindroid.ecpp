@@ -59,6 +59,7 @@ public:
 	bool sendMessage(Message& message);
 	bool sendMessageDelayed(Message& message, uint32_t delay);
 	bool sendMessageAtTime(Message& message, uint64_t execTimestamp);
+	bool removeMessages();
 	bool removeMessage(Message& message);
 	bool removeMessages(int16_t what);
 

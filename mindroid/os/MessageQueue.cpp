@@ -94,6 +94,45 @@ Message* MessageQueue::getNextMessage(uint64_t now) {
 	return NULL;
 }
 
+bool MessageQueue::removeMessages(Handler* handler) {
+	if (handler == NULL) {
+		return false;
+	}
+
+	bool foundMessage = false;
+
+	mCondVarLock.lock();
+
+	Message* curMessage = mHeadMessage;
+	// remove all matching messages at the front of the message queue.
+	while (curMessage != NULL && curMessage->mHandler == handler) {
+		foundMessage = true;
+		Message* nextMessage = curMessage->mNextMessage;
+		mHeadMessage = nextMessage;
+		curMessage->recycle();
+		curMessage = nextMessage;
+	}
+
+	// remove all matching messages after the front of the message queue.
+	while (curMessage != NULL) {
+		Message* nextMessage = curMessage->mNextMessage;
+		if (nextMessage != NULL) {
+			if (nextMessage->mHandler == handler) {
+				foundMessage = true;
+				Message* nextButOneMessage = nextMessage->mNextMessage;
+				nextMessage->recycle();
+				curMessage->mNextMessage = nextButOneMessage;
+				continue;
+			}
+		}
+		curMessage = nextMessage;
+	}
+
+	mCondVarLock.unlock();
+
+	return foundMessage;
+}
+
 bool MessageQueue::removeMessage(Handler* handler, Message* message) {
 	if (handler == NULL || message == NULL) {
 		return false;
