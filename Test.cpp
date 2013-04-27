@@ -27,7 +27,7 @@ public:
 			break;
 		}
 		default:
-			printf("Handler2::handleMessage 0x%x with ID %d by Looper 0x%x\n",
+			printf("Handler1::handleMessage 0x%x with ID %d by Looper 0x%x\n",
 					&message, message.what, Looper::myLooper());
 		}
 	}
@@ -41,7 +41,7 @@ public:
 	}
 
 	virtual void handleMessage(const Message& message) {
-		printf("Handler3::handleMessage 0x%x with ID %d by Looper 0x%x\n",
+		printf("Handler2::handleMessage 0x%x with ID %d by Looper 0x%x\n",
 				&message, message.what, Looper::myLooper());
 	}
 
@@ -59,7 +59,7 @@ public:
 	Handler3(Looper& looper) : Handler(looper), mMessage(*this, 4) {}
 
 	virtual void handleMessage(const Message& message) {
-		printf("Handler4::handleMessage 0x%x with ID %d by Looper 0x%x\n",
+		printf("Handler3::handleMessage 0x%x with ID %d by Looper 0x%x\n",
 				&message, message.what, Looper::myLooper());
 		sendMessageDelayed(mMessage, 4000);
 		printf("Time: %lld\n", Clock::monotonicTime());
