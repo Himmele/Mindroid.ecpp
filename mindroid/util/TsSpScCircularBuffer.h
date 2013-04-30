@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <mindroid/os/AtomicInteger.h>
+#include "mindroid/os/AtomicInteger.h"
 #include "mindroid/util/Utils.h"
 
 namespace mindroid {
@@ -34,8 +34,10 @@ public:
 			mWriteIndex(0) {
 	}
 
-	bool pop(void* data, uint16_t size);
-	bool push(void* data, uint16_t size);
+	int32_t front(void* data, uint16_t size);
+	int32_t pop(void* data, uint16_t size);
+	bool push(const void* data, uint16_t size);
+	uint16_t size() const;
 
 	bool empty() const {
 		return mReadIndex.get() == mWriteIndex.get();
@@ -47,7 +49,7 @@ public:
 
 protected:
 	void readData(uint16_t readIndex, uint8_t* data, uint16_t size);
-	void writeData(uint16_t writeIndex, uint8_t* data, uint16_t size);
+	void writeData(uint16_t writeIndex, const uint8_t* data, uint16_t size);
 
 private:
 	uint8_t mBuffer[SIZE];
@@ -58,29 +60,58 @@ private:
 };
 
 template<uint16_t SIZE>
-bool TsSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
+int32_t TsSpScCircularBuffer<SIZE>::front(void* data, uint16_t size) {
 	uint16_t readIndex = mReadIndex.get();
 	uint16_t writeIndex = mWriteIndex.get();
 
 	if (readIndex == writeIndex) {
-		return false;
+		return 0;
 	}
 
 	uint16_t dataSize;
 	readData(readIndex, (uint8_t*) &dataSize, 2);
-	if (size >= dataSize) {
-		uint16_t newReadIndex = (readIndex + size + 2) % SIZE;
-		readData(readIndex + 2, (uint8_t*) data, dataSize);
-		mReadIndex.set(newReadIndex);
-		return true;
+	if (data != NULL) {
+		if (size >= dataSize) {
+			readData(readIndex + 2, (uint8_t*) data, dataSize);
+			return dataSize;
+		} else {
+			return -dataSize;
+		}
 	} else {
-		return false;
+		return dataSize;
 	}
 }
 
 template<uint16_t SIZE>
-bool TsSpScCircularBuffer<SIZE>::push(void* data, uint16_t size) {
-	if ((size + 2) >= SIZE) {
+int32_t TsSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
+	uint16_t readIndex = mReadIndex.get();
+	uint16_t writeIndex = mWriteIndex.get();
+
+	if (readIndex == writeIndex) {
+		return 0;
+	}
+
+	uint16_t dataSize;
+	readData(readIndex, (uint8_t*) &dataSize, 2);
+	if (data != NULL) {
+		if (size >= dataSize) {
+			uint16_t newReadIndex = (readIndex + dataSize + 2) % SIZE;
+			readData(readIndex + 2, (uint8_t*) data, dataSize);
+			mReadIndex.set(newReadIndex);
+			return dataSize;
+		} else {
+			return -dataSize;
+		}
+	} else {
+		uint16_t newReadIndex = (readIndex + dataSize + 2) % SIZE;
+		mReadIndex.set(newReadIndex);
+		return dataSize;
+	}
+}
+
+template<uint16_t SIZE>
+bool TsSpScCircularBuffer<SIZE>::push(const void* data, uint16_t size) {
+	if ((data == NULL) || ((size + 2) >= SIZE)) {
 		return false;
 	}
 
@@ -106,6 +137,18 @@ bool TsSpScCircularBuffer<SIZE>::push(void* data, uint16_t size) {
 }
 
 template<uint16_t SIZE>
+uint16_t TsSpScCircularBuffer<SIZE>::size() const {
+	uint16_t readIndex = mReadIndex.get();
+	uint16_t writeIndex = mWriteIndex.get();
+
+	if (writeIndex >= readIndex) {
+		return (SIZE - (writeIndex - readIndex));
+	} else {
+		return (readIndex - writeIndex);
+	}
+}
+
+template<uint16_t SIZE>
 void TsSpScCircularBuffer<SIZE>::readData(uint16_t readIndex, uint8_t* data, uint16_t size) {
 	if (readIndex + size < SIZE) {
 		memcpy(data, mBuffer + readIndex, size);
@@ -117,7 +160,7 @@ void TsSpScCircularBuffer<SIZE>::readData(uint16_t readIndex, uint8_t* data, uin
 }
 
 template<uint16_t SIZE>
-void TsSpScCircularBuffer<SIZE>::writeData(uint16_t writeIndex, uint8_t* data, uint16_t size) {
+void TsSpScCircularBuffer<SIZE>::writeData(uint16_t writeIndex, const uint8_t* data, uint16_t size) {
 	if (writeIndex + size < SIZE) {
 		memcpy(mBuffer + writeIndex, data, size);
 	} else {

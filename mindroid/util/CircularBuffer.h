@@ -33,7 +33,8 @@ public:
 	}
 
 	bool pop(void* data, uint16_t size);
-	bool push(void* data, uint16_t size);
+	bool push(const void* data, uint16_t size);
+	uint16_t size() const;
 
 	bool empty() const {
 		return mReadIndex == mWriteIndex;
@@ -50,7 +51,7 @@ public:
 
 protected:
 	void readData(uint16_t readIndex, uint8_t* data, uint16_t size);
-	void writeData(uint16_t writeIndex, uint8_t* data, uint16_t size);
+	void writeData(uint16_t writeIndex, const uint8_t* data, uint16_t size);
 
 	bool hasFreeSpace(uint16_t size) const {
 		if (mWriteIndex >= mReadIndex) {
@@ -78,7 +79,7 @@ bool CircularBuffer<SIZE>::pop(void* data, uint16_t size) {
 	readData(mReadIndex, (uint8_t*) &dataSize, 2);
 	if (size >= dataSize) {
 		readData(mReadIndex + 2, (uint8_t*) data, dataSize);
-		mReadIndex = (mReadIndex + size + 2) % SIZE;
+		mReadIndex = (mReadIndex + dataSize + 2) % SIZE;
 		return true;
 	} else {
 		return false;
@@ -86,7 +87,7 @@ bool CircularBuffer<SIZE>::pop(void* data, uint16_t size) {
 }
 
 template<uint16_t SIZE>
-bool CircularBuffer<SIZE>::push(void* data, uint16_t size) {
+bool CircularBuffer<SIZE>::push(const void* data, uint16_t size) {
 	if ((size + 2) >= SIZE) {
 		return false;
 	}
@@ -101,6 +102,15 @@ bool CircularBuffer<SIZE>::push(void* data, uint16_t size) {
 }
 
 template<uint16_t SIZE>
+uint16_t CircularBuffer<SIZE>::size() const {
+	if (mWriteIndex >= mReadIndex) {
+		return (SIZE - (mWriteIndex - mReadIndex));
+	} else {
+		return (mReadIndex - mWriteIndex);
+	}
+}
+
+template<uint16_t SIZE>
 void CircularBuffer<SIZE>::readData(uint16_t readIndex, uint8_t* data, uint16_t size) {
 	if (readIndex + size < SIZE) {
 		memcpy(data, mBuffer + readIndex, size);
@@ -112,7 +122,7 @@ void CircularBuffer<SIZE>::readData(uint16_t readIndex, uint8_t* data, uint16_t 
 }
 
 template<uint16_t SIZE>
-void CircularBuffer<SIZE>::writeData(uint16_t writeIndex, uint8_t* data, uint16_t size) {
+void CircularBuffer<SIZE>::writeData(uint16_t writeIndex, const uint8_t* data, uint16_t size) {
 	if (writeIndex + size < SIZE) {
 		memcpy(mBuffer + writeIndex, data, size);
 	} else {
