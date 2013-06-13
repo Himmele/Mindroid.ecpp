@@ -78,7 +78,7 @@ bool CircularBuffer<SIZE>::pop(void* data, uint16_t size) {
 	uint16_t dataSize;
 	readData(mReadIndex, (uint8_t*) &dataSize, 2);
 	if (size >= dataSize) {
-		readData(mReadIndex + 2, (uint8_t*) data, dataSize);
+		readData((mReadIndex + 2) % SIZE, (uint8_t*) data, dataSize);
 		mReadIndex = (mReadIndex + dataSize + 2) % SIZE;
 		return true;
 	} else {
@@ -96,7 +96,7 @@ bool CircularBuffer<SIZE>::push(const void* data, uint16_t size) {
 	}
 
 	writeData(mWriteIndex, (uint8_t*) &size, 2);
-	writeData(mWriteIndex + 2, (uint8_t*) data, size);
+	writeData((mWriteIndex + 2) % SIZE, (uint8_t*) data, size);
 	mWriteIndex = (mWriteIndex + size + 2) % SIZE;
 	return true;
 }

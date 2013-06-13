@@ -19,6 +19,7 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <sys/uio.h>
 #include "mindroid/os/AtomicInteger.h"
 #include "mindroid/util/Utils.h"
 
@@ -36,7 +37,9 @@ public:
 
 	int32_t front(void* data, uint16_t size);
 	int32_t pop(void* data, uint16_t size);
+	int32_t pop(const struct iovec* iov, uint16_t iovcnt);
 	bool push(const void* data, uint16_t size);
+	bool push(const struct iovec* iov, uint16_t iovcnt);
 	uint16_t size() const;
 
 	bool empty() const {
@@ -72,7 +75,7 @@ int32_t TsSpScCircularBuffer<SIZE>::front(void* data, uint16_t size) {
 	readData(readIndex, (uint8_t*) &dataSize, 2);
 	if (data != NULL) {
 		if (size >= dataSize) {
-			readData(readIndex + 2, (uint8_t*) data, dataSize);
+			readData((readIndex + 2) % SIZE, (uint8_t*) data, dataSize);
 			return dataSize;
 		} else {
 			return -dataSize;
@@ -96,7 +99,47 @@ int32_t TsSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
 	if (data != NULL) {
 		if (size >= dataSize) {
 			uint16_t newReadIndex = (readIndex + dataSize + 2) % SIZE;
-			readData(readIndex + 2, (uint8_t*) data, dataSize);
+			readData((readIndex + 2) % SIZE, (uint8_t*) data, dataSize);
+			mReadIndex.set(newReadIndex);
+			return dataSize;
+		} else {
+			return -dataSize;
+		}
+	} else {
+		uint16_t newReadIndex = (readIndex + dataSize + 2) % SIZE;
+		mReadIndex.set(newReadIndex);
+		return dataSize;
+	}
+}
+
+template<uint16_t SIZE>
+int32_t TsSpScCircularBuffer<SIZE>::pop(const struct iovec* iov, uint16_t iovcnt) {
+	uint16_t readIndex = mReadIndex.get();
+	uint16_t writeIndex = mWriteIndex.get();
+
+	if (readIndex == writeIndex) {
+		return 0;
+	}
+
+	uint32_t size = 0;
+	for (uint16_t i = 0; i < iovcnt; i++) {
+		size += iov[i].iov_len;
+	}
+
+	uint16_t dataSize;
+	readData(readIndex, (uint8_t*) &dataSize, 2);
+	if (iov != NULL) {
+		if (size >= dataSize) {
+			uint16_t newReadIndex = (readIndex + dataSize + 2) % SIZE;
+			uint16_t offset = 0;
+			for (uint16_t i = 0; i < iovcnt; i++) {
+				uint16_t count = ((dataSize - offset) >= iov[i].iov_len) ? iov[i].iov_len : (dataSize - offset);
+				readData((readIndex + 2 + offset) % SIZE, (uint8_t*) iov[i].iov_base, count);
+				offset += iov[i].iov_len;
+				if (offset == dataSize) {
+					break;
+				}
+			}
 			mReadIndex.set(newReadIndex);
 			return dataSize;
 		} else {
@@ -128,7 +171,45 @@ bool TsSpScCircularBuffer<SIZE>::push(const void* data, uint16_t size) {
 	if (hasFreeSpace) {
 		uint16_t newWriteIndex = (writeIndex + size + 2) % SIZE;
 		writeData(writeIndex, (uint8_t*) &size, 2);
-		writeData(writeIndex + 2, (uint8_t*) data, size);
+		writeData((writeIndex + 2) % SIZE, (uint8_t*) data, size);
+		mWriteIndex.set(newWriteIndex);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+template<uint16_t SIZE>
+bool TsSpScCircularBuffer<SIZE>::push(const struct iovec* iov, uint16_t iovcnt) {
+	if (iov == NULL) {
+		return false;
+	}
+	uint32_t size = 0;
+	for (uint16_t i = 0; i < iovcnt; i++) {
+		size += iov[i].iov_len;
+	}
+	if ((size + 2) >= SIZE) {
+		return false;
+	}
+
+	uint16_t readIndex = mReadIndex.get();
+	uint16_t writeIndex = mWriteIndex.get();
+
+	bool hasFreeSpace;
+	if (writeIndex >= readIndex) {
+		hasFreeSpace = (SIZE - (writeIndex - readIndex) > size);
+	} else {
+		hasFreeSpace = (readIndex - writeIndex > size);
+	}
+
+	if (hasFreeSpace) {
+		uint16_t newWriteIndex = (writeIndex + size + 2) % SIZE;
+		writeData(writeIndex, (uint8_t*) &size, 2);
+		uint16_t offset = 0;
+		for (uint16_t i = 0; i < iovcnt; i++) {
+			writeData((writeIndex + 2 + offset) % SIZE, (uint8_t*) iov[i].iov_base, iov[i].iov_len);
+			offset += iov[i].iov_len;
+		}
 		mWriteIndex.set(newWriteIndex);
 		return true;
 	} else {
