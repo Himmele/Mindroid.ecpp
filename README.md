@@ -1,4 +1,4 @@
-## Mindroid.ecpp is a concurrency and messaging framework for embedded native C++ development in static environments without dynamic memory allocation ##
+## Mindroid.ecpp is a concurrency and messaging framework for embedded C++ development in static environments without dynamic memory allocation ##
 
 Most ideas for this framework come from Google's Android Java messaging and concurrency classes.
 This small framework is very handy not only for Android developers :-).
