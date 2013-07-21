@@ -121,7 +121,7 @@ int32_t TsSpScCircularBuffer<SIZE>::pop(const struct iovec* iov, uint16_t iovcnt
 		return 0;
 	}
 
-	uint32_t size = 0;
+	uint16_t size = 0;
 	for (uint16_t i = 0; i < iovcnt; i++) {
 		size += iov[i].iov_len;
 	}
@@ -184,7 +184,7 @@ bool TsSpScCircularBuffer<SIZE>::push(const struct iovec* iov, uint16_t iovcnt) 
 	if (iov == NULL) {
 		return false;
 	}
-	uint32_t size = 0;
+	uint16_t size = 0;
 	for (uint16_t i = 0; i < iovcnt; i++) {
 		size += iov[i].iov_len;
 	}
