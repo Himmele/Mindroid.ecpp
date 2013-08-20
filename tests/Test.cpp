@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,8 +11,11 @@
 #include "mindroid/os/Closure.h"
 #include "mindroid/os/Clock.h"
 #include "mindroid/util/Buffer.h"
+#include "mindroid/util/Log.h"
 
 using namespace mindroid;
+
+static const char* LOG_TAG = "Mindroid";
 
 class Handler1 : public Handler
 {
@@ -27,7 +29,7 @@ public:
 			break;
 		}
 		default:
-			printf("Handler1::handleMessage 0x%x with ID %d by Looper 0x%x\n",
+			Log::i(LOG_TAG, "Handler1::handleMessage 0x%x with ID %d by Looper 0x%x",
 					&message, message.what, Looper::myLooper());
 		}
 	}
@@ -41,7 +43,7 @@ public:
 	}
 
 	virtual void handleMessage(const Message& message) {
-		printf("Handler2::handleMessage 0x%x with ID %d by Looper 0x%x\n",
+		Log::i(LOG_TAG, "Handler2::handleMessage 0x%x with ID %d by Looper 0x%x",
 				&message, message.what, Looper::myLooper());
 	}
 
@@ -59,10 +61,10 @@ public:
 	Handler3(Looper& looper) : Handler(looper), mMessage(*this, 4) {}
 
 	virtual void handleMessage(const Message& message) {
-		printf("Handler3::handleMessage 0x%x with ID %d by Looper 0x%x\n",
+		Log::i(LOG_TAG, "Handler3::handleMessage 0x%x with ID %d by Looper 0x%x",
 				&message, message.what, Looper::myLooper());
 		sendMessageDelayed(mMessage, 4000);
-		printf("Time: %lld\n", Clock::monotonicTime());
+		Log::i(LOG_TAG, "Time: %lld", Clock::monotonicTime());
 	}
 
 	void test() {
@@ -77,7 +79,7 @@ class Runnable1 : public Runnable
 {
 public:
 	virtual void run() {
-		printf("Runnable1::run by Looper 0x%x\n", Looper::myLooper());
+		Log::i(LOG_TAG, "Runnable1::run by Looper 0x%x", Looper::myLooper());
 		assert(false);
 	}
 };
@@ -86,7 +88,7 @@ class Test
 {
 public:
 	void test(int32_t value) {
-		printf("Closure1::test with value %d by Looper 0x%x\n",
+		Log::i(LOG_TAG, "Closure1::test with value %d by Looper 0x%x",
 				value, Looper::myLooper());
 	}
 };
@@ -95,6 +97,8 @@ LooperThread<Handler1> sLooperThread1;
 LooperThread<Handler2> sLooperThread2;
 
 int main() {
+	Log::i(LOG_TAG, "Test");
+
 	sLooperThread1.start();
 	Handler* handler1 = sLooperThread1.getHandler();
 	sLooperThread2.start();
