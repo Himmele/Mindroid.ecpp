@@ -58,6 +58,11 @@ protected:
     void clear();
 
 private:
+    inline uint64_t getExecTimestamp() {
+    	AutoLock autoLock(mLock);
+    	return mExecTimestamp;
+    }
+
     mutable Lock mLock;
     uint64_t mExecTimestamp; // nanoseconds
     Handler* mHandler;

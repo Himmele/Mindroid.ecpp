@@ -84,8 +84,7 @@ Message::Message(const Message& message) :
 }
 
 bool Message::obtain(Message& message, Handler& handler) {
-	AutoLock autoLock(message.mLock);
-	if (message.mExecTimestamp == 0) {
+	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler);
 		return true;
 	} else {
@@ -94,8 +93,7 @@ bool Message::obtain(Message& message, Handler& handler) {
 }
 
 bool Message::obtain(Message& message, Handler& handler, int16_t what) {
-	AutoLock autoLock(message.mLock);
-	if (message.mExecTimestamp == 0) {
+	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what);
 		return true;
 	} else {
@@ -104,8 +102,7 @@ bool Message::obtain(Message& message, Handler& handler, int16_t what) {
 }
 
 bool Message::obtain(Message& message, Handler& handler, int16_t what, int32_t arg1, int32_t arg2) {
-	AutoLock autoLock(message.mLock);
-	if (message.mExecTimestamp == 0) {
+	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what, arg1, arg2);
 		return true;
 	} else {
@@ -114,8 +111,7 @@ bool Message::obtain(Message& message, Handler& handler, int16_t what, int32_t a
 }
 
 bool Message::obtain(Message& message, Handler& handler, int16_t what, void* obj) {
-	AutoLock autoLock(message.mLock);
-	if (message.mExecTimestamp == 0) {
+	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what, obj);
 		return true;
 	} else {
