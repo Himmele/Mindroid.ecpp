@@ -17,37 +17,45 @@
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Message.h"
+#include <new>
+#include <assert.h>
 
 namespace mindroid {
 
 pthread_once_t Looper::sTlsOneTimeInitializer = PTHREAD_ONCE_INIT;
 pthread_key_t Looper::sTlsKey;
+uint8_t Looper::sLooperHeapMemory[MAX_NUM_LOOPERS * sizeof(Looper)];
+Looper* Looper::sLoopers[] = { 0L };
+int Looper::sNumLoopers = 0;
+Lock Looper::sLock;
 
 Looper::Looper() {
 }
 
-void Looper::init()
-{
+void Looper::init() {
 	pthread_key_create(&sTlsKey, Looper::finalize);
 }
 
-void Looper::finalize(void* looper)
-{
-    delete (Looper*) looper;
+void Looper::finalize(void* looper) {
 }
 
 bool Looper::prepare() {
 	pthread_once(&sTlsOneTimeInitializer, Looper::init);
 	Looper* looper = (Looper*) pthread_getspecific(sTlsKey);
 	if (looper == NULL) {
-		looper = new Looper();
+		AutoLock autoLock(sLock);
+		assert(sNumLoopers < MAX_NUM_LOOPERS);
+		int i = sNumLoopers;
+		Looper* looper = reinterpret_cast<Looper*>(sLooperHeapMemory + i * sizeof(Looper));
+		new (looper) Looper();
 		if (looper == NULL) {
 			return false;
 		} else {
 			if (pthread_setspecific(sTlsKey, looper) != 0) {
-				delete looper;
 				return false;
 			} else {
+				sLoopers[i] = looper;
+				sNumLoopers++;
 				return true;
 			}
 		}
@@ -73,16 +81,16 @@ void Looper::loop() {
 				return;
 			}
 			Handler* handler = message.mHandler;
-			Message cloneMessage(message);
-			cloneMessage.mHandler = NULL;
+			Message clone(message);
+			clone.mHandler = NULL;
 			message.recycle();
-			handler->dispatchMessage(cloneMessage);
+			handler->dispatchMessage(clone);
 		}
 	}
 }
 
 void Looper::quit() {
-	mMessageQueue.enqueueMessage(mQuitMessage, 1);
+	mMessageQueue.enqueueMessage(mQuitMessage, 0);
 }
 
 } /* namespace mindroid */

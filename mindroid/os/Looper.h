@@ -21,6 +21,7 @@
 #include "mindroid/os/Message.h"
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/util/Utils.h"
+#include "mindroid/Mindroid.h"
 
 namespace mindroid {
 
@@ -43,10 +44,15 @@ private:
 		return mMessageQueue;
 	}
 
-	MessageQueue mMessageQueue;
-	Message mQuitMessage;
 	static pthread_once_t sTlsOneTimeInitializer;
 	static pthread_key_t sTlsKey;
+	static uint8_t sLooperHeapMemory[];
+	static Looper* sLoopers[MAX_NUM_LOOPERS];
+	static Lock sLock;
+	static int sNumLoopers;
+
+	MessageQueue mMessageQueue;
+	Message mQuitMessage;
 
 	friend class Handler;
 

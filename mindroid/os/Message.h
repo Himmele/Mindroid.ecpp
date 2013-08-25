@@ -32,7 +32,6 @@ public:
 	Message(Handler& handler, int16_t what);
 	Message(Handler& handler, int16_t what, int32_t arg1, int32_t arg2);
 	Message(Handler& handler, int16_t what, void* obj);
-	Message(const Message& message);
 
 	virtual ~Message() {}
 
@@ -53,24 +52,9 @@ public:
     void* obj;
 
 protected:
-    void setHandler(Handler& handler) {
-		mHandler = &handler;
-	}
+    Message(const Message& message);
 
-    bool ready() const {
-		AutoLock autoLock(mLock);
-		return mExecTimestamp == 0;
-	}
-
-	void recycle() {
-		setExecTimestamp(0);
-	}
-
-	void setExecTimestamp(uint64_t execTimestamp) {
-		AutoLock autoLock(mLock);
-		mExecTimestamp = execTimestamp;
-	}
-
+	void recycle();
     void clear();
 
 private:

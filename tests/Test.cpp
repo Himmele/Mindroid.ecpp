@@ -1,7 +1,3 @@
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
 #include <assert.h>
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/LooperThread.h"

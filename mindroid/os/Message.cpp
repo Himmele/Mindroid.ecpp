@@ -123,12 +123,19 @@ bool Message::obtain(Message& message, Handler& handler, int16_t what, void* obj
 	}
 }
 
+void Message::recycle() {
+	AutoLock autoLock(mLock);
+	mExecTimestamp = 0;
+	mNextMessage = NULL;
+}
+
 void Message::clear() {
+	AutoLock autoLock(mLock);
 	what = 0;
 	arg1 = 0;
 	arg2 = 0;
 	obj = NULL;
-	setExecTimestamp(0);
+	mExecTimestamp = 0;
 	mHandler = NULL;
 	mNextMessage = NULL;
 }

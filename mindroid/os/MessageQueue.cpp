@@ -34,15 +34,19 @@ MessageQueue::~MessageQueue() {
 
 bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 	AutoLock autoLock(mCondVarLock);
-	if ((execTimestamp == 0) || !message.ready()) {
-		return false;
-	}
 	if (mLockMessageQueue) {
 		return false;
-	} else if (message.mHandler == NULL) {
+	}
+	{
+		AutoLock autoLock(message.mLock);
+		if (message.mExecTimestamp != 0) {
+			return false;
+		}
+		message.mExecTimestamp = execTimestamp;
+	}
+	if (message.mHandler == NULL) {
 		mLockMessageQueue = true;
 	}
-	message.setExecTimestamp(execTimestamp);
 	Message* curMessage = mHeadMessage;
 	if (curMessage == NULL || execTimestamp < curMessage->mExecTimestamp) {
 		message.mNextMessage = curMessage;
