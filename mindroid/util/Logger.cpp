@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 #include "mindroid/util/Logger.h"
 #include <stdio.h>
 
 namespace mindroid {
 
-char Logger::mProrities[] = { 'V', 'D', 'I', 'W', 'E', 'A' };
+const char Logger::PRIORITIES[] = { 'V', 'D', 'I', 'W', 'E', 'A' };
 
 int Logger::println(int bufferId, uint8_t priority, const char* tag, const char* msg) {
-	printf("%c/%s: %s\r\n", mProrities[priority], tag, msg);
-	return 0;
+	return printf("%c/%s: %s\r\n", PRIORITIES[priority], tag, msg);
 }
 
 } /* namespace mindroid */

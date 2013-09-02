@@ -24,8 +24,6 @@
 #include "mindroid/util/Logger.h"
 #include "mindroid/util/Utils.h"
 
-extern "C" int vsnprintf(char* msg, size_t size, const char* format, va_list args);
-
 namespace mindroid {
 
 class Log
@@ -81,6 +79,10 @@ public:
 	 * @param msg The message you would like logged.
 	 */
 	static int wtf(const char* tag, const char* format, ...);
+	
+	static void setLogger(Logger& logger);
+	
+	static Logger DEFAULT_LOGGER;
 
 private:
     static const uint8_t VERBOSE = 0;
@@ -93,7 +95,7 @@ private:
     static const int DEFAULT_LOG_ID = 0;
     static const int LOG_RECORD_SIZE = 64;
 
-    static Logger sLogger;
+    static Logger* sLogger;
 
     NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Log)
 };
