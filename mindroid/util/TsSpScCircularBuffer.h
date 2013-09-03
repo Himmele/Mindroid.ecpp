@@ -32,15 +32,19 @@ class TsSpScCircularBuffer
 public:
 	TsSpScCircularBuffer() :
 			mReadIndex(0),
-			mWriteIndex(0) {
+			mWriteIndex(0),
+			mPeakSize(0) {
 	}
 
+	uint16_t front();
 	int32_t front(void* data, uint16_t size);
 	int32_t pop(void* data, uint16_t size);
-	int32_t pop(const struct iovec* iov, uint16_t iovcnt);
+	int32_t popv(const struct iovec* iov, uint16_t iovcnt);
 	bool push(const void* data, uint16_t size);
-	bool push(const struct iovec* iov, uint16_t iovcnt);
-	uint16_t size() const;
+	bool pushv(const struct iovec* iov, uint16_t iovcnt);
+	uint16_t dataAvail() const;
+	uint16_t dataSize() const;
+	uint16_t peakSize() const { return mPeakSize; }
 
 	bool empty() const {
 		return mReadIndex.get() == mWriteIndex.get();
@@ -55,17 +59,20 @@ protected:
 	void writeData(uint16_t writeIndex, const uint8_t* data, uint16_t size);
 
 private:
+	uint16_t dataSize(uint16_t readIndex, uint16_t writeIndex) const;
+
 	uint8_t mBuffer[SIZE];
 	AtomicInteger<uint16_t> mReadIndex;
 	AtomicInteger<uint16_t> mWriteIndex;
+	uint16_t mPeakSize;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(TsSpScCircularBuffer)
 };
 
 template<uint16_t SIZE>
-int32_t TsSpScCircularBuffer<SIZE>::front(void* data, uint16_t size) {
-	uint16_t readIndex = mReadIndex.get();
-	uint16_t writeIndex = mWriteIndex.get();
+uint16_t TsSpScCircularBuffer<SIZE>::front() {
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
 
 	if (readIndex == writeIndex) {
 		return 0;
@@ -73,22 +80,36 @@ int32_t TsSpScCircularBuffer<SIZE>::front(void* data, uint16_t size) {
 
 	uint16_t dataSize;
 	readData(readIndex, (uint8_t*) &dataSize, 2);
-	if (data != NULL) {
-		if (size >= dataSize) {
-			readData((readIndex + 2) % SIZE, (uint8_t*) data, dataSize);
-			return dataSize;
-		} else {
-			return -dataSize;
-		}
-	} else {
+	return dataSize;
+}
+
+template<uint16_t SIZE>
+int32_t TsSpScCircularBuffer<SIZE>::front(void* data, uint16_t size) {
+	if (data == NULL) {
+		return 0;
+	}
+
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
+
+	if (readIndex == writeIndex) {
+		return 0;
+	}
+
+	uint16_t dataSize;
+	readData(readIndex, (uint8_t*) &dataSize, 2);
+	if (size >= dataSize) {
+		readData((readIndex + 2) % SIZE, (uint8_t*) data, dataSize);
 		return dataSize;
+	} else {
+		return -dataSize;
 	}
 }
 
 template<uint16_t SIZE>
 int32_t TsSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
-	uint16_t readIndex = mReadIndex.get();
-	uint16_t writeIndex = mWriteIndex.get();
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
 
 	if (readIndex == writeIndex) {
 		return 0;
@@ -113,9 +134,9 @@ int32_t TsSpScCircularBuffer<SIZE>::pop(void* data, uint16_t size) {
 }
 
 template<uint16_t SIZE>
-int32_t TsSpScCircularBuffer<SIZE>::pop(const struct iovec* iov, uint16_t iovcnt) {
-	uint16_t readIndex = mReadIndex.get();
-	uint16_t writeIndex = mWriteIndex.get();
+int32_t TsSpScCircularBuffer<SIZE>::popv(const struct iovec* iov, uint16_t iovcnt) {
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
 
 	if (readIndex == writeIndex) {
 		return 0;
@@ -157,15 +178,18 @@ bool TsSpScCircularBuffer<SIZE>::push(const void* data, uint16_t size) {
 	if ((data == NULL) || ((size + 2) >= SIZE)) {
 		return false;
 	}
+	if (size == 0) {
+		return true;
+	}
 
-	uint16_t readIndex = mReadIndex.get();
-	uint16_t writeIndex = mWriteIndex.get();
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
 
 	bool hasFreeSpace;
 	if (writeIndex >= readIndex) {
-		hasFreeSpace = (SIZE - (writeIndex - readIndex) > size);
+		hasFreeSpace = (SIZE - (writeIndex - readIndex)) >= (size + 2);
 	} else {
-		hasFreeSpace = (readIndex - writeIndex > size);
+		hasFreeSpace = (readIndex - writeIndex) >= (size + 2);
 	}
 
 	if (hasFreeSpace) {
@@ -173,6 +197,7 @@ bool TsSpScCircularBuffer<SIZE>::push(const void* data, uint16_t size) {
 		writeData(writeIndex, (uint8_t*) &size, 2);
 		writeData((writeIndex + 2) % SIZE, (uint8_t*) data, size);
 		mWriteIndex.set(newWriteIndex);
+		mPeakSize = dataSize(readIndex, newWriteIndex);
 		return true;
 	} else {
 		return false;
@@ -180,7 +205,7 @@ bool TsSpScCircularBuffer<SIZE>::push(const void* data, uint16_t size) {
 }
 
 template<uint16_t SIZE>
-bool TsSpScCircularBuffer<SIZE>::push(const struct iovec* iov, uint16_t iovcnt) {
+bool TsSpScCircularBuffer<SIZE>::pushv(const struct iovec* iov, uint16_t iovcnt) {
 	if (iov == NULL) {
 		return false;
 	}
@@ -191,15 +216,18 @@ bool TsSpScCircularBuffer<SIZE>::push(const struct iovec* iov, uint16_t iovcnt) 
 	if ((size + 2) >= SIZE) {
 		return false;
 	}
+	if (size == 0) {
+		return true;
+	}
 
-	uint16_t readIndex = mReadIndex.get();
-	uint16_t writeIndex = mWriteIndex.get();
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
 
 	bool hasFreeSpace;
 	if (writeIndex >= readIndex) {
-		hasFreeSpace = (SIZE - (writeIndex - readIndex) > size);
+		hasFreeSpace = (SIZE - (writeIndex - readIndex)) >= (size + 2);
 	} else {
-		hasFreeSpace = (readIndex - writeIndex > size);
+		hasFreeSpace = (readIndex - writeIndex) >= (size + 2);
 	}
 
 	if (hasFreeSpace) {
@@ -211,6 +239,7 @@ bool TsSpScCircularBuffer<SIZE>::push(const struct iovec* iov, uint16_t iovcnt) 
 			offset += iov[i].iov_len;
 		}
 		mWriteIndex.set(newWriteIndex);
+		mPeakSize = dataSize(readIndex, newWriteIndex);
 		return true;
 	} else {
 		return false;
@@ -218,14 +247,35 @@ bool TsSpScCircularBuffer<SIZE>::push(const struct iovec* iov, uint16_t iovcnt) 
 }
 
 template<uint16_t SIZE>
-uint16_t TsSpScCircularBuffer<SIZE>::size() const {
-	uint16_t readIndex = mReadIndex.get();
-	uint16_t writeIndex = mWriteIndex.get();
+uint16_t TsSpScCircularBuffer<SIZE>::dataAvail() const {
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
 
 	if (writeIndex >= readIndex) {
 		return (SIZE - (writeIndex - readIndex));
 	} else {
 		return (readIndex - writeIndex);
+	}
+}
+
+template<uint16_t SIZE>
+uint16_t TsSpScCircularBuffer<SIZE>::dataSize() const {
+	const uint16_t readIndex = mReadIndex.get();
+	const uint16_t writeIndex = mWriteIndex.get();
+
+	if (writeIndex >= readIndex) {
+		return (writeIndex - readIndex);
+	} else {
+		return (SIZE - (readIndex - writeIndex));
+	}
+}
+
+template<uint16_t SIZE>
+uint16_t TsSpScCircularBuffer<SIZE>::dataSize(uint16_t readIndex, uint16_t writeIndex) const {
+	if (writeIndex >= readIndex) {
+		return (writeIndex - readIndex);
+	} else {
+		return (SIZE - (readIndex - writeIndex));
 	}
 }
 

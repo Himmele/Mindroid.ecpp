@@ -29,12 +29,15 @@ class CircularBuffer
 public:
 	CircularBuffer() :
 			mReadIndex(0),
-			mWriteIndex(0) {
+			mWriteIndex(0),
+			mPeakSize(0) {
 	}
 
 	bool pop(void* data, uint16_t size);
 	bool push(const void* data, uint16_t size);
-	uint16_t size() const;
+	uint16_t dataAvail() const;
+	uint16_t dataSize() const;
+	uint16_t peakSize() const { return mPeakSize; }
 
 	bool empty() const {
 		return mReadIndex == mWriteIndex;
@@ -53,18 +56,11 @@ protected:
 	void readData(uint16_t readIndex, uint8_t* data, uint16_t size);
 	void writeData(uint16_t writeIndex, const uint8_t* data, uint16_t size);
 
-	bool hasFreeSpace(uint16_t size) const {
-		if (mWriteIndex >= mReadIndex) {
-			return (SIZE - (mWriteIndex - mReadIndex) > size);
-		} else {
-			return (mReadIndex - mWriteIndex > size);
-		}
-	}
-
 private:
 	uint8_t mBuffer[SIZE];
 	uint16_t mReadIndex;
 	uint16_t mWriteIndex;
+	uint16_t mPeakSize;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(CircularBuffer)
 };
@@ -91,20 +87,38 @@ bool CircularBuffer<SIZE>::push(const void* data, uint16_t size) {
 	if ((size + 2) >= SIZE) {
 		return false;
 	}
-	if (!hasFreeSpace(size + 2)) {
-		return false;
+
+	bool hasFreeSpace;
+	if (writeIndex >= readIndex) {
+		hasFreeSpace = (SIZE - (writeIndex - readIndex)) >= (size + 2);
+	} else {
+		hasFreeSpace = (readIndex - writeIndex) >= (size + 2);
 	}
 
-	writeData(mWriteIndex, (uint8_t*) &size, 2);
-	writeData((mWriteIndex + 2) % SIZE, (uint8_t*) data, size);
-	mWriteIndex = (mWriteIndex + size + 2) % SIZE;
-	return true;
+	if (hasFreeSpace) {
+		writeData(mWriteIndex, (uint8_t*) &size, 2);
+		writeData((mWriteIndex + 2) % SIZE, (uint8_t*) data, size);
+		mWriteIndex = (mWriteIndex + size + 2) % SIZE;
+		mPeakSize = dataSize();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<uint16_t SIZE>
-uint16_t CircularBuffer<SIZE>::size() const {
+uint16_t CircularBuffer<SIZE>::dataAvail() const {
 	if (mWriteIndex >= mReadIndex) {
 		return (SIZE - (mWriteIndex - mReadIndex));
+	} else {
+		return (mReadIndex - mWriteIndex);
+	}
+}
+
+template<uint16_t SIZE>
+uint16_t CircularBuffer<SIZE>::dataSize() const {
+	if (mWriteIndex >= mReadIndex) {
+		return (SIZE - (writeIndex - readIndex));
 	} else {
 		return (mReadIndex - mWriteIndex);
 	}
