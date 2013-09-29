@@ -55,8 +55,11 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.exe.debug.569412181.827045267" name="Test.cpp" rcbsApplicability="disable" resourcePath="tests/Test.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.555681450.927557995">
+						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.555681450.927557995" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.555681450"/>
+					</fileInfo>
 					<sourceEntries>
-						<entry excluding="AsyncTaskExample.cpp|LooperThreadExample.cpp|RefCountingTest.cpp|DelegateExample.cpp|DelegateTest.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="tests/Test.cpp|AsyncTaskExample.cpp|LooperThreadExample.cpp|RefCountingTest.cpp|DelegateExample.cpp|DelegateTest.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
