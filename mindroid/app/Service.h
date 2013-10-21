@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-#ifndef MINDROID_H_
-#define MINDROID_H_
+#ifndef MINDROID_SERVICE_H_
+#define MINDROID_SERVICE_H_
 
-#define MAX_NUM_LOOPERS 4
-#define MAX_NUM_SERVICES 4
+#include <stdint.h>
+#include "mindroid/os/Handler.h"
+#include "mindroid/util/Utils.h"
 
-#endif /* MINDROID_H_ */
+namespace mindroid {
+
+class Service
+{
+public:
+	Service() {}
+	virtual ~Service() {}
+	virtual void onCreate() {}
+	virtual void onDestroy() {}
+
+private:
+    NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Service)
+};
+
+} /* namespace mindroid */
+
+#endif /* MINDROID_SERVICE_H_ */
