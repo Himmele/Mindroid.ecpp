@@ -28,25 +28,32 @@ Process::Process(Looper& looper) :
 
 void Process::startService(Service& service) {
 	int32_t id = -1;
+	bool running;
 
-	AutoLock autoLock(mLock);
+	{
+		AutoLock autoLock(mLock);
 
-	for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
-		if ((id < 0) && (mServices[i].service == NULL)) {
-			id = i;
-		} else if (mServices[i].service == &service) {
-			id = i;
-			break;
+		for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
+			if ((id < 0) && (mServices[i].service == NULL)) {
+				id = i;
+			} else if (mServices[i].service == &service) {
+				id = i;
+				break;
+			}
+		}
+		assert(id >= 0);
+
+		if (mServices[id].service == NULL) {
+			mServices[id].service = &service;
+		}
+
+		running = mServices[id].running;
+		if (!running) {
+			mServices[id].running = true;
 		}
 	}
-	assert(id >= 0);
 
-	if (mServices[id].service == NULL) {
-		mServices[id].service = &service;
-	}
-
-	if (!mServices[id].running) {
-		mServices[id].running = true;
+	if (!running) {
 		Message& message = mMessages[id];
 		if (mMainHandler.obtainMessage(message, MainHandler::START_SERVICE)) {
 			message.arg1 = id;
@@ -58,21 +65,28 @@ void Process::startService(Service& service) {
 
 void Process::stopService(Service& service) {
 	int32_t id = -1;
+	bool running;
 
-	AutoLock autoLock(mLock);
+	{
+		AutoLock autoLock(mLock);
 
-	for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
-		if ((id < 0) && (mServices[i].service == NULL)) {
-			id = i;
-		} else if (mServices[i].service == &service) {
-			id = i;
-			break;
+		for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
+			if ((id < 0) && (mServices[i].service == NULL)) {
+				id = i;
+			} else if (mServices[i].service == &service) {
+				id = i;
+				break;
+			}
+		}
+		assert((id >= 0) && (mServices[id].service != NULL));
+
+		running = mServices[id].running;
+		if (running) {
+			mServices[id].running = false;
 		}
 	}
-	assert((id >= 0) && (mServices[id].service != NULL));
 
-	if (mServices[id].running) {
-		mServices[id].running = false;
+	if (running) {
 		Message& message = mMessages[id];
 		if (mMainHandler.obtainMessage(message, MainHandler::STOP_SERVICE)) {
 			message.arg1 = id;
@@ -88,9 +102,14 @@ void Process::MainHandler::handleMessage(const Message& message) {
 		Service* service = (Service*) message.obj;
 		service->onCreate();
 
-		AutoLock autoLock(mProcess.mLock);
 		int32_t id = message.arg1;
-		if (!mProcess.mServices[id].running) {
+		bool running;
+		{
+			AutoLock autoLock(mProcess.mLock);
+			running = mProcess.mServices[id].running;
+		}
+
+		if (!running) {
 			Message& msg = mProcess.mMessages[id];
 			removeMessage(msg);
 			assert(obtainMessage(msg, MainHandler::STOP_SERVICE));
@@ -103,9 +122,14 @@ void Process::MainHandler::handleMessage(const Message& message) {
 		Service* service = (Service*) message.obj;
 		service->onDestroy();
 
-		AutoLock autoLock(mProcess.mLock);
 		int32_t id = message.arg1;
-		if (mProcess.mServices[id].running) {
+		bool running;
+		{
+			AutoLock autoLock(mProcess.mLock);
+			running = mProcess.mServices[id].running;
+		}
+
+		if (running) {
 			Message& msg = mProcess.mMessages[id];
 			removeMessage(msg);
 			assert(obtainMessage(msg, MainHandler::START_SERVICE));
