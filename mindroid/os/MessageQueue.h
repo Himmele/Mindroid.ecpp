@@ -37,8 +37,8 @@ public:
 	bool enqueueMessage(Message& message, uint64_t execTimestamp);
 	Message& dequeueMessage();
 	bool removeMessages(Handler* handler);
-	bool removeMessage(Handler* handler, Message* message);
 	bool removeMessages(Handler* handler, int16_t what);
+	bool removeMessage(Handler* handler, Message* message);
 
 private:
 	Message* getNextMessage(uint64_t now);

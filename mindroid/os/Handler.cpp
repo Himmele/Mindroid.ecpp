@@ -60,12 +60,12 @@ bool Handler::removeMessages() {
 	return mMessageQueue->removeMessages(this);
 }
 
-bool Handler::removeMessage(Message& message) {
-	return mMessageQueue->removeMessage(this, &message);
-}
-
 bool Handler::removeMessages(int16_t what) {
 	return mMessageQueue->removeMessages(this, what);
+}
+
+bool Handler::removeMessage(Message& message) {
+	return mMessageQueue->removeMessage(this, &message);
 }
 
 } /* namespace mindroid */
