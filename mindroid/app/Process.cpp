@@ -15,8 +15,8 @@
  */
 
 #include "mindroid/app/Process.h"
+#include "mindroid/util/Assert.h"
 #include <string.h>
-#include <assert.h>
 
 namespace mindroid {
 
@@ -41,7 +41,7 @@ void Process::startService(Service& service) {
 				break;
 			}
 		}
-		assert(id >= 0);
+		Assert::assertTrue(id >= 0);
 
 		if (mServices[id].service == NULL) {
 			mServices[id].service = &service;
@@ -78,7 +78,7 @@ void Process::stopService(Service& service) {
 				break;
 			}
 		}
-		assert((id >= 0) && (mServices[id].service != NULL));
+		Assert::assertTrue((id >= 0) && (mServices[id].service != NULL));
 
 		running = mServices[id].running;
 		if (running) {
@@ -112,7 +112,7 @@ void Process::MainHandler::handleMessage(const Message& message) {
 		if (!running) {
 			Message& msg = mProcess.mMessages[id];
 			removeMessage(msg);
-			assert(obtainMessage(msg, MainHandler::STOP_SERVICE));
+			Assert::assertNotNull(obtainMessage(msg, MainHandler::STOP_SERVICE));
 			msg.arg1 = id;
 			msg.obj = &service;
 			sendMessage(msg);
@@ -132,7 +132,7 @@ void Process::MainHandler::handleMessage(const Message& message) {
 		if (running) {
 			Message& msg = mProcess.mMessages[id];
 			removeMessage(msg);
-			assert(obtainMessage(msg, MainHandler::START_SERVICE));
+			Assert::assertNotNull(obtainMessage(msg, MainHandler::START_SERVICE));
 			msg.arg1 = id;
 			msg.obj = &service;
 			sendMessage(msg);

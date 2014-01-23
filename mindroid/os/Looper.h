@@ -52,6 +52,7 @@ private:
 	static int sNumLoopers;
 
 	MessageQueue mMessageQueue;
+	Message mMessage;
 	Message mQuitMessage;
 
 	friend class Handler;

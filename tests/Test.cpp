@@ -1,4 +1,3 @@
-#include <assert.h>
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/LooperThread.h"
 #include "mindroid/os/Handler.h"
@@ -8,6 +7,7 @@
 #include "mindroid/os/Clock.h"
 #include "mindroid/util/Buffer.h"
 #include "mindroid/util/Log.h"
+#include "mindroid/util/Assert.h"
 
 using namespace mindroid;
 
@@ -76,7 +76,7 @@ class Runnable1 : public Runnable
 public:
 	virtual void run() {
 		Log::i(LOG_TAG, "Runnable1::run by Looper 0x%x", Looper::myLooper());
-		assert(false);
+		Assert::assertTrue(false);
 	}
 };
 

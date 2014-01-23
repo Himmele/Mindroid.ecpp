@@ -65,13 +65,12 @@ bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 	return true;
 }
 
-Message& MessageQueue::dequeueMessage() {
+Message& MessageQueue::dequeueMessage(Message& message) {
 	while (true) {
 		AutoLock autoLock(mCondVarLock);
 		uint64_t now = Clock::monotonicTime();
-		Message* message = getNextMessage(now);
-		if (message != NULL) {
-			return *message;
+		if (getNextMessage(now, message) != NULL) {
+			return message;
 		}
 
 		if (mHeadMessage != NULL) {
@@ -87,12 +86,14 @@ Message& MessageQueue::dequeueMessage() {
 	}
 }
 
-Message* MessageQueue::getNextMessage(uint64_t now) {
-	Message* message = mHeadMessage;
-	if (message != NULL) {
-		if (now >= message->mExecTimestamp) {
-			mHeadMessage = message->mNextMessage;
-			return message;
+Message* MessageQueue::getNextMessage(uint64_t now, Message& message) {
+	Message* nextMessage = mHeadMessage;
+	if (nextMessage != NULL) {
+		if (now >= nextMessage->mExecTimestamp) {
+			mHeadMessage = nextMessage->mNextMessage;
+			message = *nextMessage;
+			nextMessage->recycle();
+			return &message;
 		}
 	}
 	return NULL;

@@ -25,7 +25,7 @@
 #ifndef MINDROID_DELEGATE_H_
 #define MINDROID_DELEGATE_H_
 
-#include <stdlib.h>
+#include <stdint.h>
 
 namespace mindroid {
 

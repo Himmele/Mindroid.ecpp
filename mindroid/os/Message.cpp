@@ -15,7 +15,6 @@
  */
 
 #include <stddef.h>
-#include <assert.h>
 #include <new>
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Handler.h"
@@ -43,7 +42,7 @@ Message::Message(Handler& handler) :
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, int16_t what) :
+Message::Message(Handler& handler, const int16_t what) :
 		what(what),
 		arg1(0),
 		arg2(0),
@@ -53,7 +52,7 @@ Message::Message(Handler& handler, int16_t what) :
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, int16_t what, int32_t arg1, int32_t arg2) :
+Message::Message(Handler& handler, const int16_t what, const int32_t arg1, const int32_t arg2) :
 		what(what),
 		arg1(arg1),
 		arg2(arg2),
@@ -63,7 +62,7 @@ Message::Message(Handler& handler, int16_t what, int32_t arg1, int32_t arg2) :
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, int16_t what, void* obj) :
+Message::Message(Handler& handler, const int16_t what, void* const obj) :
 		what(what),
 		arg1(0),
 		arg2(0),
@@ -73,49 +72,50 @@ Message::Message(Handler& handler, int16_t what, void* obj) :
 		mNextMessage(NULL) {
 }
 
-Message::Message(const Message& message) :
-		what(message.what),
-		arg1(message.arg1),
-		arg2(message.arg2),
-		obj(message.obj),
-		mExecTimestamp(message.mExecTimestamp),
-		mHandler(message.mHandler),
-		mNextMessage(NULL) {
+Message& Message::operator=(const Message& message) {
+	what = message.what;
+	arg1 = message.arg1;
+	arg2 = message.arg2;
+	obj = message.obj;
+	mExecTimestamp = 0;
+	mHandler = message.mHandler;
+	mNextMessage = NULL;
+	return *this;
 }
 
-bool Message::obtain(Message& message, Handler& handler) {
+Message* Message::obtain(Message& message, Handler& handler) {
 	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler);
-		return true;
+		return &message;
 	} else {
-		return false;
+		return NULL;
 	}
 }
 
-bool Message::obtain(Message& message, Handler& handler, int16_t what) {
+Message* Message::obtain(Message& message, Handler& handler, const int16_t what) {
 	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what);
-		return true;
+		return &message;
 	} else {
-		return false;
+		return NULL;
 	}
 }
 
-bool Message::obtain(Message& message, Handler& handler, int16_t what, int32_t arg1, int32_t arg2) {
+Message* Message::obtain(Message& message, Handler& handler, const int16_t what, const int32_t arg1, const int32_t arg2) {
 	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what, arg1, arg2);
-		return true;
+		return &message;
 	} else {
-		return false;
+		return NULL;
 	}
 }
 
-bool Message::obtain(Message& message, Handler& handler, int16_t what, void* obj) {
+Message* Message::obtain(Message& message, Handler& handler, const int16_t what, void* const obj) {
 	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what, obj);
-		return true;
+		return &message;
 	} else {
-		return false;
+		return NULL;
 	}
 }
 

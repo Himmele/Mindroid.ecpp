@@ -17,8 +17,8 @@
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Message.h"
+#include "mindroid/util/Assert.h"
 #include <new>
-#include <assert.h>
 
 namespace mindroid {
 
@@ -44,7 +44,7 @@ bool Looper::prepare() {
 	Looper* looper = (Looper*) pthread_getspecific(sTlsKey);
 	if (looper == NULL) {
 		AutoLock autoLock(sLock);
-		assert(sNumLoopers < MAX_NUM_LOOPERS);
+		Assert::assertTrue(sNumLoopers < MAX_NUM_LOOPERS);
 		int i = sNumLoopers;
 		Looper* looper = reinterpret_cast<Looper*>(sLooperHeapMemory + i * sizeof(Looper));
 		new (looper) Looper();
@@ -76,15 +76,13 @@ void Looper::loop() {
 	if (me != NULL) {
 		MessageQueue& mq = me->mMessageQueue;
 		while (true) {
-			Message& message = mq.dequeueMessage();
+			Message& message = mq.dequeueMessage(me->mMessage);
 			if (message.mHandler == NULL) {
 				return;
 			}
 			Handler* handler = message.mHandler;
-			Message clone(message);
-			clone.mHandler = NULL;
-			message.recycle();
-			handler->dispatchMessage(clone);
+			message.mHandler = NULL;
+			handler->dispatchMessage(message);
 		}
 	}
 }

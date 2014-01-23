@@ -20,6 +20,7 @@
 
 #include <sys/types.h>
 #include <stdint.h>
+#include "mindroid/util/Assert.h"
 #include "mindroid/util/Utils.h"
 
 namespace mindroid {
@@ -55,8 +56,8 @@ public:
 	}
 
 	void setRange(size_t offset, size_t size) {
-		assert(offset <= mCapacity);
-		assert(offset + size <= mCapacity);
+		Assert::assertTrue(offset <= mCapacity);
+		Assert::assertTrue(offset + size <= mCapacity);
 
 		mOffset = offset;
 		mSize = size;

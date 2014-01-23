@@ -144,7 +144,9 @@ int32_t TsSpScCircularBuffer<SIZE>::popv(const struct iovec* iov, uint16_t iovcn
 
 	uint16_t size = 0;
 	for (uint16_t i = 0; i < iovcnt; i++) {
-		size += iov[i].iov_len;
+		if (iov[i].iov_base != NULL) {
+			size += iov[i].iov_len;
+		}
 	}
 
 	uint16_t dataSize;
@@ -154,11 +156,13 @@ int32_t TsSpScCircularBuffer<SIZE>::popv(const struct iovec* iov, uint16_t iovcn
 			uint16_t newReadIndex = (readIndex + dataSize + 2) % SIZE;
 			uint16_t offset = 0;
 			for (uint16_t i = 0; i < iovcnt; i++) {
-				uint16_t count = ((dataSize - offset) >= iov[i].iov_len) ? iov[i].iov_len : (dataSize - offset);
-				readData((readIndex + 2 + offset) % SIZE, (uint8_t*) iov[i].iov_base, count);
-				offset += iov[i].iov_len;
-				if (offset == dataSize) {
-					break;
+				if (iov[i].iov_base != NULL && iov[i].iov_len != 0) {
+					uint16_t count = ((dataSize - offset) >= iov[i].iov_len) ? iov[i].iov_len : (dataSize - offset);
+					readData((readIndex + 2 + offset) % SIZE, (uint8_t*) iov[i].iov_base, count);
+					offset += iov[i].iov_len;
+					if (offset == dataSize) {
+						break;
+					}
 				}
 			}
 			mReadIndex.set(newReadIndex);
@@ -175,11 +179,14 @@ int32_t TsSpScCircularBuffer<SIZE>::popv(const struct iovec* iov, uint16_t iovcn
 
 template<uint16_t SIZE>
 bool TsSpScCircularBuffer<SIZE>::push(const void* data, uint16_t size) {
-	if ((data == NULL) || ((size + 2) >= SIZE)) {
-		return false;
+	if (data == NULL) {
+		return (size == 0);
 	}
 	if (size == 0) {
 		return true;
+	}
+	if ((size + 2) >= SIZE) {
+		return false;
 	}
 
 	const uint16_t readIndex = mReadIndex.get();
@@ -211,13 +218,15 @@ bool TsSpScCircularBuffer<SIZE>::pushv(const struct iovec* iov, uint16_t iovcnt)
 	}
 	uint16_t size = 0;
 	for (uint16_t i = 0; i < iovcnt; i++) {
-		size += iov[i].iov_len;
-	}
-	if ((size + 2) >= SIZE) {
-		return false;
+		if (iov[i].iov_base != NULL) {
+			size += iov[i].iov_len;
+		}
 	}
 	if (size == 0) {
 		return true;
+	}
+	if ((size + 2) >= SIZE) {
+		return false;
 	}
 
 	const uint16_t readIndex = mReadIndex.get();
@@ -235,8 +244,10 @@ bool TsSpScCircularBuffer<SIZE>::pushv(const struct iovec* iov, uint16_t iovcnt)
 		writeData(writeIndex, (uint8_t*) &size, 2);
 		uint16_t offset = 0;
 		for (uint16_t i = 0; i < iovcnt; i++) {
-			writeData((writeIndex + 2 + offset) % SIZE, (uint8_t*) iov[i].iov_base, iov[i].iov_len);
-			offset += iov[i].iov_len;
+			if (iov[i].iov_base != NULL && iov[i].iov_len != 0) {
+				writeData((writeIndex + 2 + offset) % SIZE, (uint8_t*) iov[i].iov_base, iov[i].iov_len);
+				offset += iov[i].iov_len;
+			}
 		}
 		mWriteIndex.set(newWriteIndex);
 		mPeakSize = dataSize(readIndex, newWriteIndex);

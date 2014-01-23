@@ -15,18 +15,18 @@
  */
 
 #include <stddef.h>
-#include <assert.h>
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Clock.h"
+#include "mindroid/util/Assert.h"
 
 namespace mindroid {
 
 Handler::Handler() {
 	Looper* looper = Looper::myLooper();
-	assert(looper != NULL);
+	Assert::assertNotNull(looper);
 	mMessageQueue = &looper->myMessageQueue();
 }
 

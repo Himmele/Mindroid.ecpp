@@ -35,13 +35,13 @@ public:
 	MessageQueue();
 	~MessageQueue();
 	bool enqueueMessage(Message& message, uint64_t execTimestamp);
-	Message& dequeueMessage();
+	Message& dequeueMessage(Message& message);
 	bool removeMessages(Handler* handler);
 	bool removeMessages(Handler* handler, int16_t what);
 	bool removeMessage(Handler* handler, Message* message);
 
 private:
-	Message* getNextMessage(uint64_t now);
+	Message* getNextMessage(uint64_t now, Message& message);
 
 	Message* mHeadMessage;
 	Lock mCondVarLock;
