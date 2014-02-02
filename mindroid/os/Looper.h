@@ -20,6 +20,7 @@
 #include <pthread.h>
 #include "mindroid/os/Message.h"
 #include "mindroid/os/MessageQueue.h"
+#include "mindroid/os/RunnableQueue.h"
 #include "mindroid/util/Utils.h"
 #include "mindroid/Mindroid.h"
 
@@ -40,8 +41,13 @@ private:
 	Looper();
 	static void init();
 	static void finalize(void* looper);
+
 	MessageQueue& myMessageQueue() {
 		return mMessageQueue;
+	}
+
+	RunnableQueue& myRunnableQueue() {
+		return mRunnableQueue;
 	}
 
 	static pthread_once_t sTlsOneTimeInitializer;
@@ -52,8 +58,8 @@ private:
 	static int sNumLoopers;
 
 	MessageQueue mMessageQueue;
+	RunnableQueue mRunnableQueue;
 	Message mMessage;
-	Message mQuitMessage;
 
 	friend class Handler;
 

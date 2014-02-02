@@ -35,18 +35,21 @@ public:
 	MessageQueue();
 	~MessageQueue();
 	bool enqueueMessage(Message& message, uint64_t execTimestamp);
-	Message& dequeueMessage(Message& message);
+	Message* dequeueMessage(Message& message);
 	bool removeMessages(Handler* handler);
-	bool removeMessages(Handler* handler, int16_t what);
-	bool removeMessage(Handler* handler, Message* message);
+	bool removeMessages(Handler* handler, int32_t what);
+	bool removeMessage(Handler* handler, const Message* message);
 
 private:
 	Message* getNextMessage(uint64_t now, Message& message);
+	void quit();
 
 	Message* mHeadMessage;
 	Lock mCondVarLock;
 	CondVar mCondVar;
-	bool mLockMessageQueue;
+	bool mQuiting;
+
+	friend class Looper;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MessageQueue)
 };

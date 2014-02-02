@@ -29,16 +29,16 @@ class Message {
 public:
     Message();
 	Message(Handler& handler);
-	Message(Handler& handler, const int16_t what);
-	Message(Handler& handler, const int16_t what, const int32_t arg1, const int32_t arg2);
-	Message(Handler& handler, const int16_t what, void* const obj);
+	Message(Handler& handler, const int32_t what);
+	Message(Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
+	Message(Handler& handler, const int32_t what, void* const obj);
 
 	Message& operator=(const Message& message);
 
     static Message* obtain(Message& message, Handler& handler);
-    static Message* obtain(Message& message, Handler& handler, const int16_t what);
-    static Message* obtain(Message& message, Handler& handler, const int16_t what, const int32_t arg1, const int32_t arg2);
-    static Message* obtain(Message& message, Handler& handler, const int16_t what, void* const obj);
+    static Message* obtain(Message& message, Handler& handler, const int32_t what);
+    static Message* obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
+    static Message* obtain(Message& message, Handler& handler, const int32_t what, void* const obj);
 
     Handler* getHandler() const {
     	return mHandler;
@@ -46,7 +46,7 @@ public:
 
     bool sendToTarget();
 
-    int16_t what;
+    int32_t what;
     int32_t arg1;
     int32_t arg2;
     void* obj;
@@ -66,6 +66,7 @@ private:
     Message* mNextMessage;
 
     friend class MessageQueue;
+    friend class RunnableQueue;
     friend class Looper;
 };
 

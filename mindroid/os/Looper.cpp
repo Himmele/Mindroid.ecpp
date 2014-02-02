@@ -17,6 +17,7 @@
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Message.h"
+#include "mindroid/os/Runnable.h"
 #include "mindroid/util/Assert.h"
 #include <new>
 
@@ -29,7 +30,9 @@ Looper* Looper::sLoopers[] = { 0L };
 int Looper::sNumLoopers = 0;
 Lock Looper::sLock;
 
-Looper::Looper() {
+Looper::Looper() :
+		mMessageQueue(),
+		mRunnableQueue(mMessageQueue) {
 }
 
 void Looper::init() {
@@ -75,20 +78,28 @@ void Looper::loop() {
 	Looper* me = myLooper();
 	if (me != NULL) {
 		MessageQueue& mq = me->mMessageQueue;
+		RunnableQueue& rq = me->mRunnableQueue;
 		while (true) {
-			Message& message = mq.dequeueMessage(me->mMessage);
-			if (message.mHandler == NULL) {
+			Message* message = mq.dequeueMessage(me->mMessage);
+			if (message == NULL) {
 				return;
 			}
-			Handler* handler = message.mHandler;
-			message.mHandler = NULL;
-			handler->dispatchMessage(message);
+			if (message->what != Runnable::MSG_RUNNABLE) {
+				Handler* handler = message->mHandler;
+				message->mHandler = NULL;
+				handler->dispatchMessage(*message);
+			} else {
+				Runnable* runnable = rq.dequeueRunnable();
+				if (runnable != NULL) {
+					runnable->run();
+				}
+			}
 		}
 	}
 }
 
 void Looper::quit() {
-	mMessageQueue.enqueueMessage(mQuitMessage, 0);
+	mMessageQueue.quit();
 }
 
 } /* namespace mindroid */

@@ -18,6 +18,7 @@
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/MessageQueue.h"
+#include "mindroid/os/RunnableQueue.h"
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Clock.h"
 #include "mindroid/util/Assert.h"
@@ -28,10 +29,12 @@ Handler::Handler() {
 	Looper* looper = Looper::myLooper();
 	Assert::assertNotNull(looper);
 	mMessageQueue = &looper->myMessageQueue();
+	mRunnableQueue = &looper->myRunnableQueue();
 }
 
 Handler::Handler(Looper& looper) {
 	mMessageQueue = &looper.myMessageQueue();
+	mRunnableQueue = &looper.myRunnableQueue();
 }
 
 Handler::~Handler() {
@@ -49,23 +52,39 @@ bool Handler::sendMessageDelayed(Message& message, uint32_t delay) {
 }
 
 bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
-	if (message.getHandler() == this) {
+	if ((message.getHandler() == this) && (message.what != Runnable::MSG_RUNNABLE)) {
 		return mMessageQueue->enqueueMessage(message, execTimestamp);
 	} else {
 		return false;
 	}
 }
 
+bool Handler::post(Runnable& runnable) {
+	return postAtTime(runnable, Clock::monotonicTime());
+}
+
+bool Handler::postDelayed(Runnable& runnable, uint32_t delay) {
+	return postAtTime(runnable, Clock::monotonicTime() + delay * 1000000LL);
+}
+
+bool Handler::postAtTime(Runnable& runnable, uint64_t execTimestamp) {
+	return mRunnableQueue->enqueueRunnable(runnable, execTimestamp);
+}
+
 bool Handler::removeMessages() {
 	return mMessageQueue->removeMessages(this);
 }
 
-bool Handler::removeMessages(int16_t what) {
+bool Handler::removeMessages(int32_t what) {
 	return mMessageQueue->removeMessages(this, what);
 }
 
-bool Handler::removeMessage(Message& message) {
+bool Handler::removeMessage(const Message& message) {
 	return mMessageQueue->removeMessage(this, &message);
+}
+
+bool Handler::removeCallbacks(const Runnable& runnable) {
+	return mRunnableQueue->removeRunnable(&runnable);
 }
 
 } /* namespace mindroid */

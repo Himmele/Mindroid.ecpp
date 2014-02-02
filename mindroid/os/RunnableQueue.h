@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Daniel Himmelein
+ * Copyright (C) 2014 Daniel Himmelein
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,37 @@
  * limitations under the License.
  */
 
-#ifndef MINDROID_CONDVAR_H_
-#define MINDROID_CONDVAR_H_
+#ifndef MINDROID_RUNNABLEQUEUE_H_
+#define MINDROID_RUNNABLEQUEUE_H_
 
 #include <stdint.h>
-#include <pthread.h>
+#include "mindroid/os/MessageQueue.h"
+#include "mindroid/os/Message.h"
 #include "mindroid/util/Utils.h"
 
 namespace mindroid {
 
-class Lock;
+class MessageQueue;
+class Runnable;
 
-class CondVar {
+class RunnableQueue
+{
 public:
-	CondVar(Lock& lock);
-	~CondVar();
-	void wait();
-	void wait(uint32_t timeout);
-	void wait(timespec& absTimestamp);
-	void notify();
-	void notifyAll();
+	RunnableQueue(MessageQueue& messageQueue);
+	~RunnableQueue();
+	bool enqueueRunnable(Runnable& runnable, uint64_t execTimestamp);
+	Runnable* dequeueRunnable();
+	bool removeRunnable(const Runnable* runnable);
 
 private:
-	pthread_cond_t mCondVar;
-	pthread_condattr_t mCondVarAttributes;
-	Lock& mCondVarLock;
+	Message mMessage;
+	MessageQueue& mMessageQueue;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(CondVar)
+	friend class Looper;
+
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(RunnableQueue)
 };
 
 } /* namespace mindroid */
 
-#endif /* MINDROID_CONDVAR_H_ */
+#endif /* MINDROID_RUNNABLEQUEUE_H_ */

@@ -24,8 +24,17 @@ namespace mindroid {
 class Runnable
 {
 public:
+	Runnable() : mExecTimestamp(0), mNextRunnable(NULL) {}
 	virtual ~Runnable() {}
 	virtual void run() = 0;
+
+	static const int32_t MSG_RUNNABLE = 0xFFFFFFFF;
+
+private:
+	uint64_t mExecTimestamp; // nanoseconds
+	Runnable* mNextRunnable;
+
+	friend class RunnableQueue;
 };
 
 } /* namespace mindroid */

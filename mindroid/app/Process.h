@@ -39,8 +39,8 @@ private:
 	class MainHandler : public Handler
 	{
 	public:
-		static const int16_t START_SERVICE = 1;
-		static const int16_t STOP_SERVICE = 2;
+		static const int32_t START_SERVICE = 1;
+		static const int32_t STOP_SERVICE = 2;
 
 		MainHandler(Process& process) : Handler(process.getMainLooper()), mProcess(process) {}
 		virtual void handleMessage(const Message& message);

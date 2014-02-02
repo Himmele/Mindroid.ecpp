@@ -42,7 +42,7 @@ Message::Message(Handler& handler) :
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, const int16_t what) :
+Message::Message(Handler& handler, const int32_t what) :
 		what(what),
 		arg1(0),
 		arg2(0),
@@ -52,7 +52,7 @@ Message::Message(Handler& handler, const int16_t what) :
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, const int16_t what, const int32_t arg1, const int32_t arg2) :
+Message::Message(Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2) :
 		what(what),
 		arg1(arg1),
 		arg2(arg2),
@@ -62,7 +62,7 @@ Message::Message(Handler& handler, const int16_t what, const int32_t arg1, const
 		mNextMessage(NULL) {
 }
 
-Message::Message(Handler& handler, const int16_t what, void* const obj) :
+Message::Message(Handler& handler, const int32_t what, void* const obj) :
 		what(what),
 		arg1(0),
 		arg2(0),
@@ -92,7 +92,7 @@ Message* Message::obtain(Message& message, Handler& handler) {
 	}
 }
 
-Message* Message::obtain(Message& message, Handler& handler, const int16_t what) {
+Message* Message::obtain(Message& message, Handler& handler, const int32_t what) {
 	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what);
 		return &message;
@@ -101,7 +101,7 @@ Message* Message::obtain(Message& message, Handler& handler, const int16_t what)
 	}
 }
 
-Message* Message::obtain(Message& message, Handler& handler, const int16_t what, const int32_t arg1, const int32_t arg2) {
+Message* Message::obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2) {
 	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what, arg1, arg2);
 		return &message;
@@ -110,7 +110,7 @@ Message* Message::obtain(Message& message, Handler& handler, const int16_t what,
 	}
 }
 
-Message* Message::obtain(Message& message, Handler& handler, const int16_t what, void* const obj) {
+Message* Message::obtain(Message& message, Handler& handler, const int32_t what, void* const obj) {
 	if (message.getExecTimestamp() == 0) {
 		new (&message) Message(handler, what, obj);
 		return &message;
