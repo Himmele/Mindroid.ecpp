@@ -51,7 +51,6 @@ bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 	if (curMessage == NULL || execTimestamp < curMessage->mExecTimestamp) {
 		message.mNextMessage = curMessage;
 		mHeadMessage = &message;
-		mCondVar.notify();
 	} else {
 		Message* prevMessage = NULL;
 		while (curMessage != NULL && curMessage->mExecTimestamp <= execTimestamp) {
@@ -60,8 +59,8 @@ bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 		}
 		message.mNextMessage = prevMessage->mNextMessage;
 		prevMessage->mNextMessage = &message;
-		mCondVar.notify();
 	}
+	mCondVar.notify();
 	return true;
 }
 

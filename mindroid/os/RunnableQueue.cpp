@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <pthread.h>
 #include "mindroid/os/RunnableQueue.h"
 #include "mindroid/os/Runnable.h"
 #include "mindroid/os/Clock.h"
