@@ -119,12 +119,6 @@ Message* Message::obtain(Message& message, Handler& handler, const int32_t what,
 	}
 }
 
-void Message::recycle() {
-	AutoLock autoLock(mLock);
-	mExecTimestamp = 0;
-	mNextMessage = NULL;
-}
-
 void Message::clear() {
 	AutoLock autoLock(mLock);
 	what = 0;

@@ -52,18 +52,23 @@ public:
     void* obj;
 
 private:
-    void recycle();
-    void clear();
-
     inline uint64_t getExecTimestamp() {
+		AutoLock autoLock(mLock);
+		return mExecTimestamp;
+	}
+
+    inline void recycle() {
     	AutoLock autoLock(mLock);
-    	return mExecTimestamp;
+    	mExecTimestamp = 0;
+    	mNextMessage = NULL;
     }
 
-    mutable Lock mLock;
+    void clear();
+
     uint64_t mExecTimestamp; // nanoseconds
     Handler* mHandler;
     Message* mNextMessage;
+    mutable Lock mLock;
 
     friend class MessageQueue;
     friend class RunnableQueue;

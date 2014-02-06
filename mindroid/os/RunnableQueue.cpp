@@ -29,10 +29,11 @@ RunnableQueue::~RunnableQueue() {
 }
 
 bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t execTimestamp) {
-	Runnable* headRunnable = NULL;
+	uint64_t delay = 0;
 	{
 		AutoLock autoLock(mMessage.mLock);
 		{
+			AutoLock autoLock(runnable.mLock);
 			if (runnable.mExecTimestamp != 0) {
 				return false;
 			}
@@ -51,16 +52,17 @@ bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t execTimestamp) 
 			runnable.mNextRunnable = prevRunnable->mNextRunnable;
 			prevRunnable->mNextRunnable = &runnable;
 		}
-		headRunnable = (Runnable*) mMessage.obj;
+		delay = ((Runnable*) mMessage.obj)->mExecTimestamp;
 	}
 	mMessageQueue.removeMessage(NULL, &mMessage);
-	mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp);
+	mMessageQueue.enqueueMessage(mMessage, delay);
 	return true;
 }
 
 Runnable* RunnableQueue::dequeueRunnable() {
 	Runnable* runnable = NULL;
 	Runnable* headRunnable = NULL;
+	uint64_t delay = 0;
 	{
 		AutoLock autoLock(mMessage.mLock);
 		Runnable* nextRunnable = (Runnable*) mMessage.obj;
@@ -69,15 +71,17 @@ Runnable* RunnableQueue::dequeueRunnable() {
 			if (now >= nextRunnable->mExecTimestamp) {
 				mMessage.obj = nextRunnable->mNextRunnable;
 				runnable = nextRunnable;
-				runnable->mExecTimestamp = 0;
-				runnable->mNextRunnable = NULL;
+				runnable->recycle();
 			}
 			headRunnable = (Runnable*) mMessage.obj;
+			if (headRunnable != NULL) {
+				delay = ((Runnable*) mMessage.obj)->mExecTimestamp;
+			}
 		}
 	}
 
 	if (headRunnable != NULL) {
-		mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp);
+		mMessageQueue.enqueueMessage(mMessage, delay);
 	}
 
 	return runnable;
@@ -89,6 +93,7 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 	}
 
 	Runnable* headRunnable = NULL;
+	uint64_t delay = 0;
 	bool foundRunnable = false;
 	{
 		AutoLock autoLock(mMessage.mLock);
@@ -99,8 +104,7 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 			foundRunnable = true;
 			Runnable* nextRunnable = curRunnable->mNextRunnable;
 			mMessage.obj = nextRunnable;
-			curRunnable->mExecTimestamp = 0;
-			curRunnable->mNextRunnable = NULL;
+			curRunnable->recycle();
 			curRunnable = nextRunnable;
 		}
 
@@ -112,8 +116,7 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 					if (nextRunnable == runnable) {
 						foundRunnable = true;
 						Runnable* nextButOneRunnable = nextRunnable->mNextRunnable;
-						nextRunnable->mExecTimestamp = 0;
-						nextRunnable->mNextRunnable = NULL;
+						nextRunnable->recycle();
 						curRunnable->mNextRunnable = nextButOneRunnable;
 						break;
 					}
@@ -123,10 +126,13 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 		}
 
 		headRunnable = (Runnable*) mMessage.obj;
+		if (headRunnable != NULL) {
+			delay = ((Runnable*) mMessage.obj)->mExecTimestamp;
+		}
 	}
 
 	if (headRunnable != NULL) {
-		mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp);
+		mMessageQueue.enqueueMessage(mMessage, delay);
 	}
 
 	return foundRunnable;
