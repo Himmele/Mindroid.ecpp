@@ -32,7 +32,7 @@ Lock Looper::sLock;
 
 Looper::Looper() :
 		mMessageQueue(),
-		mRunnableQueue(mMessageQueue) {
+		mRunnableQueue(*this) {
 }
 
 void Looper::init() {

@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/os/Message.h"
+#include "mindroid/os/Handler.h"
+#include "mindroid/os/Lock.h"
 #include "mindroid/util/Utils.h"
 
 namespace mindroid {
@@ -27,10 +29,11 @@ namespace mindroid {
 class MessageQueue;
 class Runnable;
 
-class RunnableQueue
+class RunnableQueue :
+		public Handler
 {
 public:
-	RunnableQueue(MessageQueue& messageQueue);
+	RunnableQueue(Looper& looper);
 	~RunnableQueue();
 	bool enqueueRunnable(Runnable& runnable, uint64_t execTimestamp);
 	Runnable* dequeueRunnable();
@@ -39,6 +42,7 @@ public:
 private:
 	Message mMessage;
 	MessageQueue& mMessageQueue;
+	Lock mLock;
 
 	friend class Looper;
 

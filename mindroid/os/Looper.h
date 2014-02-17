@@ -37,14 +37,14 @@ public:
 	static void loop();
 	void quit();
 
+	MessageQueue& myMessageQueue() {
+		return mMessageQueue;
+	}
+
 private:
 	Looper();
 	static void init();
 	static void finalize(void* looper);
-
-	MessageQueue& myMessageQueue() {
-		return mMessageQueue;
-	}
 
 	RunnableQueue& myRunnableQueue() {
 		return mRunnableQueue;

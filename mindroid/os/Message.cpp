@@ -84,7 +84,7 @@ Message& Message::operator=(const Message& message) {
 }
 
 Message* Message::obtain(Message& message, Handler& handler) {
-	if (message.getExecTimestamp() == 0) {
+	if (!message.isInUse()) {
 		new (&message) Message(handler);
 		return &message;
 	} else {
@@ -93,7 +93,7 @@ Message* Message::obtain(Message& message, Handler& handler) {
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what) {
-	if (message.getExecTimestamp() == 0) {
+	if (!message.isInUse()) {
 		new (&message) Message(handler, what);
 		return &message;
 	} else {
@@ -102,7 +102,7 @@ Message* Message::obtain(Message& message, Handler& handler, const int32_t what)
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2) {
-	if (message.getExecTimestamp() == 0) {
+	if (!message.isInUse()) {
 		new (&message) Message(handler, what, arg1, arg2);
 		return &message;
 	} else {
@@ -111,7 +111,7 @@ Message* Message::obtain(Message& message, Handler& handler, const int32_t what,
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what, void* const obj) {
-	if (message.getExecTimestamp() == 0) {
+	if (!message.isInUse()) {
 		new (&message) Message(handler, what, obj);
 		return &message;
 	} else {

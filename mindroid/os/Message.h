@@ -52,9 +52,9 @@ public:
     void* obj;
 
 private:
-    inline uint64_t getExecTimestamp() {
+    inline bool isInUse() {
 		AutoLock autoLock(mLock);
-		return mExecTimestamp;
+		return mExecTimestamp != 0;
 	}
 
     inline void recycle() {

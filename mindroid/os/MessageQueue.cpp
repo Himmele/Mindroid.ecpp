@@ -33,6 +33,13 @@ MessageQueue::~MessageQueue() {
 }
 
 bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
+	if (message.mHandler == NULL) {
+		return false;
+	}
+	if (execTimestamp == 0) {
+		return false;
+	}
+
 	AutoLock autoLock(mCondVarLock);
 	{
 		AutoLock autoLock(message.mLock);
@@ -40,9 +47,6 @@ bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 			return false;
 		}
 		message.mExecTimestamp = execTimestamp;
-	}
-	if ((message.mHandler == NULL) && (message.what != Runnable::MSG_RUNNABLE)) {
-		return false;
 	}
 	if (mQuiting) {
 		return false;
@@ -103,6 +107,10 @@ Message* MessageQueue::getNextMessage(uint64_t now, Message& message) {
 }
 
 bool MessageQueue::removeMessages(Handler* handler) {
+	if (handler == NULL) {
+		return false;
+	}
+
 	bool foundMessage = false;
 
 	mCondVarLock.lock();
@@ -138,6 +146,10 @@ bool MessageQueue::removeMessages(Handler* handler) {
 }
 
 bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
+	if (handler == NULL) {
+		return false;
+	}
+
 	bool foundMessage = false;
 
 	mCondVarLock.lock();
@@ -173,7 +185,7 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 }
 
 bool MessageQueue::removeMessage(Handler* handler, const Message* message) {
-	if (message == NULL) {
+	if (handler == NULL || message == NULL) {
 		return false;
 	}
 

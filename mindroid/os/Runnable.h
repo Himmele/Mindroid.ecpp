@@ -29,12 +29,12 @@ public:
 	virtual ~Runnable() {}
 	virtual void run() = 0;
 
-	static const int32_t MSG_RUNNABLE = 0xFFFFFFFF;
-
-	inline uint64_t getExecTimestamp() {
+	inline bool isInUse() {
 		AutoLock autoLock(mLock);
-		return mExecTimestamp;
+		return mExecTimestamp != 0;
 	}
+
+	static const int32_t MSG_RUNNABLE = 0xFFFFFFFF;
 
 private:
 	inline void recycle() {
