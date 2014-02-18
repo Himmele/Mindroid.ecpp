@@ -17,7 +17,6 @@
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Message.h"
-#include "mindroid/os/Runnable.h"
 #include "mindroid/util/Assert.h"
 #include <new>
 
@@ -84,16 +83,9 @@ void Looper::loop() {
 			if (message == NULL) {
 				return;
 			}
-			if (message->what != Runnable::MSG_RUNNABLE) {
-				Handler* handler = message->mHandler;
-				message->mHandler = NULL;
-				handler->dispatchMessage(*message);
-			} else {
-				Runnable* runnable = rq.dequeueRunnable();
-				if (runnable != NULL) {
-					runnable->run();
-				}
-			}
+			Handler* handler = message->mHandler;
+			message->mHandler = NULL;
+			handler->dispatchMessage(*message);
 		}
 	}
 }

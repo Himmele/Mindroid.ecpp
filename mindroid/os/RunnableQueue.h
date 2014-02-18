@@ -36,13 +36,17 @@ public:
 	RunnableQueue(Looper& looper);
 	~RunnableQueue();
 	bool enqueueRunnable(Runnable& runnable, uint64_t execTimestamp);
-	Runnable* dequeueRunnable();
 	bool removeRunnable(const Runnable* runnable);
+	virtual void handleMessage(const Message& message);
 
 private:
+	Runnable* dequeueRunnable();
+
 	Message mMessage;
 	MessageQueue& mMessageQueue;
 	Lock mLock;
+
+	static const int32_t MSG_RUNNABLE = 1;
 
 	friend class Looper;
 

@@ -52,7 +52,7 @@ bool Handler::sendMessageDelayed(Message& message, uint32_t delay) {
 }
 
 bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
-	if ((message.getHandler() == this) && (message.what != Runnable::MSG_RUNNABLE)) {
+	if (message.getHandler() == this) {
 		return mMessageQueue->enqueueMessage(message, execTimestamp);
 	} else {
 		return false;

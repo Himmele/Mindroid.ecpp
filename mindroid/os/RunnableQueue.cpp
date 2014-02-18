@@ -24,7 +24,7 @@ namespace mindroid {
 RunnableQueue::RunnableQueue(Looper& looper) :
 		Handler(looper),
 		mMessageQueue(looper.myMessageQueue()) {
-	Message::obtain(mMessage, *this, Runnable::MSG_RUNNABLE);
+	Message::obtain(mMessage, *this, MSG_RUNNABLE);
 }
 
 RunnableQueue::~RunnableQueue() {
@@ -126,6 +126,15 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 	}
 
 	return foundRunnable;
+}
+
+void RunnableQueue::handleMessage(const Message& message) {
+	if (message.what == MSG_RUNNABLE) {
+		Runnable* runnable = dequeueRunnable();
+		if (runnable != NULL) {
+			runnable->run();
+		}
+	}
 }
 
 } /* namespace mindroid */
