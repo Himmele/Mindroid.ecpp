@@ -34,7 +34,7 @@ class RunnableQueue :
 {
 public:
 	RunnableQueue(Looper& looper);
-	~RunnableQueue();
+	virtual ~RunnableQueue();
 	bool enqueueRunnable(Runnable& runnable, uint64_t execTimestamp);
 	bool removeRunnable(const Runnable* runnable);
 	virtual void handleMessage(const Message& message);
