@@ -20,20 +20,14 @@
 
 namespace mindroid {
 
-Lock::Lock() {
-	pthread_mutex_init(&mMutex, NULL);
-}
-
-Lock::~Lock() {
-	pthread_mutex_destroy(&mMutex);
-}
+pthread_mutex_t Lock::sLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
 
 bool Lock::lock() {
-	return (pthread_mutex_lock(&mMutex) == 0);
+	return (pthread_mutex_lock(&sLock) == 0);
 }
 
 void Lock::unlock() {
-	pthread_mutex_unlock(&mMutex);
+	pthread_mutex_unlock(&sLock);
 }
 
 } /* namespace mindroid */

@@ -22,13 +22,13 @@
 namespace mindroid {
 
 Thread::Thread() :
-	mRunnable(this),
-	mInterrupted(false) {
+		mRunnable(this),
+		mInterrupted(false) {
 }
 
 Thread::Thread(Runnable* runnable) :
-	mRunnable(runnable),
-	mInterrupted(false) {
+		mRunnable(runnable),
+		mInterrupted(false) {
 }
 
 bool Thread::start() {

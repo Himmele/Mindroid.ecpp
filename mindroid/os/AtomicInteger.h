@@ -29,37 +29,36 @@ class AtomicInteger
 public:
 	AtomicInteger();
 	AtomicInteger(INT initialValue);
-	INT	get();
+	INT get();
 	void set(INT newValue);
 
 private:
 	INT mValue;
-	Lock mLock;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(AtomicInteger)
 };
 
 template<typename INT>
 AtomicInteger<INT>::AtomicInteger() {
-	AutoLock autoLock(mLock);
+	AutoLock autoLock;
 	mValue = 0;
 }
 
 template<typename INT>
 AtomicInteger<INT>::AtomicInteger(INT initialValue) {
-	AutoLock autoLock(mLock);
+	AutoLock autoLock;
 	mValue = initialValue;
 }
 
 template<typename INT>
 INT	AtomicInteger<INT>::get() {
-	AutoLock autoLock(mLock);
+	AutoLock autoLock;
 	return mValue;
 }
 
 template<typename INT>
 void AtomicInteger<INT>::set(INT newValue) {
-	AutoLock autoLock(mLock);
+	AutoLock autoLock;
 	mValue = newValue;
 }
 

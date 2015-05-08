@@ -19,7 +19,7 @@
 
 namespace mindroid {
 
-const char* Assert::LOG_TAG = "Assert";
+const char* const Assert::LOG_TAG = "Assert";
 
 void Assert::assertTrue(const char* message, bool condition) {
 	if (!condition) {

@@ -26,13 +26,17 @@ namespace mindroid {
 class Lock
 {
 public:
-	Lock();
-	~Lock();
-	bool lock();
-	void unlock();
+	static bool lock();
+	static void unlock();
 
 private:
-	pthread_mutex_t mMutex;
+	Lock() {}
+
+	static pthread_mutex_t* getLock() {
+		return &sLock;
+	}
+
+	static pthread_mutex_t sLock;
 
 	friend class CondVar;
 
@@ -42,18 +46,15 @@ private:
 class AutoLock
 {
 public:
-	AutoLock(Lock& lock) :
-			mLock(lock) {
-		mLock.lock();
+	AutoLock() {
+		Lock::lock();
 	}
 
 	~AutoLock() {
-		mLock.unlock();
+		Lock::unlock();
 	}
 
 private:
-	Lock& mLock;
-
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(AutoLock)
 };
 

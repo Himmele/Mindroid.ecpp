@@ -21,8 +21,7 @@
 
 namespace mindroid {
 
-CondVar::CondVar(Lock& lock) :
-	mCondVarLock(lock) {
+CondVar::CondVar() {
 	pthread_condattr_init(&mCondVarAttributes);
 	pthread_condattr_setclock(&mCondVarAttributes, CLOCK_MONOTONIC);
 	pthread_cond_init(&mCondVar, &mCondVarAttributes);
@@ -34,11 +33,11 @@ CondVar::~CondVar() {
 }
 
 void CondVar::wait() {
-	pthread_cond_wait(&mCondVar, &mCondVarLock.mMutex);
+	pthread_cond_wait(&mCondVar, Lock::getLock());
 }
 
 void CondVar::wait(uint32_t timeout) {
-	uint64_t timeoutTimestamp = Clock::monotonicTime() + timeout * 1000000LL;
+	uint64_t timeoutTimestamp = (Clock::monotonicTime() + timeout) * 1000000LL;
 	timespec absTimestamp;
 	absTimestamp.tv_sec = timeoutTimestamp / 1000000000LL;
 	absTimestamp.tv_nsec = timeoutTimestamp % 1000000000LL;
@@ -46,7 +45,7 @@ void CondVar::wait(uint32_t timeout) {
 }
 
 void CondVar::wait(timespec& absTimestamp) {
-	pthread_cond_timedwait(&mCondVar, &mCondVarLock.mMutex, &absTimestamp);
+	pthread_cond_timedwait(&mCondVar, Lock::getLock());
 }
 
 void CondVar::notify() {

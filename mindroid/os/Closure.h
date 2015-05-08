@@ -366,6 +366,7 @@ private:
 };
 
 inline Runnable* obtainClosure(FuncClosure0& closure, void (*func)()) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) FuncClosure0(func);
 	} else {
@@ -375,6 +376,7 @@ inline Runnable* obtainClosure(FuncClosure0& closure, void (*func)()) {
 
 template<typename Class>
 inline Runnable* obtainClosure(Closure0<Class>& closure, Class& object, void (Class::*method)()) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) Closure0<Class>(object, method);
 	} else {
@@ -384,6 +386,7 @@ inline Runnable* obtainClosure(Closure0<Class>& closure, Class& object, void (Cl
 
 template<typename Arg1>
 inline Runnable* obtainClosure(FuncClosure1<Arg1>& closure, void (*func)(Arg1), Arg1 arg1) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) FuncClosure1<Arg1>(func, arg1);
 	} else {
@@ -393,6 +396,7 @@ inline Runnable* obtainClosure(FuncClosure1<Arg1>& closure, void (*func)(Arg1), 
 
 template<typename Class, typename Arg1>
 inline Runnable* obtainClosure(Closure1<Class, Arg1>& closure, Class& object, void (Class::*method)(Arg1), Arg1 arg1) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) Closure1<Class, Arg1>(object, method, arg1);
 	} else {
@@ -402,6 +406,7 @@ inline Runnable* obtainClosure(Closure1<Class, Arg1>& closure, Class& object, vo
 
 template<typename Arg1, typename Arg2>
 inline Runnable* obtainClosure(FuncClosure2<Arg1, Arg2>& closure, void (*func)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) FuncClosure2<Arg1, Arg2>(func, arg1, arg2);
 	} else {
@@ -411,6 +416,7 @@ inline Runnable* obtainClosure(FuncClosure2<Arg1, Arg2>& closure, void (*func)(A
 
 template<typename Class, typename Arg1, typename Arg2>
 inline Runnable* obtainClosure(Closure2<Class, Arg1, Arg2>& closure, Class& object, void (Class::*method)(Arg1, Arg2), Arg1 arg1, Arg2 arg2) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) Closure2<Class, Arg1, Arg2>(object, method, arg1, arg2);
 	} else {
@@ -420,6 +426,7 @@ inline Runnable* obtainClosure(Closure2<Class, Arg1, Arg2>& closure, Class& obje
 
 template<typename Arg1, typename Arg2, typename Arg3>
 inline Runnable* obtainClosure(FuncClosure3<Arg1, Arg2, Arg3>& closure, void (*func)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) FuncClosure3<Arg1, Arg2, Arg3>(func, arg1, arg2, arg3);
 	} else {
@@ -429,6 +436,7 @@ inline Runnable* obtainClosure(FuncClosure3<Arg1, Arg2, Arg3>& closure, void (*f
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3>
 inline Runnable* obtainClosure(Closure3<Class, Arg1, Arg2, Arg3>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) Closure3<Class, Arg1, Arg2, Arg3>(object, method,  arg1, arg2, arg3);
 	} else {
@@ -438,6 +446,7 @@ inline Runnable* obtainClosure(Closure3<Class, Arg1, Arg2, Arg3>& closure, Class
 
 template<typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 inline Runnable* obtainClosure(FuncClosure4<Arg1, Arg2, Arg3, Arg4>& closure, void (*func)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) FuncClosure4<Arg1, Arg2, Arg3, Arg4>(func, arg1, arg2, arg3, arg4);
 	} else {
@@ -447,6 +456,7 @@ inline Runnable* obtainClosure(FuncClosure4<Arg1, Arg2, Arg3, Arg4>& closure, vo
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 inline Runnable* obtainClosure(Closure4<Class, Arg1, Arg2, Arg3, Arg4>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3, Arg4), Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) {
+	AutoLock autoLock;
 	if (!closure.isInUse()) {
 		return new (&closure) Closure4<Class, Arg1, Arg2, Arg3, Arg4>(object, method, arg1, arg2, arg3, arg4);
 	} else {

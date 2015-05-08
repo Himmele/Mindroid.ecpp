@@ -48,7 +48,7 @@ bool Handler::sendMessage(Message& message) {
 }
 
 bool Handler::sendMessageDelayed(Message& message, uint32_t delay) {
-	return sendMessageAtTime(message, Clock::monotonicTime() + delay * 1000000LL);
+	return sendMessageAtTime(message, Clock::monotonicTime() + delay);
 }
 
 bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
@@ -64,7 +64,7 @@ bool Handler::post(Runnable& runnable) {
 }
 
 bool Handler::postDelayed(Runnable& runnable, uint32_t delay) {
-	return postAtTime(runnable, Clock::monotonicTime() + delay * 1000000LL);
+	return postAtTime(runnable, Clock::monotonicTime() + delay);
 }
 
 bool Handler::postAtTime(Runnable& runnable, uint64_t execTimestamp) {

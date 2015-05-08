@@ -41,15 +41,18 @@ public:
 	bool removeMessage(Handler* handler, const Message* message);
 
 private:
+	bool enqueueMessage(Message& message, uint64_t execTimestamp, bool notify);
+	Message* dequeueMessage(Message& message, bool wait);
 	Message* getNextMessage(uint64_t now, Message& message);
+	void notify();
 	void quit();
 
 	Message* mHeadMessage;
-	Lock mCondVarLock;
 	CondVar mCondVar;
 	bool mQuiting;
 
 	friend class Looper;
+	friend class RunnableQueue;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MessageQueue)
 };

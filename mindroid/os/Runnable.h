@@ -18,6 +18,7 @@
 #define MINDROID_RUNNABLE_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #include "mindroid/os/Lock.h"
 
 namespace mindroid {
@@ -30,20 +31,19 @@ public:
 	virtual void run() = 0;
 
 	inline bool isInUse() {
-		AutoLock autoLock(mLock);
+		AutoLock autoLock;
 		return mExecTimestamp != 0;
 	}
 
 private:
 	inline void recycle() {
-		AutoLock autoLock(mLock);
+		AutoLock autoLock;
 		mExecTimestamp = 0;
 		mNextRunnable = NULL;
 	}
 
-	uint64_t mExecTimestamp; // nanoseconds
+	uint64_t mExecTimestamp; // milliseconds
 	Runnable* mNextRunnable;
-	mutable Lock mLock;
 
 	friend class RunnableQueue;
 };

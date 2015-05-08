@@ -21,7 +21,6 @@
 #include "mindroid/app/Service.h"
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Handler.h"
-#include "mindroid/os/Lock.h"
 #include "mindroid/util/Utils.h"
 #include "mindroid/Mindroid.h"
 
@@ -61,7 +60,6 @@ private:
 	MainHandler mMainHandler;
 	ServiceRecord mServices[MAX_NUM_SERVICES];
 	mindroid::Message mMessages[MAX_NUM_SERVICES];
-	Lock mLock;
 
     NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Process)
 };

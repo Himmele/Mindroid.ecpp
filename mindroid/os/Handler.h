@@ -54,24 +54,28 @@ public:
 	}
 
 	Message& grabMessage(Message& message) {
+		AutoLock autoLock;
 		removeMessage(message);
 		Assert::assertNotNull(Message::obtain(message, *this));
 		return message;
 	}
 
 	Message& grabMessage(Message& message, const int32_t what) {
+		AutoLock autoLock;
 		removeMessage(message);
 		Assert::assertNotNull(Message::obtain(message, *this, what));
 		return message;
 	}
 
 	Message& grabMessage(Message& message, const int32_t what, const int32_t arg1, const int32_t arg2) {
+		AutoLock autoLock;
 		removeMessage(message);
 		Assert::assertNotNull(Message::obtain(message, *this, what, arg1, arg2));
 		return message;
 	}
 
 	Message& grabMessage(Message& message, const int32_t what, void* const obj) {
+		AutoLock autoLock;
 		removeMessage(message);
 		Assert::assertNotNull(Message::obtain(message, *this, what, obj));
 		return message;

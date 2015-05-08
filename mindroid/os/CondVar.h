@@ -23,22 +23,20 @@
 
 namespace mindroid {
 
-class Lock;
-
 class CondVar {
 public:
-	CondVar(Lock& lock);
+	CondVar();
 	~CondVar();
 	void wait();
 	void wait(uint32_t timeout);
-	void wait(timespec& absTimestamp);
 	void notify();
 	void notifyAll();
 
 private:
+	void wait(timespec& absTimestamp);
+
 	pthread_cond_t mCondVar;
 	pthread_condattr_t mCondVarAttributes;
-	Lock& mCondVarLock;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(CondVar)
 };

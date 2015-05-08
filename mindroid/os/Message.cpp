@@ -18,7 +18,6 @@
 #include <new>
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Handler.h"
-#include "mindroid/os/Lock.h"
 
 namespace mindroid {
 
@@ -84,6 +83,7 @@ Message& Message::operator=(const Message& message) {
 }
 
 Message* Message::obtain(Message& message, Handler& handler) {
+	AutoLock autoLock;
 	if (!message.isInUse()) {
 		new (&message) Message(handler);
 		return &message;
@@ -93,6 +93,7 @@ Message* Message::obtain(Message& message, Handler& handler) {
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what) {
+	AutoLock autoLock;
 	if (!message.isInUse()) {
 		new (&message) Message(handler, what);
 		return &message;
@@ -102,6 +103,7 @@ Message* Message::obtain(Message& message, Handler& handler, const int32_t what)
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2) {
+	AutoLock autoLock;
 	if (!message.isInUse()) {
 		new (&message) Message(handler, what, arg1, arg2);
 		return &message;
@@ -111,6 +113,7 @@ Message* Message::obtain(Message& message, Handler& handler, const int32_t what,
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what, void* const obj) {
+	AutoLock autoLock;
 	if (!message.isInUse()) {
 		new (&message) Message(handler, what, obj);
 		return &message;
@@ -120,7 +123,7 @@ Message* Message::obtain(Message& message, Handler& handler, const int32_t what,
 }
 
 void Message::clear() {
-	AutoLock autoLock(mLock);
+	AutoLock autoLock;
 	what = 0;
 	arg1 = 0;
 	arg2 = 0;

@@ -18,6 +18,7 @@
 #define MINDROID_MESSAGE_H_
 
 #include <stdint.h>
+#include <stddef.h>
 #include "mindroid/os/Lock.h"
 
 namespace mindroid {
@@ -45,6 +46,11 @@ public:
     }
 
     bool sendToTarget();
+	
+	inline bool isInUse() {
+		AutoLock autoLock;
+		return mExecTimestamp != 0;
+	}
 
     int32_t what;
     int32_t arg1;
@@ -52,23 +58,17 @@ public:
     void* obj;
 
 private:
-    inline bool isInUse() {
-		AutoLock autoLock(mLock);
-		return mExecTimestamp != 0;
-	}
-
     inline void recycle() {
-    	AutoLock autoLock(mLock);
+    	AutoLock autoLock;
     	mExecTimestamp = 0;
     	mNextMessage = NULL;
     }
 
     void clear();
 
-    uint64_t mExecTimestamp; // nanoseconds
+    uint64_t mExecTimestamp; // milliseconds
     Handler* mHandler;
     Message* mNextMessage;
-    mutable Lock mLock;
 
     friend class MessageQueue;
     friend class RunnableQueue;

@@ -18,7 +18,6 @@
 #ifndef MINDROID_BUFFER_H_
 #define MINDROID_BUFFER_H_
 
-#include <sys/types.h>
 #include <stdint.h>
 #include "mindroid/util/Assert.h"
 #include "mindroid/util/Utils.h"
@@ -30,9 +29,8 @@ class Buffer
 {
 public:
 	Buffer() :
-			mCapacity(CAPACITY),
 			mOffset(0),
-			mSize(CAPACITY) {
+			mSize(0) {
 	}
 
 	uint8_t* base() {
@@ -44,7 +42,7 @@ public:
 	}
 
 	size_t capacity() const {
-		return mCapacity;
+		return CAPACITY;
 	}
 
 	size_t size() const {
@@ -56,16 +54,20 @@ public:
 	}
 
 	void setRange(size_t offset, size_t size) {
-		Assert::assertTrue(offset <= mCapacity);
-		Assert::assertTrue(offset + size <= mCapacity);
+		Assert::assertTrue(offset <= CAPACITY);
+		Assert::assertTrue(size <= CAPACITY);
 
 		mOffset = offset;
 		mSize = size;
 	}
 
+	void clear() {
+		mOffset = 0;
+		mSize = 0;
+	}
+
 private:
 	uint8_t mData[CAPACITY];
-	size_t mCapacity;
 	size_t mOffset;
 	size_t mSize;
 

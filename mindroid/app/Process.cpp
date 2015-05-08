@@ -15,6 +15,7 @@
  */
 
 #include "mindroid/app/Process.h"
+#include "mindroid/os/Lock.h"
 #include "mindroid/util/Assert.h"
 #include <string.h>
 
@@ -31,7 +32,7 @@ void Process::startService(Service& service) {
 	bool running;
 
 	{
-		AutoLock autoLock(mLock);
+		AutoLock autoLock;
 
 		for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
 			if ((id < 0) && (mServices[i].service == NULL)) {
@@ -68,7 +69,7 @@ void Process::stopService(Service& service) {
 	bool running;
 
 	{
-		AutoLock autoLock(mLock);
+		AutoLock autoLock;
 
 		for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
 			if ((id < 0) && (mServices[i].service == NULL)) {
@@ -105,7 +106,7 @@ void Process::MainHandler::handleMessage(const Message& message) {
 		int32_t id = message.arg1;
 		bool running;
 		{
-			AutoLock autoLock(mProcess.mLock);
+			AutoLock autoLock;
 			running = mProcess.mServices[id].running;
 		}
 
@@ -125,7 +126,7 @@ void Process::MainHandler::handleMessage(const Message& message) {
 		int32_t id = message.arg1;
 		bool running;
 		{
-			AutoLock autoLock(mProcess.mLock);
+			AutoLock autoLock;
 			running = mProcess.mServices[id].running;
 		}
 

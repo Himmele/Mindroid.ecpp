@@ -92,7 +92,7 @@ private:
     static const uint8_t WTF = 5;
 
     static const int DEFAULT_LOG_ID = 0;
-    static const int LOG_RECORD_SIZE = 64;
+    static const int LOG_RECORD_SIZE = 128;
 
     static Logger* sLogger;
 

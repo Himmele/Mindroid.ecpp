@@ -35,6 +35,7 @@ public:
 	static bool prepare();
 	static Looper* myLooper();
 	static void loop();
+	static void loop(uint32_t maxLoops);
 	void quit();
 
 	MessageQueue& myMessageQueue() {
@@ -52,9 +53,8 @@ private:
 
 	static pthread_once_t sTlsOneTimeInitializer;
 	static pthread_key_t sTlsKey;
-	static uint8_t sLooperHeapMemory[];
-	static Looper* sLoopers[MAX_NUM_LOOPERS];
-	static Lock sLock;
+	static uint8_t sLooperData[] __attribute__((aligned (8)));
+	static Looper* sLoopers[];
 	static int sNumLoopers;
 
 	MessageQueue mMessageQueue;

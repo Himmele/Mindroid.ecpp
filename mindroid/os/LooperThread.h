@@ -41,7 +41,7 @@ public:
 	LooperThread() :
 			mLooper(NULL),
 			mHandler(NULL),
-			mCondVar(mLock),
+			mCondVar(),
 			mIsDone(false) {
 	}
 
@@ -49,22 +49,22 @@ public:
 
 	virtual void run() {
 		Looper::prepare();
-		mLock.lock();
+		Lock::lock();
 		mLooper = Looper::myLooper();
 		mHandler = new (mHandlerData) T();
 		mCondVar.notifyAll();
-		mLock.unlock();
+		Lock::unlock();
 		Looper::loop();
-		mLock.lock();
+		Lock::lock();
 		mIsDone = true;
 		mHandler->removeMessages();
 		mLooper = NULL;
 		mHandler = NULL;
-		mLock.unlock();
+		Lock::unlock();
 	}
 
 	Looper* getLooper() {
-		AutoLock autoLock(mLock);
+		AutoLock autoLock;
 		if (!mIsDone && mLooper == NULL) {
 			mCondVar.wait();
 		}
@@ -72,7 +72,7 @@ public:
 	}
 
 	T* getHandler() {
-		AutoLock autoLock(mLock);
+		AutoLock autoLock;
 		if (!mIsDone && mHandler == NULL) {
 			mCondVar.wait();
 		}
@@ -81,9 +81,8 @@ public:
 
 private:
 	Looper* mLooper;
-	uint8_t mHandlerData[sizeof(T)];
+	uint8_t mHandlerData[sizeof(T)] __attribute__((aligned (8)));
 	T* mHandler;
-	Lock mLock;
 	CondVar mCondVar;
 	bool mIsDone;
 

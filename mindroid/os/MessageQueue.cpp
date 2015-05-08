@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <pthread.h>
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Clock.h"
@@ -24,15 +23,19 @@
 namespace mindroid {
 
 MessageQueue::MessageQueue() :
-	mHeadMessage(NULL),
-	mCondVar(mCondVarLock),
-	mQuiting(false) {
+		mHeadMessage(NULL),
+		mCondVar(),
+		mQuiting(false) {
 }
 
 MessageQueue::~MessageQueue() {
 }
 
 bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
+	return enqueueMessage(message, execTimestamp, true);
+}
+
+bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp, bool notify) {
 	if (message.mHandler == NULL) {
 		return false;
 	}
@@ -40,55 +43,63 @@ bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
 		return false;
 	}
 
-	AutoLock autoLock(mCondVarLock);
 	{
-		AutoLock autoLock(message.mLock);
+		AutoLock autoLock;
 		if (message.mExecTimestamp != 0) {
 			return false;
 		}
-		message.mExecTimestamp = execTimestamp;
-	}
-	if (mQuiting) {
-		return false;
-	}
-	Message* curMessage = mHeadMessage;
-	if (curMessage == NULL || execTimestamp < curMessage->mExecTimestamp) {
-		message.mNextMessage = curMessage;
-		mHeadMessage = &message;
-	} else {
-		Message* prevMessage = NULL;
-		while (curMessage != NULL && curMessage->mExecTimestamp <= execTimestamp) {
-			prevMessage = curMessage;
-			curMessage = curMessage->mNextMessage;
+		if (mQuiting) {
+			return false;
 		}
-		message.mNextMessage = prevMessage->mNextMessage;
-		prevMessage->mNextMessage = &message;
+		message.mExecTimestamp = execTimestamp;
+		Message* curMessage = mHeadMessage;
+		if (curMessage == NULL || execTimestamp < curMessage->mExecTimestamp) {
+			message.mNextMessage = curMessage;
+			mHeadMessage = &message;
+		} else {
+			Message* prevMessage = NULL;
+			while (curMessage != NULL && curMessage->mExecTimestamp <= execTimestamp) {
+				prevMessage = curMessage;
+				curMessage = curMessage->mNextMessage;
+			}
+			message.mNextMessage = prevMessage->mNextMessage;
+			prevMessage->mNextMessage = &message;
+		}
 	}
-	mCondVar.notify();
+	if (notify) {
+		mCondVar.notify();
+	}
 	return true;
 }
 
 Message* MessageQueue::dequeueMessage(Message& message) {
+	return dequeueMessage(message, true);
+}
+
+Message* MessageQueue::dequeueMessage(Message& message, bool wait) {
 	while (true) {
-		AutoLock autoLock(mCondVarLock);
+		uint64_t now = Clock::monotonicTime();
+
+		AutoLock autoLock;
 		if (mQuiting) {
 			return NULL;
 		}
 
-		uint64_t now = Clock::monotonicTime();
 		if (getNextMessage(now, message) != NULL) {
 			return &message;
 		}
 
-		if (mHeadMessage != NULL) {
-			if (mHeadMessage->mExecTimestamp - now > 0) {
-				timespec absExecTimestamp;
-				absExecTimestamp.tv_sec = mHeadMessage->mExecTimestamp / 1000000000LL;
-				absExecTimestamp.tv_nsec = mHeadMessage->mExecTimestamp % 1000000000LL;
-				mCondVar.wait(absExecTimestamp);
+		if (wait) {
+			if (mHeadMessage != NULL) {
+				if (mHeadMessage->mExecTimestamp - now > 0) {
+					uint32_t timeout = (mHeadMessage->mExecTimestamp - now); // milliseconds
+					mCondVar.wait(timeout);
+				}
+			} else {
+				mCondVar.wait();
 			}
 		} else {
-			mCondVar.wait();
+			return NULL;
 		}
 	}
 }
@@ -113,10 +124,10 @@ bool MessageQueue::removeMessages(Handler* handler) {
 
 	bool foundMessage = false;
 
-	mCondVarLock.lock();
+	Lock::lock();
 
 	Message* curMessage = mHeadMessage;
-	// remove all matching messages at the front of the message queue.
+	// Remove all matching messages at the front of the message queue.
 	while (curMessage != NULL && curMessage->mHandler == handler) {
 		foundMessage = true;
 		Message* nextMessage = curMessage->mNextMessage;
@@ -125,7 +136,7 @@ bool MessageQueue::removeMessages(Handler* handler) {
 		curMessage = nextMessage;
 	}
 
-	// remove all matching messages after the front of the message queue.
+	// Remove all matching messages after the front of the message queue.
 	while (curMessage != NULL) {
 		Message* nextMessage = curMessage->mNextMessage;
 		if (nextMessage != NULL) {
@@ -140,7 +151,7 @@ bool MessageQueue::removeMessages(Handler* handler) {
 		curMessage = nextMessage;
 	}
 
-	mCondVarLock.unlock();
+	Lock::unlock();
 
 	return foundMessage;
 }
@@ -152,10 +163,10 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 
 	bool foundMessage = false;
 
-	mCondVarLock.lock();
+	Lock::lock();
 
 	Message* curMessage = mHeadMessage;
-	// remove all matching messages at the front of the message queue.
+	// Remove all matching messages at the front of the message queue.
 	while (curMessage != NULL && curMessage->mHandler == handler && curMessage->what == what) {
 		foundMessage = true;
 		Message* nextMessage = curMessage->mNextMessage;
@@ -164,7 +175,7 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 		curMessage = nextMessage;
 	}
 
-	// remove all matching messages after the front of the message queue.
+	// Remove all matching messages after the front of the message queue.
 	while (curMessage != NULL) {
 		Message* nextMessage = curMessage->mNextMessage;
 		if (nextMessage != NULL) {
@@ -179,7 +190,7 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 		curMessage = nextMessage;
 	}
 
-	mCondVarLock.unlock();
+	Lock::unlock();
 
 	return foundMessage;
 }
@@ -191,10 +202,10 @@ bool MessageQueue::removeMessage(Handler* handler, const Message* message) {
 
 	bool foundMessage = false;
 
-	mCondVarLock.lock();
+	Lock::lock();
 
 	Message* curMessage = mHeadMessage;
-	// remove a matching message at the front of the message queue.
+	// Remove a matching message at the front of the message queue.
 	if (curMessage != NULL && curMessage->mHandler == handler && curMessage == message) {
 		foundMessage = true;
 		Message* nextMessage = curMessage->mNextMessage;
@@ -203,7 +214,7 @@ bool MessageQueue::removeMessage(Handler* handler, const Message* message) {
 		curMessage = nextMessage;
 	}
 
-	// remove a matching message after the front of the message queue.
+	// Remove a matching message after the front of the message queue.
 	if (!foundMessage) {
 		while (curMessage != NULL) {
 			Message* nextMessage = curMessage->mNextMessage;
@@ -220,13 +231,17 @@ bool MessageQueue::removeMessage(Handler* handler, const Message* message) {
 		}
 	}
 
-	mCondVarLock.unlock();
+	Lock::unlock();
 
 	return foundMessage;
 }
 
+void MessageQueue::notify() {
+	mCondVar.notify();
+}
+
 void MessageQueue::quit() {
-	AutoLock autoLock(mCondVarLock);
+	AutoLock autoLock;
 	if (mQuiting) {
 		return;
 	}

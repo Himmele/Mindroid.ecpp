@@ -100,7 +100,7 @@ public:
 private:
 	Assert() {}
 
-	static const char* LOG_TAG;
+	static const char* const LOG_TAG;
 
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Assert)
 };
