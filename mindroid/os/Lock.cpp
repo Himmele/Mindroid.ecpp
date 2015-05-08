@@ -20,7 +20,7 @@
 
 namespace mindroid {
 
-pthread_mutex_t Lock::sLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
+pthread_mutex_t Lock::sLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
 bool Lock::lock() {
 	return (pthread_mutex_lock(&sLock) == 0);

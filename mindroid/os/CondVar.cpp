@@ -45,7 +45,7 @@ void CondVar::wait(uint32_t timeout) {
 }
 
 void CondVar::wait(timespec& absTimestamp) {
-	pthread_cond_timedwait(&mCondVar, Lock::getLock());
+	pthread_cond_timedwait(&mCondVar, Lock::getLock(), &absTimestamp);
 }
 
 void CondVar::notify() {
