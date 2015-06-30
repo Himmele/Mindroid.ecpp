@@ -29,7 +29,8 @@ class AtomicInteger
 public:
 	AtomicInteger();
 	AtomicInteger(INT initialValue);
-	INT get();
+	INT get() const;
+	INT unsafeGet() const;
 	void set(INT newValue);
 
 private:
@@ -51,8 +52,13 @@ AtomicInteger<INT>::AtomicInteger(INT initialValue) {
 }
 
 template<typename INT>
-INT	AtomicInteger<INT>::get() {
+INT AtomicInteger<INT>::get() const {
 	AutoLock autoLock;
+	return mValue;
+}
+
+template<typename INT>
+INT AtomicInteger<INT>::unsafeGet() const {
 	return mValue;
 }
 
