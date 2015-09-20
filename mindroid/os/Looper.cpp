@@ -75,7 +75,7 @@ Looper* Looper::myLooper() {
 void Looper::loop() {
 	Looper* me = myLooper();
 	if (me != NULL) {
-		MessageQueue& mq = me->mMessageQueue;		
+		MessageQueue& mq = me->mMessageQueue;
 		while (true) {
 			Message* message = mq.dequeueMessage(me->mMessage);
 			if (message == NULL) {

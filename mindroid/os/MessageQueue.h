@@ -28,8 +28,7 @@ class Message;
 class Handler;
 class Runnable;
 
-class MessageQueue
-{
+class MessageQueue {
 public:
 	MessageQueue();
 	~MessageQueue();

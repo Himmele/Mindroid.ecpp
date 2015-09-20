@@ -28,7 +28,7 @@ class Handler;
 
 class Message {
 public:
-    Message();
+	Message();
 	Message(Handler& handler);
 	Message(Handler& handler, const int32_t what);
 	Message(Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
@@ -36,43 +36,43 @@ public:
 
 	Message& operator=(const Message& message);
 
-    static Message* obtain(Message& message, Handler& handler);
-    static Message* obtain(Message& message, Handler& handler, const int32_t what);
-    static Message* obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
-    static Message* obtain(Message& message, Handler& handler, const int32_t what, void* const obj);
+	static Message* obtain(Message& message, Handler& handler);
+	static Message* obtain(Message& message, Handler& handler, const int32_t what);
+	static Message* obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
+	static Message* obtain(Message& message, Handler& handler, const int32_t what, void* const obj);
 
-    Handler* getHandler() const {
-    	return mHandler;
-    }
+	Handler* getHandler() const {
+		return mHandler;
+	}
 
-    bool sendToTarget();
-	
+	bool sendToTarget();
+
 	inline bool isInUse() {
 		AutoLock autoLock;
 		return mExecTimestamp != 0;
 	}
 
-    int32_t what;
-    int32_t arg1;
-    int32_t arg2;
-    void* obj;
+	int32_t what;
+	int32_t arg1;
+	int32_t arg2;
+	void* obj;
 
 private:
-    inline void recycle() {
-    	AutoLock autoLock;
-    	mExecTimestamp = 0;
-    	mNextMessage = NULL;
-    }
+	inline void recycle() {
+		AutoLock autoLock;
+		mExecTimestamp = 0;
+		mNextMessage = NULL;
+	}
 
-    void clear();
+	void clear();
 
-    uint64_t mExecTimestamp; // milliseconds
-    Handler* mHandler;
-    Message* mNextMessage;
+	uint64_t mExecTimestamp; // milliseconds
+	Handler* mHandler;
+	Message* mNextMessage;
 
-    friend class MessageQueue;
-    friend class RunnableQueue;
-    friend class Looper;
+	friend class MessageQueue;
+	friend class RunnableQueue;
+	friend class Looper;
 };
 
 } /* namespace mindroid */

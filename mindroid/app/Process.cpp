@@ -118,7 +118,8 @@ void Process::MainHandler::handleMessage(const Message& message) {
 			msg.obj = &service;
 			sendMessage(msg);
 		}
-	} break;
+		break;
+	}
 	case STOP_SERVICE: {
 		Service* service = (Service*) message.obj;
 		service->onDestroy();
@@ -138,7 +139,8 @@ void Process::MainHandler::handleMessage(const Message& message) {
 			msg.obj = &service;
 			sendMessage(msg);
 		}
-	} break;
+		break;
+	}
 	}
 }
 

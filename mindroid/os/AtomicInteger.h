@@ -24,8 +24,7 @@
 namespace mindroid {
 
 template<typename INT>
-class AtomicInteger
-{
+class AtomicInteger {
 public:
 	AtomicInteger();
 	AtomicInteger(INT initialValue);

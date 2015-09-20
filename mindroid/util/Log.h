@@ -25,8 +25,7 @@
 
 namespace mindroid {
 
-class Log
-{
+class Log {
 public:
 	/**
 	 * Send a {@link #VERBOSE} log message.
@@ -78,25 +77,25 @@ public:
 	 * @param msg The message you would like logged.
 	 */
 	static int wtf(const char* tag, const char* format, ...);
-	
+
 	static void setLogger(Logger& logger);
-	
+
 	static Logger DEFAULT_LOGGER;
 
 private:
-    static const uint8_t VERBOSE = 0;
-    static const uint8_t DEBUG = 1;
-    static const uint8_t INFO = 2;
-    static const uint8_t WARN = 3;
-    static const uint8_t ERROR = 4;
-    static const uint8_t WTF = 5;
+	static const uint8_t VERBOSE = 0;
+	static const uint8_t DEBUG = 1;
+	static const uint8_t INFO = 2;
+	static const uint8_t WARN = 3;
+	static const uint8_t ERROR = 4;
+	static const uint8_t WTF = 5;
 
-    static const int DEFAULT_LOG_ID = 0;
-    static const int LOG_RECORD_SIZE = 128;
+	static const int DEFAULT_LOG_ID = 0;
+	static const int LOG_RECORD_SIZE = 128;
 
-    static Logger* sLogger;
+	static Logger* sLogger;
 
-    NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Log)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Log)
 };
 
 } /* namespace mindroid */

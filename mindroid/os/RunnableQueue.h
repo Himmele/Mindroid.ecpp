@@ -28,9 +28,7 @@ namespace mindroid {
 class MessageQueue;
 class Runnable;
 
-class RunnableQueue :
-		public Handler
-{
+class RunnableQueue : public Handler {
 public:
 	RunnableQueue(Looper& looper);
 	virtual ~RunnableQueue();

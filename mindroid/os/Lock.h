@@ -23,14 +23,14 @@
 
 namespace mindroid {
 
-class Lock
-{
+class Lock {
 public:
 	static bool lock();
 	static void unlock();
 
 private:
-	Lock() {}
+	Lock() {
+	}
 
 	static pthread_mutex_t* getLock() {
 		return &sLock;
@@ -43,8 +43,7 @@ private:
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Lock)
 };
 
-class AutoLock
-{
+class AutoLock {
 public:
 	AutoLock() {
 		Lock::lock();

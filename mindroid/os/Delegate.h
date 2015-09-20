@@ -34,15 +34,14 @@ class Delegate;
 
 // 4 arguments
 template<typename R, typename A1, typename A2, typename A3, typename A4>
-class Delegate
-{
+class Delegate {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1, A2, A3, A4)>
+	template<class T, R (T::*TMethod)(A1, A2, A3, A4)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -50,7 +49,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1, A2, A3, A4)>
+	template<R (*TMethod)(A1, A2, A3, A4)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -78,13 +77,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1, A2 arg2, A3 arg3, A4 arg4);
 
-	template<class T, R(T::*TMethod)(A1, A2, A3, A4)>
+	template<class T, R (T::*TMethod)(A1, A2, A3, A4)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3, A4 arg4) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1, arg2, arg3, arg4);
 	}
 
-	template<R(*TMethod)(A1, A2, A3, A4)>
+	template<R (*TMethod)(A1, A2, A3, A4)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3, A4 arg4) {
 		return (*TMethod)(arg1, arg2, arg3, arg4);
 	}
@@ -94,15 +93,14 @@ private:
 };
 
 template<typename R, typename A1, typename A2, typename A3, typename A4>
-class Delegate<R(A1, A2, A3, A4)>
-{
+class Delegate<R(A1, A2, A3, A4)> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1, A2, A3, A4)>
+	template<class T, R (T::*TMethod)(A1, A2, A3, A4)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -110,7 +108,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1, A2, A3, A4)>
+	template<R (*TMethod)(A1, A2, A3, A4)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -138,13 +136,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1, A2 arg2, A3 arg3, A4 arg4);
 
-	template<class T, R(T::*TMethod)(A1, A2, A3, A4)>
+	template<class T, R (T::*TMethod)(A1, A2, A3, A4)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3, A4 arg4) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1, arg2, arg3, arg4);
 	}
 
-	template<R(*TMethod)(A1, A2, A3, A4)>
+	template<R (*TMethod)(A1, A2, A3, A4)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3, A4 arg4) {
 		return (*TMethod)(arg1, arg2, arg3, arg4);
 	}
@@ -155,15 +153,14 @@ private:
 
 // 3 arguments
 template<typename R, typename A1, typename A2, typename A3>
-class Delegate<R, A1, A2, A3, void>
-{
+class Delegate<R, A1, A2, A3, void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1, A2, A3)>
+	template<class T, R (T::*TMethod)(A1, A2, A3)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -171,7 +168,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1, A2, A3)>
+	template<R (*TMethod)(A1, A2, A3)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -199,13 +196,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1, A2 arg2, A3 arg3);
 
-	template<class T, R(T::*TMethod)(A1, A2, A3)>
+	template<class T, R (T::*TMethod)(A1, A2, A3)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1, arg2, arg3);
 	}
 
-	template<R(*TMethod)(A1, A2, A3)>
+	template<R (*TMethod)(A1, A2, A3)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3) {
 		return (*TMethod)(arg1, arg2, arg3);
 	}
@@ -215,15 +212,14 @@ private:
 };
 
 template<typename R, typename A1, typename A2, typename A3>
-class Delegate<R(A1, A2, A3), void>
-{
+class Delegate<R(A1, A2, A3), void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1, A2, A3)>
+	template<class T, R (T::*TMethod)(A1, A2, A3)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -231,7 +227,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1, A2, A3)>
+	template<R (*TMethod)(A1, A2, A3)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -259,13 +255,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1, A2 arg2, A3 arg3);
 
-	template<class T, R(T::*TMethod)(A1, A2, A3)>
+	template<class T, R (T::*TMethod)(A1, A2, A3)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1, arg2, arg3);
 	}
 
-	template<R(*TMethod)(A1, A2, A3)>
+	template<R (*TMethod)(A1, A2, A3)>
 	static R exec(void* object, A1 arg1, A2 arg2, A3 arg3) {
 		return (*TMethod)(arg1, arg2, arg3);
 	}
@@ -276,15 +272,14 @@ private:
 
 // 2 arguments
 template<typename R, typename A1, typename A2>
-class Delegate<R, A1, A2, void, void>
-{
+class Delegate<R, A1, A2, void, void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1, A2)>
+	template<class T, R (T::*TMethod)(A1, A2)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -292,7 +287,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1, A2)>
+	template<R (*TMethod)(A1, A2)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -320,13 +315,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1, A2 arg2);
 
-	template<class T, R(T::*TMethod)(A1, A2)>
+	template<class T, R (T::*TMethod)(A1, A2)>
 	static R exec(void* object, A1 arg1, A2 arg2) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1, arg2);
 	}
 
-	template<R(*TMethod)(A1, A2)>
+	template<R (*TMethod)(A1, A2)>
 	static R exec(void* object, A1 arg1, A2 arg2) {
 		return (*TMethod)(arg1, arg2);
 	}
@@ -336,15 +331,14 @@ private:
 };
 
 template<typename R, typename A1, typename A2>
-class Delegate<R(A1, A2), void, void>
-{
+class Delegate<R(A1, A2), void, void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1, A2)>
+	template<class T, R (T::*TMethod)(A1, A2)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -352,7 +346,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1, A2)>
+	template<R (*TMethod)(A1, A2)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -380,13 +374,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1, A2 arg2);
 
-	template<class T, R(T::*TMethod)(A1, A2)>
+	template<class T, R (T::*TMethod)(A1, A2)>
 	static R exec(void* object, A1 arg1, A2 arg2) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1, arg2);
 	}
 
-	template<R(*TMethod)(A1, A2)>
+	template<R (*TMethod)(A1, A2)>
 	static R exec(void* object, A1 arg1, A2 arg2) {
 		return (*TMethod)(arg1, arg2);
 	}
@@ -397,15 +391,14 @@ private:
 
 // 1 argument
 template<typename R, typename A1>
-class Delegate<R, A1, void, void, void>
-{
+class Delegate<R, A1, void, void, void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1)>
+	template<class T, R (T::*TMethod)(A1)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -413,7 +406,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1)>
+	template<R (*TMethod)(A1)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -441,13 +434,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1);
 
-	template<class T, R(T::*TMethod)(A1)>
+	template<class T, R (T::*TMethod)(A1)>
 	static R exec(void* object, A1 arg1) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1);
 	}
 
-	template<R(*TMethod)(A1)>
+	template<R (*TMethod)(A1)>
 	static R exec(void* object, A1 arg1) {
 		return (*TMethod)(arg1);
 	}
@@ -457,15 +450,14 @@ private:
 };
 
 template<typename R, typename A1>
-class Delegate<R(A1), void, void, void>
-{
+class Delegate<R(A1), void, void, void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)(A1)>
+	template<class T, R (T::*TMethod)(A1)>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -473,7 +465,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)(A1)>
+	template<R (*TMethod)(A1)>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -501,13 +493,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object, A1 arg1);
 
-	template<class T, R(T::*TMethod)(A1)>
+	template<class T, R (T::*TMethod)(A1)>
 	static R exec(void* object, A1 arg1) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)(arg1);
 	}
 
-	template<R(*TMethod)(A1)>
+	template<R (*TMethod)(A1)>
 	static R exec(void* object, A1 arg1) {
 		return (*TMethod)(arg1);
 	}
@@ -518,15 +510,14 @@ private:
 
 // no arguments
 template<typename R>
-class Delegate<R, void, void, void, void>
-{
+class Delegate<R, void, void, void, void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)()>
+	template<class T, R (T::*TMethod)()>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -534,7 +525,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)()>
+	template<R (*TMethod)()>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -562,13 +553,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object);
 
-	template<class T, R(T::*TMethod)()>
+	template<class T, R (T::*TMethod)()>
 	static R exec(void* object) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)();
 	}
 
-	template<R(*TMethod)()>
+	template<R (*TMethod)()>
 	static R exec(void* object) {
 		return (*TMethod)();
 	}
@@ -578,15 +569,14 @@ private:
 };
 
 template<typename R>
-class Delegate<R(void), void, void, void>
-{
+class Delegate<R(void), void, void, void> {
 public:
 	Delegate() :
 			mObject(NULL),
 			mMethod(NULL) {
 	}
 
-	template<class T, R(T::*TMethod)()>
+	template<class T, R (T::*TMethod)()>
 	static Delegate create(T& object) {
 		Delegate delegate;
 		delegate.mObject = &object;
@@ -594,7 +584,7 @@ public:
 		return delegate;
 	}
 
-	template<R(*TMethod)()>
+	template<R (*TMethod)()>
 	static Delegate create() {
 		Delegate delegate;
 		delegate.mObject = NULL;
@@ -622,13 +612,13 @@ public:
 private:
 	typedef R (*MethodType)(void* object);
 
-	template<class T, R(T::*TMethod)()>
+	template<class T, R (T::*TMethod)()>
 	static R exec(void* object) {
 		T* self = static_cast<T*>(object);
 		return (self->*TMethod)();
 	}
 
-	template<R(*TMethod)()>
+	template<R (*TMethod)()>
 	static R exec(void* object) {
 		return (*TMethod)();
 	}

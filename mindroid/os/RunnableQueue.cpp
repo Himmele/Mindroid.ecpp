@@ -114,7 +114,7 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 			curRunnable->recycle();
 			curRunnable = nextRunnable;
 
-			Runnable* headRunnable = curRunnable;
+			Runnable* headRunnable = (Runnable*) mMessage.obj;
 			if (headRunnable != NULL) {
 				mMessageQueue.removeMessage(this, &mMessage);
 				mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp, false);

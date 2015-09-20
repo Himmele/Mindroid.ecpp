@@ -26,22 +26,25 @@
 
 namespace mindroid {
 
-class Process
-{
+class Process {
 public:
 	Process(Looper& looper);
 	void startService(Service& service);
 	void stopService(Service& service);
-	Looper& getMainLooper() { return mLooper; }
+	Looper& getMainLooper() {
+		return mLooper;
+	}
 
 private:
-	class MainHandler : public Handler
-	{
+	class MainHandler : public Handler {
 	public:
 		static const int32_t START_SERVICE = 1;
 		static const int32_t STOP_SERVICE = 2;
 
-		MainHandler(Process& process) : Handler(process.getMainLooper()), mProcess(process) {}
+		MainHandler(Process& process) :
+				Handler(process.getMainLooper()),
+				mProcess(process) {
+		}
 		virtual void handleMessage(const Message& message);
 
 	private:
@@ -50,8 +53,7 @@ private:
 		NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MainHandler)
 	};
 
-	struct ServiceRecord
-	{
+	struct ServiceRecord {
 		Service* service;
 		bool running;
 	};
@@ -61,7 +63,7 @@ private:
 	ServiceRecord mServices[MAX_NUM_SERVICES];
 	mindroid::Message mMessages[MAX_NUM_SERVICES];
 
-    NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Process)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Process)
 };
 
 } /* namespace mindroid */

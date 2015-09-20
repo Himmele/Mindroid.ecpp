@@ -25,8 +25,7 @@
 namespace mindroid {
 
 template<uint16_t SIZE>
-class CircularBuffer
-{
+class CircularBuffer {
 public:
 	CircularBuffer() :
 			mReadIndex(0),
@@ -40,8 +39,12 @@ public:
 	int32_t popv(const struct iovec* iov, uint16_t iovcnt);
 	bool push(const void* data, uint16_t size);
 	bool pushv(const struct iovec* iov, uint16_t iovcnt);
-	uint16_t capacity() { return SIZE; }
-	uint16_t peakSize() const { return mPeakSize; }
+	uint16_t capacity() {
+		return SIZE;
+	}
+	uint16_t peakSize() const {
+		return mPeakSize;
+	}
 
 	bool empty() const {
 		return mReadIndex == mWriteIndex;

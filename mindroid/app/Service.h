@@ -23,16 +23,19 @@
 
 namespace mindroid {
 
-class Service
-{
+class Service {
 public:
-	Service() {}
-	virtual ~Service() {}
-	virtual void onCreate() {}
-	virtual void onDestroy() {}
+	Service() {
+	}
+	virtual ~Service() {
+	}
+	virtual void onCreate() {
+	}
+	virtual void onDestroy() {
+	}
 
 private:
-    NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Service)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Service)
 };
 
 } /* namespace mindroid */

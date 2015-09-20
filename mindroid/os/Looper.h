@@ -28,10 +28,10 @@ namespace mindroid {
 
 class Runnable;
 
-class Looper
-{
+class Looper {
 public:
-	virtual ~Looper() {}
+	virtual ~Looper() {
+	}
 	static bool prepare();
 	static Looper* myLooper();
 	static void loop();

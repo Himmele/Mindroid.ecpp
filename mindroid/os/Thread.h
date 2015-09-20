@@ -23,14 +23,14 @@
 
 namespace mindroid {
 
-class Thread :
-	public Runnable
-{
+class Thread : public Runnable {
 public:
 	Thread();
 	Thread(Runnable* runnable);
-	virtual ~Thread() {}
-	virtual void run() {}
+	virtual ~Thread() {
+	}
+	virtual void run() {
+	}
 	bool start();
 	static void sleep(uint32_t milliseconds);
 	void interrupt();

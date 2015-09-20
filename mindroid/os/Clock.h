@@ -21,17 +21,13 @@
 #include <time.h>
 #include "mindroid/util/Utils.h"
 
-#define CLOCK_REALTIME  0
-#define CLOCK_MONOTONIC 1
-
 namespace mindroid {
 
-class Clock
-{
+class Clock {
 public:
 	/**
-	  * The monotonic time never goes backwards and never is zero.
-	  */
+	 * The monotonic time never goes backwards and never is zero.
+	 */
 	static uint64_t monotonicTime(); // milliseconds
 
 	static uint64_t realTime(); // milliseconds

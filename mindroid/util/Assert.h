@@ -24,8 +24,7 @@
 
 namespace mindroid {
 
-class Assert
-{
+class Assert {
 public:
 	static void assertTrue(bool condition) {
 		assert(condition);
@@ -98,7 +97,8 @@ public:
 	static void assertEquals(const char* message, void* expected, void* actual);
 
 private:
-	Assert() {}
+	Assert() {
+	}
 
 	static const char* const LOG_TAG;
 

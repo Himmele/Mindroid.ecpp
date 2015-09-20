@@ -46,19 +46,20 @@
 
 namespace mindroid {
 
-class FuncClosure0 :
-	public Runnable
-{
+class FuncClosure0 : public Runnable {
 public:
 	typedef void (*FuncType)();
 
-	FuncClosure0() : mFunc(NULL) {}
+	FuncClosure0() :
+			mFunc(NULL) {
+	}
 
 	FuncClosure0(FuncType func) :
 			mFunc(func) {
 	}
 
-	virtual ~FuncClosure0() {}
+	virtual ~FuncClosure0() {
+	}
 
 	virtual void run() {
 		if (mFunc) {
@@ -73,20 +74,22 @@ private:
 };
 
 template<typename Class>
-class Closure0 :
-	public Runnable
-{
+class Closure0 : public Runnable {
 public:
 	typedef void (Class::*MethodType)();
 
-	Closure0() : mObject(NULL), mMethod(NULL) {}
+	Closure0() :
+			mObject(NULL),
+			mMethod(NULL) {
+	}
 
 	Closure0(Class& object, MethodType method) :
 			mObject(&object),
 			mMethod(method) {
 	}
 
-	virtual ~Closure0() {}
+	virtual ~Closure0() {
+	}
 
 	virtual void run() {
 		if (mObject && mMethod) {
@@ -95,27 +98,28 @@ public:
 	}
 
 private:
-	 Class* mObject;
-	 MethodType mMethod;
+	Class* mObject;
+	MethodType mMethod;
 
-	 NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure0)
+	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Closure0)
 };
 
 template<typename Arg1>
-class FuncClosure1 :
-	public Runnable
-{
+class FuncClosure1 : public Runnable {
 public:
 	typedef void (*FuncType)(Arg1 arg1);
 
-	FuncClosure1() : mFunc(NULL) {}
+	FuncClosure1() :
+			mFunc(NULL) {
+	}
 
 	FuncClosure1(FuncType func, Arg1 arg1) :
 			mFunc(func),
-			mArg1(arg1)	{
+			mArg1(arg1) {
 	}
 
-	virtual ~FuncClosure1() {}
+	virtual ~FuncClosure1() {
+	}
 
 	virtual void run() {
 		if (mFunc) {
@@ -131,21 +135,23 @@ private:
 };
 
 template<typename Class, typename Arg1>
-class Closure1 :
-	public Runnable
-{
+class Closure1 : public Runnable {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1);
 
-	Closure1() : mObject(NULL), mMethod(NULL) {}
+	Closure1() :
+			mObject(NULL),
+			mMethod(NULL) {
+	}
 
 	Closure1(Class& object, MethodType method, Arg1 arg1) :
 			mObject(&object),
 			mMethod(method),
-			mArg1(arg1)	{
+			mArg1(arg1) {
 	}
 
-	virtual ~Closure1() {}
+	virtual ~Closure1() {
+	}
 
 	virtual void run() {
 		if (mObject && mMethod) {
@@ -162,13 +168,13 @@ private:
 };
 
 template<typename Arg1, typename Arg2>
-class FuncClosure2 :
-	public Runnable
-{
+class FuncClosure2 : public Runnable {
 public:
 	typedef void (*FuncType)(Arg1 arg1, Arg2 arg2);
 
-	FuncClosure2() : mFunc(NULL) {}
+	FuncClosure2() :
+			mFunc(NULL) {
+	}
 
 	FuncClosure2(FuncType func, Arg1 arg1, Arg2 arg2) :
 			mFunc(func),
@@ -176,7 +182,8 @@ public:
 			mArg2(arg2) {
 	}
 
-	virtual ~FuncClosure2() {}
+	virtual ~FuncClosure2() {
+	}
 
 	virtual void run() {
 		if (mFunc) {
@@ -193,13 +200,14 @@ private:
 };
 
 template<typename Class, typename Arg1, typename Arg2>
-class Closure2 :
-	public Runnable
-{
+class Closure2 : public Runnable {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2);
 
-	Closure2() : mObject(NULL), mMethod(NULL) {}
+	Closure2() :
+			mObject(NULL),
+			mMethod(NULL) {
+	}
 
 	Closure2(Class& object, MethodType method, Arg1 arg1, Arg2 arg2) :
 			mObject(&object),
@@ -208,7 +216,8 @@ public:
 			mArg2(arg2) {
 	}
 
-	virtual ~Closure2() {}
+	virtual ~Closure2() {
+	}
 
 	virtual void run() {
 		if (mObject && mMethod) {
@@ -226,13 +235,13 @@ private:
 };
 
 template<typename Arg1, typename Arg2, typename Arg3>
-class FuncClosure3 :
-	public Runnable
-{
+class FuncClosure3 : public Runnable {
 public:
 	typedef void (*FuncType)(Arg1 arg1, Arg2 arg2, Arg3 arg3);
 
-	FuncClosure3() : mFunc(NULL) {}
+	FuncClosure3() :
+			mFunc(NULL) {
+	}
 
 	FuncClosure3(FuncType func, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
 			mFunc(func),
@@ -241,7 +250,8 @@ public:
 			mArg3(arg3) {
 	}
 
-	virtual ~FuncClosure3() {}
+	virtual ~FuncClosure3() {
+	}
 
 	virtual void run() {
 		if (mFunc) {
@@ -259,13 +269,14 @@ private:
 };
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3>
-class Closure3 :
-	public Runnable
-{
+class Closure3 : public Runnable {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2, Arg3 arg3);
 
-	Closure3() : mObject(NULL), mMethod(NULL) {}
+	Closure3() :
+			mObject(NULL),
+			mMethod(NULL) {
+	}
 
 	Closure3(Class& object, MethodType method, Arg1 arg1, Arg2 arg2, Arg3 arg3) :
 			mObject(&object),
@@ -275,7 +286,8 @@ public:
 			mArg3(arg3) {
 	}
 
-	virtual ~Closure3() {}
+	virtual ~Closure3() {
+	}
 
 	virtual void run() {
 		if (mObject && mMethod) {
@@ -294,13 +306,13 @@ private:
 };
 
 template<typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-class FuncClosure4 :
-	public Runnable
-{
+class FuncClosure4 : public Runnable {
 public:
 	typedef void (*FuncType)(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4);
 
-	FuncClosure4() : mFunc(NULL) {}
+	FuncClosure4() :
+			mFunc(NULL) {
+	}
 
 	FuncClosure4(FuncType func, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
 			mFunc(func),
@@ -310,7 +322,8 @@ public:
 			mArg4(arg4) {
 	}
 
-	virtual ~FuncClosure4() {}
+	virtual ~FuncClosure4() {
+	}
 
 	virtual void run() {
 		if (mFunc) {
@@ -329,13 +342,14 @@ private:
 };
 
 template<typename Class, typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-class Closure4 :
-	public Runnable
-{
+class Closure4 : public Runnable {
 public:
 	typedef void (Class::*MethodType)(Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4);
 
-	Closure4() : mObject(NULL), mMethod(NULL) {}
+	Closure4() :
+			mObject(NULL),
+			mMethod(NULL) {
+	}
 
 	Closure4(Class& object, MethodType method, Arg1 arg1, Arg2 arg2, Arg3 arg3, Arg4 arg4) :
 			mObject(&object),
@@ -346,7 +360,8 @@ public:
 			mArg4(arg4) {
 	}
 
-	virtual ~Closure4() {}
+	virtual ~Closure4() {
+	}
 
 	virtual void run() {
 		if (mObject && mMethod) {
@@ -438,7 +453,7 @@ template<typename Class, typename Arg1, typename Arg2, typename Arg3>
 inline Runnable* obtainClosure(Closure3<Class, Arg1, Arg2, Arg3>& closure, Class& object, void (Class::*method)(Arg1, Arg2, Arg3), Arg1 arg1, Arg2 arg2, Arg3 arg3) {
 	AutoLock autoLock;
 	if (!closure.isInUse()) {
-		return new (&closure) Closure3<Class, Arg1, Arg2, Arg3>(object, method,  arg1, arg2, arg3);
+		return new (&closure) Closure3<Class, Arg1, Arg2, Arg3>(object, method, arg1, arg2, arg3);
 	} else {
 		return NULL;
 	}

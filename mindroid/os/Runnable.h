@@ -23,11 +23,14 @@
 
 namespace mindroid {
 
-class Runnable
-{
+class Runnable {
 public:
-	Runnable() : mExecTimestamp(0), mNextRunnable(NULL) {}
-	virtual ~Runnable() {}
+	Runnable() :
+			mExecTimestamp(0),
+			mNextRunnable(NULL) {
+	}
+	virtual ~Runnable() {
+	}
 	virtual void run() = 0;
 
 	inline bool isInUse() {

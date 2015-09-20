@@ -25,8 +25,7 @@
 namespace mindroid {
 
 template<size_t CAPACITY>
-class Buffer
-{
+class Buffer {
 public:
 	Buffer() :
 			mOffset(0),

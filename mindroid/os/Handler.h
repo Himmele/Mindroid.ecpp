@@ -30,8 +30,7 @@ class MessageQueue;
 class RunnableQueue;
 class Lock;
 
-class Handler
-{
+class Handler {
 public:
 	Handler();
 	Handler(Looper& looper);

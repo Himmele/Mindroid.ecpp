@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #ifndef MINDROID_LOGGER_H_
 #define MINDROID_LOGGER_H_
 
@@ -22,17 +22,16 @@
 
 namespace mindroid {
 
-class Logger
-{
+class Logger {
 public:
 	Logger() {
 	}
 
 	virtual int println(int bufferId, uint8_t priority, const char* tag, const char* msg);
-	
+
 protected:
 	static const char PRIORITIES[];
-	
+
 private:
 	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Logger)
 };
