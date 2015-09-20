@@ -18,7 +18,6 @@
 #define MINDROID_MESSAGEQUEUE_H_
 
 #include <stdint.h>
-#include <pthread.h>
 #include "mindroid/os/Lock.h"
 #include "mindroid/os/CondVar.h"
 #include "mindroid/util/Utils.h"

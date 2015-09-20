@@ -36,6 +36,7 @@ bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t execTimestamp) 
 		return false;
 	}
 
+	bool notify = false;
 	{
 		AutoLock autoLock;
 		if (runnable.mExecTimestamp != 0) {
@@ -46,6 +47,10 @@ bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t execTimestamp) 
 		if (curRunnable == NULL || execTimestamp < curRunnable->mExecTimestamp) {
 			runnable.mNextRunnable = curRunnable;
 			mMessage.obj = &runnable;
+
+			mMessageQueue.removeMessage(this, &mMessage);
+			mMessageQueue.enqueueMessage(mMessage, execTimestamp, false);
+			notify = true;
 		} else {
 			Runnable* prevRunnable = NULL;
 			while (curRunnable != NULL && curRunnable->mExecTimestamp <= execTimestamp) {
@@ -55,11 +60,10 @@ bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t execTimestamp) 
 			runnable.mNextRunnable = prevRunnable->mNextRunnable;
 			prevRunnable->mNextRunnable = &runnable;
 		}
-		uint64_t execTimestamp = ((Runnable*) mMessage.obj)->mExecTimestamp;
-		mMessageQueue.removeMessage(this, &mMessage);
-		mMessageQueue.enqueueMessage(mMessage, execTimestamp, false);
 	}
-	mMessageQueue.notify();
+	if (notify) {
+		mMessageQueue.notify();
+	}
 	return true;
 }
 
@@ -109,6 +113,13 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 			mMessage.obj = nextRunnable;
 			curRunnable->recycle();
 			curRunnable = nextRunnable;
+
+			Runnable* headRunnable = curRunnable;
+			if (headRunnable != NULL) {
+				mMessageQueue.removeMessage(this, &mMessage);
+				mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp, false);
+				notify = true;
+			}
 		}
 
 		// Remove a matching runnable after the front of the runnable queue.
@@ -126,12 +137,6 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 				}
 				curRunnable = nextRunnable;
 			}
-		}
-
-		Runnable* headRunnable = (Runnable*) mMessage.obj;
-		if (headRunnable != NULL) {
-			mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp, false);
-			notify = true;
 		}
 	}
 	if (notify) {
