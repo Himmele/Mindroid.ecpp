@@ -29,7 +29,7 @@ LIB_OBJS = $(addprefix $(LIB_DIR)/,$(OBJS))
 
 Mindroid.ecpp = $(LIB_DIR)/libmindroid.a
 
-.PHONY: depend clean
+.PHONY: clean
 
 all: $(Mindroid.ecpp)
 
@@ -42,6 +42,3 @@ $(LIB_DIR)/%.o: %.cpp
 
 clean:
 	$(RM) -rf $(LIB_DIR)
-
-depend: $(SRCS)
-	makedepend $(INCLUDES) $^
