@@ -1,5 +1,8 @@
-Debug
 *.o
+*.lib
+*.a
+.bake
+Debug
+Release
 .settings
 out
-
