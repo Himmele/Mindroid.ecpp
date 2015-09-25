@@ -18,8 +18,8 @@
 #define MINDROID_ATOMICINTEGER_H_
 
 #include <stdint.h>
-#include "mindroid/util/Utils.h"
 #include "mindroid/os/Lock.h"
+#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 
