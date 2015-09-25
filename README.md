@@ -1,9 +1,9 @@
 ## Mindroid.cpp is mainly a messaging and concurrency framework for C++ development ##
 
-### Branches ###
-- master: Contains a POSIX compliant version of the embedded Mindroid application framework.
-- cmsis-rtos: Contains a CMSIS-RTOS compliant version for ARM Cortex-M processors.
-- autosar-os: Contains an AUTOSAR-OS compliant version for various embedded processors.
+### Platforms ###
+- POSIX: Contains a POSIX compliant version of the embedded Mindroid application framework.
+- CMSIS-RTOS: Contains a CMSIS-RTOS compliant version for ARM Cortex-M processors.
+- Autosar-OS: Contains an AUTOSAR-OS compliant version for various embedded processors.
 
 ### [Mindroid would even make Alan Kay comfortable with C++ :-)](http://himmele.blogspot.com/2010/11/alan-kay-on-object-oriented-programming.html) ###
 
