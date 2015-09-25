@@ -1,4 +1,5 @@
 Debug
 *.o
 .settings
+out
 
