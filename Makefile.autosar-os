@@ -1,3 +1,4 @@
+# WindRiver Diab Compiler
 CC := dcc.exe
 CXX := dcc.exe
 LD := dld.exe
