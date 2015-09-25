@@ -4,6 +4,7 @@
 - POSIX: Contains a POSIX compliant version of the embedded Mindroid application framework.
 - CMSIS-RTOS: Contains a CMSIS-RTOS compliant version for ARM Cortex-M processors.
 - Autosar-OS: Contains an AUTOSAR-OS compliant version for various embedded processors.
+- Autosar-SWC: Run event-driven Mindroid inside of cyclic AUTOSAR Software Components.
 
 ### [Mindroid would even make Alan Kay comfortable with C++ :-)](http://himmele.blogspot.com/2010/11/alan-kay-on-object-oriented-programming.html) ###
 
