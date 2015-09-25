@@ -15,7 +15,6 @@
  */
 
 #include "mindroid/os/Lock.h"
-#include "mindroid/os/Clock.h"
 #include <autosar-os.h>
 
 namespace mindroid {
