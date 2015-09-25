@@ -1,0 +1,47 @@
+CC := armcc.exe
+CXX := armcc.exe
+LD := armlink.exe
+AS := armasm.exe
+AR := armar.exe
+RM := rm
+INCLUDES := -Isrc -Isrc/cmsis-rtos -Icmsis-rtos
+CFLAGS := -c --cpu Cortex-M3 -g -O0 --gnu
+LDFLAGS :=
+LIB_DIR := lib/cmsis-rtos
+
+SRCS = src/mindroid/app/Process.cpp \
+	src/mindroid/os/Handler.cpp \
+	src/mindroid/os/Message.cpp \
+	src/mindroid/os/MessageQueue.cpp \
+	src/mindroid/os/RunnableQueue.cpp \
+	src/mindroid/util/Assert.cpp \
+	src/mindroid/util/Log.cpp \
+	src/mindroid/util/Logger.cpp \
+	src/cmsis-rtos/mindroid/os/Clock.cpp \
+	src/cmsis-rtos/mindroid/os/CondVar.cpp \
+	src/cmsis-rtos/mindroid/os/Lock.cpp \
+	src/cmsis-rtos/mindroid/os/Looper.cpp \
+	src/cmsis-rtos/mindroid/os/Semaphore.cpp \
+	src/cmsis-rtos/mindroid/os/Thread.cpp
+
+OBJS = $(SRCS:.cpp=.o)
+LIB_OBJS = $(addprefix $(LIB_DIR)/,$(OBJS))
+
+Mindroid.ecpp = $(LIB_DIR)/libmindroid.a
+
+.PHONY: depend clean
+
+all: $(Mindroid.ecpp)
+
+$(Mindroid.ecpp): $(LIB_OBJS) 
+	$(AR) -r $@ $^
+
+$(LIB_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	$(RM) -rf $(LIB_DIR)
+
+depend: $(SRCS)
+	makedepend $(INCLUDES) $^

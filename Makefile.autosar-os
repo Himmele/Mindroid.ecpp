@@ -1,0 +1,45 @@
+CC := dcc.exe
+CXX := dcc.exe
+LD := dld.exe
+AS := das.exe
+AR := dar.exe
+RM := rm
+INCLUDES := -Isrc -Isrc/autosar-os -Iautosar-os
+CFLAGS := -tPPCVLEES:simple -g -XO -Xrtti-off -Xexceptions-off -ew4265 -ew4504
+LDFLAGS :=
+LIB_DIR := lib/autosar-os
+
+SRCS = src/mindroid/app/Process.cpp \
+	src/mindroid/os/Handler.cpp \
+	src/mindroid/os/Message.cpp \
+	src/mindroid/os/MessageQueue.cpp \
+	src/mindroid/os/RunnableQueue.cpp \
+	src/mindroid/util/Assert.cpp \
+	src/mindroid/util/Log.cpp \
+	src/mindroid/util/Logger.cpp \
+	src/autosar-os/mindroid/os/Clock.cpp \
+	src/autosar-os/mindroid/os/CondVar.cpp \
+	src/autosar-os/mindroid/os/Lock.cpp \
+	src/autosar-os/mindroid/os/Looper.cpp
+
+OBJS = $(SRCS:.cpp=.o)
+LIB_OBJS = $(addprefix $(LIB_DIR)/,$(OBJS))
+
+Mindroid.ecpp = $(LIB_DIR)/libmindroid.a
+
+.PHONY: depend clean
+
+all: $(Mindroid.ecpp)
+
+$(Mindroid.ecpp): $(LIB_OBJS) 
+	$(AR) -r $@ $^
+
+$(LIB_DIR)/%.o: %.cpp
+	@mkdir -p $(@D)
+	$(CXX) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	$(RM) -rf $(LIB_DIR)
+
+depend: $(SRCS)
+	makedepend $(INCLUDES) $^
