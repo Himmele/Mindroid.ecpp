@@ -20,11 +20,11 @@ Links:
 - [Android messaging and concurrency for native C++ code development](http://himmele.blogspot.com/2011/08/android-messaging-and-concurrency-for.html)
 - [Alan Kay on Object-Oriented Programming](http://himmele.blogspot.com/2010/11/alan-kay-on-object-oriented-programming.html)
 
-### [Mindroid would even make Alan Kay comfortable with C++ :-)](http://himmele.blogspot.com/2010/11/alan-kay-on-object-oriented-programming.html) ###
+#### [Mindroid would even make Alan Kay comfortable with C++ :-)](http://himmele.blogspot.com/2010/11/alan-kay-on-object-oriented-programming.html) ####
 
-## Google Android ##
+### Ideas from Google Android ###
 
-Most ideas for Mindroid come from Google's Android messaging and concurrency classes.
+Most ideas of Mindroid come from Google's Android messaging and concurrency classes.
 
 Android's messaging and concurrency framework (together with the Binder IPC mechanism) forms the basis of all Android applications and services.
 The messaging and concurrency framework is mainly based on the Thread, Looper, Message, MessageQueue and Handler classes.
