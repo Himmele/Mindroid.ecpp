@@ -11,10 +11,9 @@
 
 using namespace mindroid;
 
-static const char* LOG_TAG = "Mindroid";
+static const char* const LOG_TAG = "Mindroid";
 
-class Handler1 : public Handler
-{
+class Handler1 : public Handler {
 public:
 	virtual void handleMessage(const Message& message) {
 		switch (message.what) {
@@ -25,22 +24,19 @@ public:
 			break;
 		}
 		default:
-			Log::i(LOG_TAG, "Handler1::handleMessage 0x%x with ID %d by Looper 0x%x",
-					&message, message.what, Looper::myLooper());
+			Log::i(LOG_TAG, "Handler1::handleMessage 0x%x with ID %d by Looper 0x%x", &message, message.what, Looper::myLooper());
 		}
 	}
 };
 
-class Handler2 : public Handler
-{
+class Handler2 : public Handler {
 public:
 	Handler2() {
 		obtainMessage(mMessage, 3);
 	}
 
 	virtual void handleMessage(const Message& message) {
-		Log::i(LOG_TAG, "Handler2::handleMessage 0x%x with ID %d by Looper 0x%x",
-				&message, message.what, Looper::myLooper());
+		Log::i(LOG_TAG, "Handler2::handleMessage 0x%x with ID %d by Looper 0x%x", &message, message.what, Looper::myLooper());
 	}
 
 	void test() {
@@ -51,14 +47,15 @@ private:
 	Message mMessage;
 };
 
-class Handler3 : public Handler
-{
+class Handler3 : public Handler {
 public:
-	Handler3(Looper& looper) : Handler(looper), mMessage(*this, 4) {}
+	Handler3(Looper& looper) :
+			Handler(looper),
+			mMessage(*this, 4) {
+	}
 
 	virtual void handleMessage(const Message& message) {
-		Log::i(LOG_TAG, "Handler3::handleMessage 0x%x with ID %d by Looper 0x%x",
-				&message, message.what, Looper::myLooper());
+		Log::i(LOG_TAG, "Handler3::handleMessage 0x%x with ID %d by Looper 0x%x", &message, message.what, Looper::myLooper());
 		sendMessageDelayed(mMessage, 4000);
 		Log::i(LOG_TAG, "Time: %lld", Clock::monotonicTime());
 	}
@@ -71,8 +68,7 @@ private:
 	Message mMessage;
 };
 
-class Runnable1 : public Runnable
-{
+class Runnable1 : public Runnable {
 public:
 	virtual void run() {
 		Log::i(LOG_TAG, "Runnable1::run by Looper 0x%x", Looper::myLooper());
@@ -80,12 +76,10 @@ public:
 	}
 };
 
-class Test
-{
+class Test {
 public:
 	void test(int32_t value) {
-		Log::i(LOG_TAG, "Closure1::test with value %d by Looper 0x%x",
-				value, Looper::myLooper());
+		Log::i(LOG_TAG, "Closure1::test with value %d by Looper 0x%x", value, Looper::myLooper());
 	}
 };
 
@@ -113,7 +107,7 @@ int main() {
 	handler3.test();
 
 	Test test;
-	int i = 0;
+	int32_t i = 0;
 	while (i < 10) {
 		obtainClosure(closure1, test, &Test::test, i++);
 		handler1->sendMessageDelayed(message2, 100);

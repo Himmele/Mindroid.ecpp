@@ -6,3 +6,5 @@ Debug
 Release
 .settings
 lib
+examples/main
+examples/snippets/loopers
