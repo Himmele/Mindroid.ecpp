@@ -27,6 +27,8 @@ typedef unsigned short AlarmType;
 typedef unsigned int EventMaskType;
 typedef EventMaskType *EventMaskRefType;
 
+extern void SuspendAllInterrupts(void);
+extern void ResumeAllInterrupts(void);
 extern void ResumeOSInterrupts(void);
 extern void SuspendOSInterrupts(void);
 
