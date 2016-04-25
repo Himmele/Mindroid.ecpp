@@ -5,10 +5,10 @@ LD := dld.exe
 AS := das.exe
 AR := dar.exe
 RM := rm
-INCLUDES := -Isrc/autosar-swc -Isrc -Iautosar-os
+INCLUDES := -Isrc/platforms/autosar-swc -Isrc -Iplatforms/autosar-os
 CFLAGS := -tPPCVLEES:simple -g -XO -Xrtti-off -Xexceptions-off -ew4265 -ew4504
 LDFLAGS :=
-LIB_DIR := lib/autosar-swc
+LIB_DIR := libs/autosar-swc
 
 SRCS = src/mindroid/app/Process.cpp \
 	src/mindroid/os/Handler.cpp \
@@ -16,11 +16,11 @@ SRCS = src/mindroid/app/Process.cpp \
 	src/mindroid/util/Assert.cpp \
 	src/mindroid/util/Log.cpp \
 	src/mindroid/util/Logger.cpp \
-	src/autosar-swc/mindroid/os/Clock.cpp \
-	src/autosar-swc/mindroid/os/Lock.cpp \
-	src/autosar-swc/mindroid/os/Looper.cpp \
-	src/autosar-swc/mindroid/os/MessageQueue.cpp \
-	src/autosar-swc/mindroid/os/RunnableQueue.cpp
+	src/platforms/autosar-swc/mindroid/os/Clock.cpp \
+	src/platforms/autosar-swc/mindroid/os/Lock.cpp \
+	src/platforms/autosar-swc/mindroid/os/Looper.cpp \
+	src/platforms/autosar-swc/mindroid/os/MessageQueue.cpp \
+	src/platforms/autosar-swc/mindroid/os/RunnableQueue.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 LIB_OBJS = $(addprefix $(LIB_DIR)/,$(OBJS))
