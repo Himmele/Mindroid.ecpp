@@ -5,9 +5,9 @@ LD := g++
 AS := gas
 AR := ar
 RM := rm
-INCLUDES := -I../src -I../src/posix
+INCLUDES := -I../src -I../src/platforms/posix
 CFLAGS := -c -g -O0
-LDFLAGS := -lmindroid -lpthread -lrt -L../lib/posix
+LDFLAGS := -lmindroid -lpthread -lrt -L../libs/posix
 
 SRCS = Main.cpp \
 	ServiceManager.cpp \
