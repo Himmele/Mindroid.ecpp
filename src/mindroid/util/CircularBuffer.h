@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/uio.h>
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
 
 namespace mindroid {
 
@@ -72,7 +72,7 @@ private:
 	uint16_t mWriteIndex;
 	uint16_t mPeakSize;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(CircularBuffer)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(CircularBuffer)
 };
 
 template<uint16_t SIZE>

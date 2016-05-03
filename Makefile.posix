@@ -10,19 +10,19 @@ CFLAGS := -c -g -O0
 LDFLAGS :=
 LIB_DIR := libs/posix
 
-SRCS = src/mindroid/app/Process.cpp \
-	src/mindroid/os/Handler.cpp \
+SRCS = src/mindroid/os/Handler.cpp \
 	src/mindroid/os/Message.cpp \
 	src/mindroid/os/MessageQueue.cpp \
 	src/mindroid/os/RunnableQueue.cpp \
+	src/mindroid/os/Process.cpp \
 	src/mindroid/util/Assert.cpp \
 	src/mindroid/util/Log.cpp \
 	src/mindroid/util/Logger.cpp \
-	src/platforms/posix/mindroid/os/Clock.cpp \
-	src/platforms/posix/mindroid/os/CondVar.cpp \
-	src/platforms/posix/mindroid/os/Lock.cpp \
 	src/platforms/posix/mindroid/os/Looper.cpp \
-	src/platforms/posix/mindroid/os/Thread.cpp
+	src/platforms/posix/mindroid/os/SystemClock.cpp \
+	src/platforms/posix/mindroid/os/Thread.cpp \
+	src/platforms/posix/mindroid/util/concurrent/locks/Condition.cpp \
+	src/platforms/posix/mindroid/util/concurrent/locks/Lock.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 LIB_OBJS = $(addprefix $(LIB_DIR)/,$(OBJS))

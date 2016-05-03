@@ -18,17 +18,17 @@
 #define MINDROID_HANDLER_H_
 
 #include <stdint.h>
+#include "mindroid/lang/Runnable.h"
+#include "mindroid/lang/Object.h"
 #include "mindroid/os/Message.h"
-#include "mindroid/os/Runnable.h"
 #include "mindroid/util/Assert.h"
-#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 
+class Lock;
 class Looper;
 class MessageQueue;
 class RunnableQueue;
-class Lock;
 
 class Handler {
 public:
@@ -87,10 +87,10 @@ public:
 	virtual void handleMessage(const Message& message);
 	bool sendMessage(Message& message);
 	bool sendMessageDelayed(Message& message, uint32_t delay);
-	bool sendMessageAtTime(Message& message, uint64_t execTimestamp);
+	bool sendMessageAtTime(Message& message, uint64_t uptimeMillis);
 	bool post(Runnable& runnable);
 	bool postDelayed(Runnable& runnable, uint32_t delay);
-	bool postAtTime(Runnable& runnable, uint64_t execTimestamp);
+	bool postAtTime(Runnable& runnable, uint64_t uptimeMillis);
 	bool removeMessages();
 	bool removeMessages(int32_t what);
 	bool removeMessage(const Message& message);
@@ -100,7 +100,7 @@ private:
 	MessageQueue* mMessageQueue;
 	RunnableQueue* mRunnableQueue;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Handler)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Handler)
 };
 
 } /* namespace mindroid */

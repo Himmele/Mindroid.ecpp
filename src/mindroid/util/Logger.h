@@ -18,7 +18,7 @@
 #define MINDROID_LOGGER_H_
 
 #include <stdint.h>
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
 
 namespace mindroid {
 
@@ -33,7 +33,7 @@ protected:
 	static const char PRIORITIES[];
 
 private:
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Logger)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Logger)
 };
 
 } /* namespace mindroid */

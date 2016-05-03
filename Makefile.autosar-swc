@@ -10,17 +10,18 @@ CFLAGS := -tPPCVLEES:simple -g -XO -Xrtti-off -Xexceptions-off -ew4265 -ew4504
 LDFLAGS :=
 LIB_DIR := libs/autosar-swc
 
-SRCS = src/mindroid/app/Process.cpp \
-	src/mindroid/os/Handler.cpp \
+SRCS = src/mindroid/os/Handler.cpp \
 	src/mindroid/os/Message.cpp \
+	src/mindroid/os/MessageQueue.cpp \
+	src/mindroid/os/RunnableQueue.cpp \
+	src/mindroid/os/Process.cpp \
 	src/mindroid/util/Assert.cpp \
 	src/mindroid/util/Log.cpp \
 	src/mindroid/util/Logger.cpp \
-	src/platforms/autosar-swc/mindroid/os/Clock.cpp \
-	src/platforms/autosar-swc/mindroid/os/Lock.cpp \
 	src/platforms/autosar-swc/mindroid/os/Looper.cpp \
-	src/platforms/autosar-swc/mindroid/os/MessageQueue.cpp \
-	src/platforms/autosar-swc/mindroid/os/RunnableQueue.cpp
+	src/platforms/autosar-swc/mindroid/os/SystemClock.cpp \
+	src/platforms/autosar-swc/mindroid/util/concurrent/locks/Condition.cpp \
+	src/platforms/autosar-swc/mindroid/util/concurrent/locks/Lock.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 LIB_OBJS = $(addprefix $(LIB_DIR)/,$(OBJS))

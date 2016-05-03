@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 #include "mindroid/app/Service.h"
+#include "mindroid/lang/Closure.h"
+#include "mindroid/lang/Object.h"
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Message.h"
-#include "mindroid/os/Closure.h"
-#include "mindroid/util/Utils.h"
 
 class World;
 
@@ -26,7 +26,7 @@ private:
 	World& mWorld;
 	mindroid::Message mMessage;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Hello)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Hello)
 };
 
 class World : public mindroid::Service, public mindroid::Handler {
@@ -43,7 +43,7 @@ private:
 	Hello& mHello;
 	mindroid::Closure1<World, const char*> mSayWorld;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(World)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(World)
 };
 
 #endif /* HELLOWORLD_H_ */

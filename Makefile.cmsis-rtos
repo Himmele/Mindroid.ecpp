@@ -10,20 +10,20 @@ CFLAGS := -c --cpu Cortex-M3 -g -O0 --gnu
 LDFLAGS :=
 LIB_DIR := libs/cmsis-rtos
 
-SRCS = src/mindroid/app/Process.cpp \
-	src/mindroid/os/Handler.cpp \
+SRCS = src/mindroid/os/Handler.cpp \
 	src/mindroid/os/Message.cpp \
 	src/mindroid/os/MessageQueue.cpp \
 	src/mindroid/os/RunnableQueue.cpp \
+	src/mindroid/os/Process.cpp \
 	src/mindroid/util/Assert.cpp \
 	src/mindroid/util/Log.cpp \
 	src/mindroid/util/Logger.cpp \
-	src/platforms/cmsis-rtos/mindroid/os/Clock.cpp \
-	src/platforms/cmsis-rtos/mindroid/os/CondVar.cpp \
-	src/platforms/cmsis-rtos/mindroid/os/Lock.cpp \
 	src/platforms/cmsis-rtos/mindroid/os/Looper.cpp \
-	src/platforms/cmsis-rtos/mindroid/os/Semaphore.cpp \
-	src/platforms/cmsis-rtos/mindroid/os/Thread.cpp
+	src/platforms/cmsis-rtos/mindroid/os/SystemClock.cpp \
+	src/platforms/cmsis-rtos/mindroid/os/Thread.cpp \
+	src/platforms/cmsis-rtos/mindroid/util/concurrent/Semaphore.cpp \
+	src/platforms/cmsis-rtos/mindroid/util/concurrent/locks/Condition.cpp \
+	src/platforms/cmsis-rtos/mindroid/util/concurrent/locks/Lock.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 LIB_OBJS = $(addprefix $(LIB_DIR)/,$(OBJS))

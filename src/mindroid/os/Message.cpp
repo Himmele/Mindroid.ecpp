@@ -26,9 +26,9 @@ Message::Message() :
 		arg1(0),
 		arg2(0),
 		obj(NULL),
-		mExecTimestamp(0),
-		mHandler(NULL),
-		mNextMessage(NULL) {
+		when(0xFFFFFFFFFFFFFFFF),
+		target(NULL),
+		nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler) :
@@ -36,9 +36,9 @@ Message::Message(Handler& handler) :
 		arg1(0),
 		arg2(0),
 		obj(NULL),
-		mExecTimestamp(0),
-		mHandler(&handler),
-		mNextMessage(NULL) {
+		when(0xFFFFFFFFFFFFFFFF),
+		target(&handler),
+		nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler, const int32_t what) :
@@ -46,9 +46,9 @@ Message::Message(Handler& handler, const int32_t what) :
 		arg1(0),
 		arg2(0),
 		obj(NULL),
-		mExecTimestamp(0),
-		mHandler(&handler),
-		mNextMessage(NULL) {
+		when(0xFFFFFFFFFFFFFFFF),
+		target(&handler),
+		nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2) :
@@ -56,9 +56,9 @@ Message::Message(Handler& handler, const int32_t what, const int32_t arg1, const
 		arg1(arg1),
 		arg2(arg2),
 		obj(NULL),
-		mExecTimestamp(0),
-		mHandler(&handler),
-		mNextMessage(NULL) {
+		when(0xFFFFFFFFFFFFFFFF),
+		target(&handler),
+		nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler, const int32_t what, void* const obj) :
@@ -66,9 +66,9 @@ Message::Message(Handler& handler, const int32_t what, void* const obj) :
 		arg1(0),
 		arg2(0),
 		obj(obj),
-		mExecTimestamp(0),
-		mHandler(&handler),
-		mNextMessage(NULL) {
+		when(0xFFFFFFFFFFFFFFFF),
+		target(&handler),
+		nextMessage(NULL) {
 }
 
 Message& Message::operator=(const Message& message) {
@@ -76,9 +76,9 @@ Message& Message::operator=(const Message& message) {
 	arg1 = message.arg1;
 	arg2 = message.arg2;
 	obj = message.obj;
-	mExecTimestamp = 0;
-	mHandler = message.mHandler;
-	mNextMessage = NULL;
+	when = 0xFFFFFFFFFFFFFFFF;
+	target = message.target;
+	nextMessage = NULL;
 	return *this;
 }
 
@@ -128,14 +128,14 @@ void Message::clear() {
 	arg1 = 0;
 	arg2 = 0;
 	obj = NULL;
-	mExecTimestamp = 0;
-	mHandler = NULL;
-	mNextMessage = NULL;
+	when = 0xFFFFFFFFFFFFFFFF;
+	target = NULL;
+	nextMessage = NULL;
 }
 
 bool Message::sendToTarget() {
-	if (mHandler != NULL) {
-		return mHandler->sendMessage(*this);
+	if (target != NULL) {
+		return target->sendMessage(*this);
 	} else {
 		return false;
 	}

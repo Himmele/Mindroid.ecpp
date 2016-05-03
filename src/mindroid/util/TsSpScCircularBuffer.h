@@ -20,8 +20,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/uio.h>
-#include "mindroid/os/AtomicInteger.h"
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
+#include "mindroid/util/concurrent/atomic/AtomicInteger.h"
 
 namespace mindroid {
 
@@ -71,11 +71,11 @@ private:
 	void calcPeakSize(uint16_t readIndex, uint16_t writeIndex);
 
 	uint8_t mBuffer[SIZE];
-	AtomicInteger<uint16_t> mReadIndex;
-	AtomicInteger<uint16_t> mWriteIndex;
+	AtomicShort mReadIndex;	
+	AtomicShort mWriteIndex;
 	uint16_t mPeakSize;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(TsSpScCircularBuffer)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(TsSpScCircularBuffer)
 };
 
 template<uint16_t SIZE>

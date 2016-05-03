@@ -3,8 +3,8 @@
 #include "mindroid/os/Handler.h"
 #include "mindroid/os/Thread.h"
 #include "mindroid/os/Message.h"
-#include "mindroid/os/Closure.h"
-#include "mindroid/os/Clock.h"
+#include "mindroid/os/SystemClock.h"
+#include "mindroid/lang/Closure.h"
 #include "mindroid/util/Buffer.h"
 #include "mindroid/util/Log.h"
 #include "mindroid/util/Assert.h"
@@ -57,7 +57,7 @@ public:
 	virtual void handleMessage(const Message& message) {
 		Log::i(LOG_TAG, "Handler3::handleMessage 0x%x with ID %d by Looper 0x%x", &message, message.what, Looper::myLooper());
 		sendMessageDelayed(mMessage, 4000);
-		Log::i(LOG_TAG, "Time: %lld", Clock::monotonicTime());
+		Log::i(LOG_TAG, "Time: %lld", SystemClock::monotonicTime());
 	}
 
 	void test() {

@@ -16,58 +16,55 @@
 
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/os/Message.h"
-#include "mindroid/os/Clock.h"
-#include "mindroid/os/Lock.h"
-#include "mindroid/os/Runnable.h"
+#include "mindroid/os/SystemClock.h"
+#include "mindroid/lang/Runnable.h"
 
 namespace mindroid {
 
 MessageQueue::MessageQueue() :
 		mHeadMessage(NULL),
-		mCondVar(),
-		mQuiting(false) {
+		mCondition(),
+		mQuitting(false) {
 }
 
 MessageQueue::~MessageQueue() {
 }
 
-bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp) {
-	return enqueueMessage(message, execTimestamp, true);
+bool MessageQueue::enqueueMessage(Message& message, uint64_t when) {
+	return enqueueMessage(message, when, true);
 }
 
-bool MessageQueue::enqueueMessage(Message& message, uint64_t execTimestamp, bool notify) {
-	if (message.mHandler == NULL) {
-		return false;
-	}
-	if (execTimestamp == 0) {
+bool MessageQueue::enqueueMessage(Message& message, uint64_t when, bool signal) {
+	if (message.target == NULL) {
 		return false;
 	}
 
 	{
 		AutoLock autoLock;
-		if (message.mExecTimestamp != 0) {
+		if (mQuitting) {
 			return false;
 		}
-		if (mQuiting) {
+		if (message.isInUse()) {
 			return false;
 		}
-		message.mExecTimestamp = execTimestamp;
+		message.markInUse();
+		message.when = when;
 		Message* curMessage = mHeadMessage;
-		if (curMessage == NULL || execTimestamp < curMessage->mExecTimestamp) {
-			message.mNextMessage = curMessage;
+		if (curMessage == NULL || when < curMessage->when) {
+			message.nextMessage = curMessage;
 			mHeadMessage = &message;
 		} else {
 			Message* prevMessage = NULL;
-			while (curMessage != NULL && curMessage->mExecTimestamp <= execTimestamp) {
+			while (curMessage != NULL && curMessage->when <= when) {
 				prevMessage = curMessage;
-				curMessage = curMessage->mNextMessage;
+				curMessage = curMessage->nextMessage;
 			}
-			message.mNextMessage = prevMessage->mNextMessage;
-			prevMessage->mNextMessage = &message;
+			message.nextMessage = prevMessage->nextMessage;
+			prevMessage->nextMessage = &message;
 		}
 	}
-	if (notify) {
-		mCondVar.notify();
+	if (signal) {
+		mCondition.signal();
 	}
 	return true;
 }
@@ -78,10 +75,10 @@ Message* MessageQueue::dequeueMessage(Message& message) {
 
 Message* MessageQueue::dequeueMessage(Message& message, bool wait) {
 	while (true) {
-		uint64_t now = Clock::monotonicTime();
+		uint64_t now = SystemClock::monotonicTime();
 
 		AutoLock autoLock;
-		if (mQuiting) {
+		if (mQuitting) {
 			return NULL;
 		}
 
@@ -91,12 +88,12 @@ Message* MessageQueue::dequeueMessage(Message& message, bool wait) {
 
 		if (wait) {
 			if (mHeadMessage != NULL) {
-				if (mHeadMessage->mExecTimestamp - now > 0) {
-					uint32_t timeout = (mHeadMessage->mExecTimestamp - now); // milliseconds
-					mCondVar.wait(timeout);
+				if (mHeadMessage->when - now > 0) {
+					uint32_t timeout = (mHeadMessage->when - now); // milliseconds
+					mCondition.await(timeout);
 				}
 			} else {
-				mCondVar.wait();
+				mCondition.await();
 			}
 		} else {
 			return NULL;
@@ -107,8 +104,8 @@ Message* MessageQueue::dequeueMessage(Message& message, bool wait) {
 Message* MessageQueue::getNextMessage(uint64_t now, Message& message) {
 	Message* nextMessage = mHeadMessage;
 	if (nextMessage != NULL) {
-		if (now >= nextMessage->mExecTimestamp) {
-			mHeadMessage = nextMessage->mNextMessage;
+		if (now >= nextMessage->when) {
+			mHeadMessage = nextMessage->nextMessage;
 			message = *nextMessage;
 			nextMessage->recycle();
 			return &message;
@@ -128,9 +125,9 @@ bool MessageQueue::removeMessages(Handler* handler) {
 
 	Message* curMessage = mHeadMessage;
 	// Remove all matching messages at the front of the message queue.
-	while (curMessage != NULL && curMessage->mHandler == handler) {
+	while (curMessage != NULL && curMessage->target == handler) {
 		foundMessage = true;
-		Message* nextMessage = curMessage->mNextMessage;
+		Message* nextMessage = curMessage->nextMessage;
 		mHeadMessage = nextMessage;
 		curMessage->recycle();
 		curMessage = nextMessage;
@@ -138,13 +135,13 @@ bool MessageQueue::removeMessages(Handler* handler) {
 
 	// Remove all matching messages after the front of the message queue.
 	while (curMessage != NULL) {
-		Message* nextMessage = curMessage->mNextMessage;
+		Message* nextMessage = curMessage->nextMessage;
 		if (nextMessage != NULL) {
-			if (nextMessage->mHandler == handler) {
+			if (nextMessage->target == handler) {
 				foundMessage = true;
-				Message* nextButOneMessage = nextMessage->mNextMessage;
+				Message* nextButOneMessage = nextMessage->nextMessage;
 				nextMessage->recycle();
-				curMessage->mNextMessage = nextButOneMessage;
+				curMessage->nextMessage = nextButOneMessage;
 				continue;
 			}
 		}
@@ -167,9 +164,9 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 
 	Message* curMessage = mHeadMessage;
 	// Remove all matching messages at the front of the message queue.
-	while (curMessage != NULL && curMessage->mHandler == handler && curMessage->what == what) {
+	while (curMessage != NULL && curMessage->target == handler && curMessage->what == what) {
 		foundMessage = true;
-		Message* nextMessage = curMessage->mNextMessage;
+		Message* nextMessage = curMessage->nextMessage;
 		mHeadMessage = nextMessage;
 		curMessage->recycle();
 		curMessage = nextMessage;
@@ -177,13 +174,13 @@ bool MessageQueue::removeMessages(Handler* handler, int32_t what) {
 
 	// Remove all matching messages after the front of the message queue.
 	while (curMessage != NULL) {
-		Message* nextMessage = curMessage->mNextMessage;
+		Message* nextMessage = curMessage->nextMessage;
 		if (nextMessage != NULL) {
-			if (nextMessage->mHandler == handler && nextMessage->what == what) {
+			if (nextMessage->target == handler && nextMessage->what == what) {
 				foundMessage = true;
-				Message* nextButOneMessage = nextMessage->mNextMessage;
+				Message* nextButOneMessage = nextMessage->nextMessage;
 				nextMessage->recycle();
-				curMessage->mNextMessage = nextButOneMessage;
+				curMessage->nextMessage = nextButOneMessage;
 				continue;
 			}
 		}
@@ -206,9 +203,9 @@ bool MessageQueue::removeMessage(Handler* handler, const Message* message) {
 
 	Message* curMessage = mHeadMessage;
 	// Remove a matching message at the front of the message queue.
-	if (curMessage != NULL && curMessage->mHandler == handler && curMessage == message) {
+	if (curMessage != NULL && curMessage->target == handler && curMessage == message) {
 		foundMessage = true;
-		Message* nextMessage = curMessage->mNextMessage;
+		Message* nextMessage = curMessage->nextMessage;
 		mHeadMessage = nextMessage;
 		curMessage->recycle();
 		curMessage = nextMessage;
@@ -217,13 +214,13 @@ bool MessageQueue::removeMessage(Handler* handler, const Message* message) {
 	// Remove a matching message after the front of the message queue.
 	if (!foundMessage) {
 		while (curMessage != NULL) {
-			Message* nextMessage = curMessage->mNextMessage;
+			Message* nextMessage = curMessage->nextMessage;
 			if (nextMessage != NULL) {
-				if (nextMessage->mHandler == handler && nextMessage == message) {
+				if (nextMessage->target == handler && nextMessage == message) {
 					foundMessage = true;
-					Message* nextButOneMessage = nextMessage->mNextMessage;
+					Message* nextButOneMessage = nextMessage->nextMessage;
 					nextMessage->recycle();
-					curMessage->mNextMessage = nextButOneMessage;
+					curMessage->nextMessage = nextButOneMessage;
 					break;
 				}
 			}
@@ -236,16 +233,16 @@ bool MessageQueue::removeMessage(Handler* handler, const Message* message) {
 	return foundMessage;
 }
 
-void MessageQueue::notify() {
-	mCondVar.notify();
+void MessageQueue::signal() {
+	mCondition.signal();
 }
 
 void MessageQueue::quit() {
 	AutoLock autoLock;
-	if (mQuiting) {
+	if (mQuitting) {
 		return;
 	}
-	mQuiting = true;
+	mQuitting = true;
 }
 
 } /* namespace mindroid */

@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <assert.h>
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
 
 namespace mindroid {
 
@@ -102,7 +102,7 @@ private:
 
 	static const char* const LOG_TAG;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Assert)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Assert)
 };
 
 } /* namespace mindroid */

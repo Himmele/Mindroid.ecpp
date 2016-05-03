@@ -19,8 +19,8 @@
 #define MINDROID_BUFFER_H_
 
 #include <stdint.h>
+#include "mindroid/lang/Object.h"
 #include "mindroid/util/Assert.h"
-#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 
@@ -70,7 +70,7 @@ private:
 	size_t mOffset;
 	size_t mSize;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Buffer)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Buffer)
 };
 
 } /* namespace mindroid */

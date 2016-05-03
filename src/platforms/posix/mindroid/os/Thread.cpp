@@ -39,9 +39,9 @@ bool Thread::start() {
 	return (errorCode == 0);
 }
 
-void Thread::sleep(uint32_t milliseconds) {
-	::usleep((milliseconds % 1000) * 1000);
-	::sleep(milliseconds / 1000);
+void Thread::sleep(uint32_t millis) {
+	::usleep((millis % 1000) * 1000);
+	::sleep(millis / 1000);
 }
 
 void Thread::join() const {

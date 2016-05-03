@@ -31,7 +31,7 @@ int Looper::sNumLoopers = 0;
 Looper::Looper(TaskType taskId, AlarmType alarmId, EventMaskType eventId) :
 		mMessageQueue(),
 		mRunnableQueue(*this) {
-	new (&mMessageQueue.mCondVar) CondVar(taskId, alarmId, eventId);
+	new (&mMessageQueue.mCondition) Condition(taskId, alarmId, eventId);
 }
 
 bool Looper::prepare(TaskType taskId, AlarmType alarmId, EventMaskType eventId) {
@@ -91,8 +91,8 @@ void Looper::loop() {
 			if (message == NULL) {
 				return;
 			}
-			Handler* handler = message->mHandler;
-			message->mHandler = NULL;
+			Handler* handler = message->target;
+			message->target = NULL;
 			handler->dispatchMessage(*message);
 		}
 	}
@@ -108,8 +108,8 @@ void Looper::loop(uint32_t maxLoops) {
 			if (message == NULL) {
 				return;
 			}
-			Handler* handler = message->mHandler;
-			message->mHandler = NULL;
+			Handler* handler = message->target;
+			message->target = NULL;
 			handler->dispatchMessage(*message);
 			i++;
 		}

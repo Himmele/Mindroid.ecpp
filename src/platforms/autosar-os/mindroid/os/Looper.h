@@ -18,11 +18,11 @@
 #define MINDROID_LOOPER_H_
 
 #include <autosar-os.h>
+#include "mindroid/lang/Object.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/os/RunnableQueue.h"
 #include "mindroid/Mindroid.h"
-#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 
@@ -60,7 +60,7 @@ private:
 
 	friend class Handler;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Looper)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Looper)
 };
 
 } /* namespace mindroid */

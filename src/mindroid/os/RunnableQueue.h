@@ -21,7 +21,7 @@
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/os/Message.h"
 #include "mindroid/os/Handler.h"
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
 
 namespace mindroid {
 
@@ -32,7 +32,7 @@ class RunnableQueue : public Handler {
 public:
 	RunnableQueue(Looper& looper);
 	virtual ~RunnableQueue();
-	bool enqueueRunnable(Runnable& runnable, uint64_t execTimestamp);
+	bool enqueueRunnable(Runnable& runnable, uint64_t when);
 	bool removeRunnable(const Runnable* runnable);
 	virtual void handleMessage(const Message& message);
 
@@ -46,7 +46,7 @@ private:
 
 	friend class Looper;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(RunnableQueue)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(RunnableQueue)
 };
 
 } /* namespace mindroid */

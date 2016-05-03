@@ -18,8 +18,8 @@
 #define MINDROID_THREAD_H_
 
 #include <cmsis_os.h>
-#include "mindroid/os/Runnable.h"
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
+#include "mindroid/lang/Runnable.h"
 
 namespace mindroid {
 
@@ -42,11 +42,11 @@ private:
 
 	Runnable* mRunnable;
 	osThreadId mThreadId;
-	// osThreadDef macro body in cmsis_os.h
+	// osThreadDef macro in cmsis_os.h
 	osThreadDef_t mThread;
 	bool mInterrupted;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Thread)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Thread)
 };
 
 } /* namespace mindroid */

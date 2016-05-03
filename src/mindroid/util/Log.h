@@ -20,8 +20,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include "mindroid/lang/Object.h"
 #include "mindroid/util/Logger.h"
-#include "mindroid/util/Utils.h"
 
 namespace mindroid {
 
@@ -95,7 +95,7 @@ private:
 
 	static Logger* sLogger;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Log)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Log)
 };
 
 } /* namespace mindroid */

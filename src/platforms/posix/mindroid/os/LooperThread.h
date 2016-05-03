@@ -19,12 +19,12 @@
 
 #include <stdint.h>
 #include <new>
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
 #include "mindroid/os/Thread.h"
 #include "mindroid/os/Looper.h"
 #include "mindroid/os/Handler.h"
-#include "mindroid/os/Lock.h"
-#include "mindroid/os/CondVar.h"
+#include "mindroid/util/concurrent/locks/Lock.h"
+#include "mindroid/util/concurrent/locks/Condition.h"
 
 namespace mindroid {
 
@@ -39,7 +39,7 @@ public:
 	LooperThread() :
 			mLooper(NULL),
 			mHandler(NULL),
-			mCondVar(),
+			mCondition(),
 			mIsDone(false) {
 	}
 
@@ -51,7 +51,7 @@ public:
 		Lock::lock();
 		mLooper = Looper::myLooper();
 		mHandler = new (mHandlerData) T();
-		mCondVar.notifyAll();
+		mCondition.signalAll();
 		Lock::unlock();
 		Looper::loop();
 		Lock::lock();
@@ -65,7 +65,7 @@ public:
 	Looper* getLooper() {
 		AutoLock autoLock;
 		if (!mIsDone && mLooper == NULL) {
-			mCondVar.wait();
+			mCondition.await();
 		}
 		return mLooper;
 	}
@@ -73,7 +73,7 @@ public:
 	T* getHandler() {
 		AutoLock autoLock;
 		if (!mIsDone && mHandler == NULL) {
-			mCondVar.wait();
+			mCondition.await();
 		}
 		return mHandler;
 	}
@@ -82,10 +82,10 @@ private:
 	Looper* mLooper;
 	uint8_t mHandlerData[sizeof(T)] __attribute__((aligned (8)));
 	T* mHandler;
-	CondVar mCondVar;
+	Condition mCondition;
 	bool mIsDone;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(LooperThread)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(LooperThread)
 };
 
 } /* namespace mindroid */

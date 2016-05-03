@@ -18,8 +18,8 @@
 #define MINDROID_THREAD_H_
 
 #include <pthread.h>
-#include "mindroid/os/Runnable.h"
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Runnable.h"
+#include "mindroid/lang/Object.h"
 
 namespace mindroid {
 
@@ -32,7 +32,7 @@ public:
 	virtual void run() {
 	}
 	bool start();
-	static void sleep(uint32_t milliseconds);
+	static void sleep(uint32_t millis);
 	void interrupt();
 	bool isInterrupted() const;
 	void join() const;
@@ -45,7 +45,7 @@ private:
 	pthread_t mThread;
 	bool mInterrupted;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Thread)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Thread)
 };
 
 } /* namespace mindroid */

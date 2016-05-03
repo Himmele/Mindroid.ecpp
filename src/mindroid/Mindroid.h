@@ -17,7 +17,7 @@
 #ifndef MINDROID_H_
 #define MINDROID_H_
 
-#define MAX_NUM_LOOPERS 4
-#define MAX_NUM_SERVICES 4
+#define MAX_NUM_LOOPERS 1
+#define MAX_NUM_SERVICES 1
 
 #endif /* MINDROID_H_ */

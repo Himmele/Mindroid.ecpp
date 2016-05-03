@@ -18,8 +18,7 @@
 #define MINDROID_SERVICE_H_
 
 #include <stdint.h>
-#include "mindroid/os/Handler.h"
-#include "mindroid/util/Utils.h"
+#include "mindroid/lang/Object.h"
 
 namespace mindroid {
 
@@ -27,15 +26,18 @@ class Service {
 public:
 	Service() {
 	}
+
 	virtual ~Service() {
 	}
+
 	virtual void onCreate() {
 	}
+
 	virtual void onDestroy() {
 	}
 
 private:
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(Service)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Service)
 };
 
 } /* namespace mindroid */

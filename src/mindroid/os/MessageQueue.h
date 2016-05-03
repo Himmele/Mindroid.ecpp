@@ -18,9 +18,9 @@
 #define MINDROID_MESSAGEQUEUE_H_
 
 #include <stdint.h>
-#include "mindroid/os/Lock.h"
-#include "mindroid/os/CondVar.h"
-#include "mindroid/util/Utils.h"
+#include "mindroid/util/concurrent/locks/Lock.h"
+#include "mindroid/util/concurrent/locks/Condition.h"
+#include "mindroid/lang/Object.h"
 
 namespace mindroid {
 
@@ -32,27 +32,27 @@ class MessageQueue {
 public:
 	MessageQueue();
 	~MessageQueue();
-	bool enqueueMessage(Message& message, uint64_t execTimestamp);
+	bool enqueueMessage(Message& message, uint64_t when);
 	Message* dequeueMessage(Message& message);
 	bool removeMessages(Handler* handler);
 	bool removeMessages(Handler* handler, int32_t what);
 	bool removeMessage(Handler* handler, const Message* message);
 
 private:
-	bool enqueueMessage(Message& message, uint64_t execTimestamp, bool notify);
+	bool enqueueMessage(Message& message, uint64_t when, bool signal);
 	Message* dequeueMessage(Message& message, bool wait);
 	Message* getNextMessage(uint64_t now, Message& message);
-	void notify();
+	void signal();
 	void quit();
 
 	Message* mHeadMessage;
-	CondVar mCondVar;
-	bool mQuiting;
+	Condition mCondition;
+	bool mQuitting;
 
 	friend class Looper;
 	friend class RunnableQueue;
 
-	NO_COPY_CTOR_AND_ASSIGNMENT_OPERATOR(MessageQueue)
+	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(MessageQueue)
 };
 
 } /* namespace mindroid */

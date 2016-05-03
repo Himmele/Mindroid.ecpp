@@ -19,12 +19,12 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "mindroid/os/Lock.h"
+#include "mindroid/util/concurrent/locks/Lock.h"
 
 namespace mindroid {
 
-class Runnable;
 class Handler;
+class Runnable;
 
 class Message {
 public:
@@ -41,15 +41,15 @@ public:
 	static Message* obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
 	static Message* obtain(Message& message, Handler& handler, const int32_t what, void* const obj);
 
-	Handler* getHandler() const {
-		return mHandler;
+	Handler* getTarget() const {
+		return target;
 	}
 
 	bool sendToTarget();
 
 	inline bool isInUse() {
 		AutoLock autoLock;
-		return mExecTimestamp != 0;
+		return when != 0xFFFFFFFFFFFFFFFF;
 	}
 
 	int32_t what;
@@ -58,17 +58,20 @@ public:
 	void* obj;
 
 private:
+	inline void markInUse() {
+	}
+
 	inline void recycle() {
 		AutoLock autoLock;
-		mExecTimestamp = 0;
-		mNextMessage = NULL;
+		when = 0xFFFFFFFFFFFFFFFF;
+		nextMessage = NULL;
 	}
 
 	void clear();
 
-	uint64_t mExecTimestamp; // milliseconds
-	Handler* mHandler;
-	Message* mNextMessage;
+	uint64_t when; // milliseconds
+	Handler* target;
+	Message* nextMessage;
 
 	friend class MessageQueue;
 	friend class RunnableQueue;

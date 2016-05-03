@@ -16,6 +16,8 @@
 
 #include "mindroid/util/Log.h"
 
+extern "C" int vsnprintf(char* msg, size_t size, const char* format, va_list args);
+
 namespace mindroid {
 
 Logger Log::DEFAULT_LOGGER;

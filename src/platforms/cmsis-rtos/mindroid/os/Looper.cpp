@@ -87,8 +87,8 @@ void Looper::loop() {
 			if (message == NULL) {
 				return;
 			}
-			Handler* handler = message->mHandler;
-			message->mHandler = NULL;
+			Handler* handler = message->target;
+			message->target = NULL;
 			handler->dispatchMessage(*message);
 		}
 	}
@@ -104,8 +104,8 @@ void Looper::loop(uint32_t maxLoops) {
 			if (message == NULL) {
 				return;
 			}
-			Handler* handler = message->mHandler;
-			message->mHandler = NULL;
+			Handler* handler = message->target;
+			message->target = NULL;
 			handler->dispatchMessage(*message);
 			i++;
 		}

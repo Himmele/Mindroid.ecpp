@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+#include "mindroid/lang/Runnable.h"
 #include "mindroid/os/RunnableQueue.h"
-#include "mindroid/os/Runnable.h"
 #include "mindroid/os/Looper.h"
-#include "mindroid/os/Clock.h"
-#include "mindroid/os/Lock.h"
+#include "mindroid/os/SystemClock.h"
+#include "mindroid/util/concurrent/locks/Lock.h"
 
 namespace mindroid {
 
@@ -31,66 +31,63 @@ RunnableQueue::RunnableQueue(Looper& looper) :
 RunnableQueue::~RunnableQueue() {
 }
 
-bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t execTimestamp) {
-	if (execTimestamp == 0) {
-		return false;
-	}
-
-	bool notify = false;
+bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t when) {
+	bool signal = false;
 	{
 		AutoLock autoLock;
-		if (runnable.mExecTimestamp != 0) {
+		if (runnable.isInUse()) {
 			return false;
 		}
-		runnable.mExecTimestamp = execTimestamp;
+		runnable.markInUse();
+		runnable.when = when;
 		Runnable* curRunnable = (Runnable*) mMessage.obj;
-		if (curRunnable == NULL || execTimestamp < curRunnable->mExecTimestamp) {
-			runnable.mNextRunnable = curRunnable;
+		if (curRunnable == NULL || when < curRunnable->when) {
+			runnable.nextRunnable = curRunnable;
 			mMessage.obj = &runnable;
 
 			mMessageQueue.removeMessage(this, &mMessage);
-			mMessageQueue.enqueueMessage(mMessage, execTimestamp, false);
-			notify = true;
+			mMessageQueue.enqueueMessage(mMessage, when, false);
+			signal = true;
 		} else {
 			Runnable* prevRunnable = NULL;
-			while (curRunnable != NULL && curRunnable->mExecTimestamp <= execTimestamp) {
+			while (curRunnable != NULL && curRunnable->when <= when) {
 				prevRunnable = curRunnable;
-				curRunnable = curRunnable->mNextRunnable;
+				curRunnable = curRunnable->nextRunnable;
 			}
-			runnable.mNextRunnable = prevRunnable->mNextRunnable;
-			prevRunnable->mNextRunnable = &runnable;
+			runnable.nextRunnable = prevRunnable->nextRunnable;
+			prevRunnable->nextRunnable = &runnable;
 		}
 	}
-	if (notify) {
-		mMessageQueue.notify();
+	if (signal) {
+		mMessageQueue.signal();
 	}
 	return true;
 }
 
 Runnable* RunnableQueue::dequeueRunnable() {
 	Runnable* runnable = NULL;
-	uint64_t now = Clock::monotonicTime();
-	bool notify = false;
+	uint64_t now = SystemClock::monotonicTime();
+	bool signal = false;
 
 	{
 		AutoLock autoLock;
 		Runnable* nextRunnable = (Runnable*) mMessage.obj;
 		if (nextRunnable != NULL) {
-			if (now >= nextRunnable->mExecTimestamp) {
-				mMessage.obj = nextRunnable->mNextRunnable;
+			if (now >= nextRunnable->when) {
+				mMessage.obj = nextRunnable->nextRunnable;
 				runnable = nextRunnable;
 				runnable->recycle();
 			}
 
 			Runnable* headRunnable = (Runnable*) mMessage.obj;
 			if (headRunnable != NULL) {
-				mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp, false);
-				notify = true;
+				mMessageQueue.enqueueMessage(mMessage, headRunnable->when, false);
+				signal = true;
 			}
 		}
 	}
-	if (notify) {
-		mMessageQueue.notify();
+	if (signal) {
+		mMessageQueue.signal();
 	}
 	return runnable;
 }
@@ -101,7 +98,7 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 	}
 
 	bool foundRunnable = false;
-	bool notify = false;
+	bool signal = false;
 
 	{
 		AutoLock autoLock;
@@ -109,7 +106,7 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 		// Remove a matching runnable at the front of the runnable queue.
 		if (curRunnable != NULL && curRunnable == runnable) {
 			foundRunnable = true;
-			Runnable* nextRunnable = curRunnable->mNextRunnable;
+			Runnable* nextRunnable = curRunnable->nextRunnable;
 			mMessage.obj = nextRunnable;
 			curRunnable->recycle();
 			curRunnable = nextRunnable;
@@ -117,21 +114,21 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 			Runnable* headRunnable = (Runnable*) mMessage.obj;
 			if (headRunnable != NULL) {
 				mMessageQueue.removeMessage(this, &mMessage);
-				mMessageQueue.enqueueMessage(mMessage, headRunnable->mExecTimestamp, false);
-				notify = true;
+				mMessageQueue.enqueueMessage(mMessage, headRunnable->when, false);
+				signal = true;
 			}
 		}
 
 		// Remove a matching runnable after the front of the runnable queue.
 		if (!foundRunnable) {
 			while (curRunnable != NULL) {
-				Runnable* nextRunnable = curRunnable->mNextRunnable;
+				Runnable* nextRunnable = curRunnable->nextRunnable;
 				if (nextRunnable != NULL) {
 					if (nextRunnable == runnable) {
 						foundRunnable = true;
-						Runnable* nextButOneRunnable = nextRunnable->mNextRunnable;
+						Runnable* nextButOneRunnable = nextRunnable->nextRunnable;
 						nextRunnable->recycle();
-						curRunnable->mNextRunnable = nextButOneRunnable;
+						curRunnable->nextRunnable = nextButOneRunnable;
 						break;
 					}
 				}
@@ -139,8 +136,8 @@ bool RunnableQueue::removeRunnable(const Runnable* runnable) {
 			}
 		}
 	}
-	if (notify) {
-		mMessageQueue.notify();
+	if (signal) {
+		mMessageQueue.signal();
 	}
 
 	return foundRunnable;

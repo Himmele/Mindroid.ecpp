@@ -20,7 +20,7 @@
 #include "mindroid/os/MessageQueue.h"
 #include "mindroid/os/RunnableQueue.h"
 #include "mindroid/os/Looper.h"
-#include "mindroid/os/Clock.h"
+#include "mindroid/os/SystemClock.h"
 #include "mindroid/util/Assert.h"
 
 namespace mindroid {
@@ -44,31 +44,31 @@ void Handler::handleMessage(const Message& message) {
 }
 
 bool Handler::sendMessage(Message& message) {
-	return sendMessageAtTime(message, Clock::monotonicTime());
+	return sendMessageAtTime(message, SystemClock::monotonicTime());
 }
 
 bool Handler::sendMessageDelayed(Message& message, uint32_t delay) {
-	return sendMessageAtTime(message, Clock::monotonicTime() + delay);
+	return sendMessageAtTime(message, SystemClock::monotonicTime() + delay);
 }
 
-bool Handler::sendMessageAtTime(Message& message, uint64_t execTimestamp) {
-	if (message.getHandler() == this) {
-		return mMessageQueue->enqueueMessage(message, execTimestamp);
+bool Handler::sendMessageAtTime(Message& message, uint64_t uptimeMillis) {
+	if (message.getTarget() == this) {
+		return mMessageQueue->enqueueMessage(message, uptimeMillis);
 	} else {
 		return false;
 	}
 }
 
 bool Handler::post(Runnable& runnable) {
-	return postAtTime(runnable, Clock::monotonicTime());
+	return postAtTime(runnable, SystemClock::monotonicTime());
 }
 
 bool Handler::postDelayed(Runnable& runnable, uint32_t delay) {
-	return postAtTime(runnable, Clock::monotonicTime() + delay);
+	return postAtTime(runnable, SystemClock::monotonicTime() + delay);
 }
 
-bool Handler::postAtTime(Runnable& runnable, uint64_t execTimestamp) {
-	return mRunnableQueue->enqueueRunnable(runnable, execTimestamp);
+bool Handler::postAtTime(Runnable& runnable, uint64_t uptimeMillis) {
+	return mRunnableQueue->enqueueRunnable(runnable, uptimeMillis);
 }
 
 bool Handler::removeMessages() {
