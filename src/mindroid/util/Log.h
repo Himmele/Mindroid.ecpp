@@ -83,6 +83,9 @@ public:
 	static Logger DEFAULT_LOGGER;
 
 private:
+	Log() {
+	}
+
 	static const uint8_t VERBOSE = 0;
 	static const uint8_t DEBUG = 1;
 	static const uint8_t INFO = 2;

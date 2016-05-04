@@ -25,8 +25,10 @@ namespace mindroid {
 
 class AtomicShort {
 public:
-	AtomicShort() : mValue(0) { }
-	AtomicShort(uint16_t initialValue) : mValue(initialValue) { }
+	AtomicShort() : mValue(0) {
+	}
+	AtomicShort(uint16_t initialValue) : mValue(initialValue) {
+	}
 
 	inline uint16_t get() const {
 		return mValue;
@@ -48,8 +50,10 @@ private:
 
 class AtomicInteger {
 public:
-	AtomicInteger() : mValue(0) { }
-	AtomicInteger(uint32_t initialValue) : mValue(initialValue) { }
+	AtomicInteger() : mValue(0) {
+	}
+	AtomicInteger(uint32_t initialValue) : mValue(initialValue) {
+	}
 
 	inline uint32_t get() const {
 		return mValue;

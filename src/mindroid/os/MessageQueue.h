@@ -31,7 +31,9 @@ class Runnable;
 class MessageQueue {
 public:
 	MessageQueue();
-	~MessageQueue();
+	~MessageQueue() {
+	}
+
 	bool enqueueMessage(Message& message, uint64_t when);
 	Message* dequeueMessage(Message& message);
 	bool removeMessages(Handler* handler);

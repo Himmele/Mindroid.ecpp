@@ -30,8 +30,6 @@ class Runnable;
 
 class Looper {
 public:
-	virtual ~Looper() {
-	}
 	static bool prepare(TaskType taskId, AlarmType alarmId, EventMaskType eventId);
 	static Looper* myLooper();
 	static void loop();

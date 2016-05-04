@@ -27,9 +27,6 @@ MessageQueue::MessageQueue() :
 		mQuitting(false) {
 }
 
-MessageQueue::~MessageQueue() {
-}
-
 bool MessageQueue::enqueueMessage(Message& message, uint64_t when) {
 	return enqueueMessage(message, when, true);
 }

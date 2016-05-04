@@ -29,6 +29,9 @@ public:
 	static uint64_t realTime(); // milliseconds
 
 private:
+	SystemClock() {
+	}
+
 	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(SystemClock)
 };
 

@@ -30,8 +30,6 @@ class Runnable;
 
 class Looper {
 public:
-	virtual ~Looper() {
-	}
 	static bool prepare();
 	static Looper* myLooper();
 	static void loop();

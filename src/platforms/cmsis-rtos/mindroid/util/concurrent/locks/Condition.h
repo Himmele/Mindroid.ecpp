@@ -29,8 +29,6 @@ class Lock;
 class Condition {
 public:
 	Condition();
-	~Condition() {
-	}
 	void await();
 	void await(uint32_t timeout);
 	void signal();

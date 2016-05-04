@@ -31,6 +31,9 @@ public:
 	static void tick(uint32_t duration);
 
 private:
+	SystemClock() {
+	}
+
 	static uint64_t sMonotonicTime;
 
 	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(SystemClock)

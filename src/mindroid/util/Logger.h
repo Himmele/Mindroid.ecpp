@@ -27,6 +27,9 @@ public:
 	Logger() {
 	}
 
+	virtual ~Logger() {
+	}
+
 	virtual int println(int bufferId, uint8_t priority, const char* tag, const char* msg);
 
 protected:

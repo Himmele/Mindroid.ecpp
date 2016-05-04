@@ -34,7 +34,8 @@ class Handler {
 public:
 	Handler();
 	Handler(Looper& looper);
-	virtual ~Handler();
+	virtual ~Handler() {
+	}
 
 	Message* obtainMessage(Message& message) {
 		return Message::obtain(message, *this);

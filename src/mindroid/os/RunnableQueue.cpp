@@ -28,9 +28,6 @@ RunnableQueue::RunnableQueue(Looper& looper) :
 		mMessage(*this, MSG_RUNNABLE) {
 }
 
-RunnableQueue::~RunnableQueue() {
-}
-
 bool RunnableQueue::enqueueRunnable(Runnable& runnable, uint64_t when) {
 	bool signal = false;
 	{

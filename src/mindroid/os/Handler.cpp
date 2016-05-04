@@ -37,9 +37,6 @@ Handler::Handler(Looper& looper) {
 	mRunnableQueue = &looper.myRunnableQueue();
 }
 
-Handler::~Handler() {
-}
-
 void Handler::handleMessage(const Message& message) {
 }
 
