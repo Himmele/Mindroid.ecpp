@@ -1,9 +1,9 @@
 # WindRiver Diab Compiler
-CC := dcc.exe
-CXX := dcc.exe
-LD := dld.exe
-AS := das.exe
-AR := dar.exe
+CC := dcc
+CXX := dcc
+LD := dld
+AS := das
+AR := dar
 RM := rm
 INCLUDES := -Isrc/platforms/autosar-swc -Isrc -Iplatforms/autosar-os
 CFLAGS := -tPPCVLEES:simple -g -XO -Xrtti-off -Xexceptions-off -ew4265 -ew4504
