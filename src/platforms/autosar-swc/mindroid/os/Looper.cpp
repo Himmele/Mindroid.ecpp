@@ -23,27 +23,27 @@ namespace mindroid {
 Looper* Looper::sInstance = NULL;
 
 Looper::Looper() :
-		mMessageQueue(),
-		mRunnableQueue(*this) {
-	sInstance = this;
+        mMessageQueue(),
+        mRunnableQueue(*this) {
+    sInstance = this;
 }
 
 Looper* Looper::myLooper() {
-	return sInstance;
+    return sInstance;
 }
 
 void Looper::loop(const uint32_t maxLoops) {
-	uint32_t i = 0;
-	while (i < maxLoops) {
-		Message* message = mMessageQueue.dequeueMessage(mMessage, false);
-		if (message == NULL) {
-			return;
-		}
-		Handler* handler = message->target;
-		message->target = NULL;
-		handler->dispatchMessage(*message);
-		i++;
-	}
+    uint32_t i = 0;
+    while (i < maxLoops) {
+        Message* message = mMessageQueue.dequeueMessage(mMessage, false);
+        if (message == NULL) {
+            return;
+        }
+        Handler* handler = message->target;
+        message->target = NULL;
+        handler->dispatchMessage(*message);
+        i++;
+    }
 }
 
 } /* namespace mindroid */

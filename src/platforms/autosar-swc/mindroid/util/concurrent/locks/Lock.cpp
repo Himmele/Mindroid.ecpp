@@ -20,12 +20,12 @@
 namespace mindroid {
 
 bool Lock::lock() {
-	SuspendOSInterrupts();
-	return true;
+    SuspendOSInterrupts();
+    return true;
 }
 
 void Lock::unlock() {
-	ResumeOSInterrupts();
+    ResumeOSInterrupts();
 }
 
 } /* namespace mindroid */

@@ -27,78 +27,78 @@ namespace mindroid {
 
 class Log {
 public:
-	/**
-	 * Send a {@link #VERBOSE} log message.
-	 * @param tag Used to identify the source of a log message.  It usually identifies
-	 *        the class or activity where the log call occurs.
-	 * @param msg The message you would like logged.
-	 */
-	static int v(const char* tag, const char* format, ...);
+    /**
+     * Send a {@link #VERBOSE} log message.
+     * @param tag Used to identify the source of a log message.  It usually identifies
+     *        the class or activity where the log call occurs.
+     * @param msg The message you would like logged.
+     */
+    static int v(const char* tag, const char* format, ...);
 
-	/**
-	 * Send a {@link #DEBUG} log message.
-	 * @param tag Used to identify the source of a log message.  It usually identifies
-	 *        the class or activity where the log call occurs.
-	 * @param msg The message you would like logged.
-	 */
-	static int d(const char* tag, const char* format, ...);
+    /**
+     * Send a {@link #DEBUG} log message.
+     * @param tag Used to identify the source of a log message.  It usually identifies
+     *        the class or activity where the log call occurs.
+     * @param msg The message you would like logged.
+     */
+    static int d(const char* tag, const char* format, ...);
 
-	/**
-	 * Send an {@link #INFO} log message.
-	 * @param tag Used to identify the source of a log message.  It usually identifies
-	 *        the class or activity where the log call occurs.
-	 * @param msg The message you would like logged.
-	 */
-	static int i(const char* tag, const char* format, ...);
+    /**
+     * Send an {@link #INFO} log message.
+     * @param tag Used to identify the source of a log message.  It usually identifies
+     *        the class or activity where the log call occurs.
+     * @param msg The message you would like logged.
+     */
+    static int i(const char* tag, const char* format, ...);
 
-	/**
-	 * Send a {@link #WARN} log message.
-	 * @param tag Used to identify the source of a log message.  It usually identifies
-	 *        the class or activity where the log call occurs.
-	 * @param msg The message you would like logged.
-	 */
-	static int w(const char* tag, const char* format, ...);
+    /**
+     * Send a {@link #WARN} log message.
+     * @param tag Used to identify the source of a log message.  It usually identifies
+     *        the class or activity where the log call occurs.
+     * @param msg The message you would like logged.
+     */
+    static int w(const char* tag, const char* format, ...);
 
-	/**
-	 * Send an {@link #ERROR} log message.
-	 * @param tag Used to identify the source of a log message.  It usually identifies
-	 *        the class or activity where the log call occurs.
-	 * @param msg The message you would like logged.
-	 */
-	static int e(const char* tag, const char* format, ...);
+    /**
+     * Send an {@link #ERROR} log message.
+     * @param tag Used to identify the source of a log message.  It usually identifies
+     *        the class or activity where the log call occurs.
+     * @param msg The message you would like logged.
+     */
+    static int e(const char* tag, const char* format, ...);
 
-	/**
-	 * What a Terrible Failure: Report a condition that should never happen.
-	 * The error will always be logged at level ASSERT with the call stack.
-	 * Depending on system configuration, a report may be added to the
-	 * {@link android.os.DropBoxManager} and/or the process may be terminated
-	 * immediately with an error dialog.
-	 * @param tag Used to identify the source of a log message.
-	 * @param msg The message you would like logged.
-	 */
-	static int wtf(const char* tag, const char* format, ...);
+    /**
+     * What a Terrible Failure: Report a condition that should never happen.
+     * The error will always be logged at level ASSERT with the call stack.
+     * Depending on system configuration, a report may be added to the
+     * {@link android.os.DropBoxManager} and/or the process may be terminated
+     * immediately with an error dialog.
+     * @param tag Used to identify the source of a log message.
+     * @param msg The message you would like logged.
+     */
+    static int wtf(const char* tag, const char* format, ...);
 
-	static void setLogger(Logger& logger);
+    static void setLogger(Logger& logger);
 
-	static Logger DEFAULT_LOGGER;
+    static Logger DEFAULT_LOGGER;
 
 private:
-	Log() {
-	}
+    Log() {
+    }
 
-	static const uint8_t VERBOSE = 0;
-	static const uint8_t DEBUG = 1;
-	static const uint8_t INFO = 2;
-	static const uint8_t WARN = 3;
-	static const uint8_t ERROR = 4;
-	static const uint8_t WTF = 5;
+    static const uint8_t VERBOSE = 0;
+    static const uint8_t DEBUG = 1;
+    static const uint8_t INFO = 2;
+    static const uint8_t WARN = 3;
+    static const uint8_t ERROR = 4;
+    static const uint8_t WTF = 5;
 
-	static const int DEFAULT_LOG_ID = 0;
-	static const int LOG_RECORD_SIZE = 128;
+    static const int DEFAULT_LOG_ID = 0;
+    static const int LOG_RECORD_SIZE = 128;
 
-	static Logger* sLogger;
+    static Logger* sLogger;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Log)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Log)
 };
 
 } /* namespace mindroid */

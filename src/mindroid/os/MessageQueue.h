@@ -30,31 +30,31 @@ class Runnable;
 
 class MessageQueue {
 public:
-	MessageQueue();
-	~MessageQueue() {
-	}
+    MessageQueue();
+    ~MessageQueue() {
+    }
 
-	bool enqueueMessage(Message& message, uint64_t when);
-	Message* dequeueMessage(Message& message);
-	bool removeMessages(Handler* handler);
-	bool removeMessages(Handler* handler, int32_t what);
-	bool removeMessage(Handler* handler, const Message* message);
+    bool enqueueMessage(Message& message, uint64_t when);
+    Message* dequeueMessage(Message& message);
+    bool removeMessages(Handler* handler);
+    bool removeMessages(Handler* handler, int32_t what);
+    bool removeMessage(Handler* handler, const Message* message);
 
 private:
-	bool enqueueMessage(Message& message, uint64_t when, bool signal);
-	Message* dequeueMessage(Message& message, bool wait);
-	Message* getNextMessage(uint64_t now, Message& message);
-	void signal();
-	void quit();
+    bool enqueueMessage(Message& message, uint64_t when, bool signal);
+    Message* dequeueMessage(Message& message, bool wait);
+    Message* getNextMessage(uint64_t now, Message& message);
+    void signal();
+    void quit();
 
-	Message* mHeadMessage;
-	Condition mCondition;
-	bool mQuitting;
+    Message* mHeadMessage;
+    Condition mCondition;
+    bool mQuitting;
 
-	friend class Looper;
-	friend class RunnableQueue;
+    friend class Looper;
+    friend class RunnableQueue;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(MessageQueue)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(MessageQueue)
 };
 
 } /* namespace mindroid */

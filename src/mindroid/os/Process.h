@@ -28,43 +28,43 @@ namespace mindroid {
 
 class Process {
 public:
-	Process(Looper& looper);
-	void startService(Service& service);
-	void stopService(Service& service);
+    Process(Looper& looper);
+    void startService(Service& service);
+    void stopService(Service& service);
 
-	Looper& getMainLooper() {
-		return mLooper;
-	}
+    Looper& getMainLooper() {
+        return mLooper;
+    }
 
 private:
-	class MainHandler : public Handler {
-	public:
-		static const int32_t START_SERVICE = 1;
-		static const int32_t STOP_SERVICE = 2;
+    class MainHandler : public Handler {
+    public:
+        static const int32_t START_SERVICE = 1;
+        static const int32_t STOP_SERVICE = 2;
 
-		MainHandler(Process& process) :
-				Handler(process.getMainLooper()),
-				mProcess(process) {
-		}
-		virtual void handleMessage(const Message& message);
+        MainHandler(Process& process) :
+                Handler(process.getMainLooper()),
+                mProcess(process) {
+        }
+        virtual void handleMessage(const Message& message);
 
-	private:
-		Process& mProcess;
+    private:
+        Process& mProcess;
 
-		NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(MainHandler)
-	};
+        NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(MainHandler)
+    };
 
-	struct ServiceRecord {
-		Service* service;
-		bool running;
-	};
+    struct ServiceRecord {
+        Service* service;
+        bool running;
+    };
 
-	Looper& mLooper;
-	MainHandler mMainHandler;
-	ServiceRecord mServices[MAX_NUM_SERVICES];
-	mindroid::Message mMessages[MAX_NUM_SERVICES];
+    Looper& mLooper;
+    MainHandler mMainHandler;
+    ServiceRecord mServices[MAX_NUM_SERVICES];
+    mindroid::Message mMessages[MAX_NUM_SERVICES];
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Process)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Process)
 };
 
 } /* namespace mindroid */

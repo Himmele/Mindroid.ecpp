@@ -36,56 +36,56 @@ namespace mindroid {
 template<class T /*extends Handler*/>
 class LooperThread : public Thread {
 public:
-	LooperThread() :
-			mLooper(NULL),
-			mHandler(NULL),
-			mCondition(),
-			mIsDone(false) {
-	}
+    LooperThread() :
+            mLooper(NULL),
+            mHandler(NULL),
+            mCondition(),
+            mIsDone(false) {
+    }
 
-	virtual ~LooperThread() {
-	}
+    virtual ~LooperThread() {
+    }
 
-	virtual void run() {
-		Looper::prepare();
-		Lock::lock();
-		mLooper = Looper::myLooper();
-		mHandler = new (mHandlerData) T();
-		mCondition.signalAll();
-		Lock::unlock();
-		Looper::loop();
-		Lock::lock();
-		mIsDone = true;
-		mHandler->removeMessages();
-		mLooper = NULL;
-		mHandler = NULL;
-		Lock::unlock();
-	}
+    virtual void run() {
+        Looper::prepare();
+        Lock::lock();
+        mLooper = Looper::myLooper();
+        mHandler = new (mHandlerData) T();
+        mCondition.signalAll();
+        Lock::unlock();
+        Looper::loop();
+        Lock::lock();
+        mIsDone = true;
+        mHandler->removeMessages();
+        mLooper = NULL;
+        mHandler = NULL;
+        Lock::unlock();
+    }
 
-	Looper* getLooper() {
-		AutoLock autoLock;
-		if (!mIsDone && mLooper == NULL) {
-			mCondition.await();
-		}
-		return mLooper;
-	}
+    Looper* getLooper() {
+        AutoLock autoLock;
+        if (!mIsDone && mLooper == NULL) {
+            mCondition.await();
+        }
+        return mLooper;
+    }
 
-	T* getHandler() {
-		AutoLock autoLock;
-		if (!mIsDone && mHandler == NULL) {
-			mCondition.await();
-		}
-		return mHandler;
-	}
+    T* getHandler() {
+        AutoLock autoLock;
+        if (!mIsDone && mHandler == NULL) {
+            mCondition.await();
+        }
+        return mHandler;
+    }
 
 private:
-	Looper* mLooper;
-	uint8_t mHandlerData[sizeof(T)] __attribute__((aligned (8)));
-	T* mHandler;
-	Condition mCondition;
-	bool mIsDone;
+    Looper* mLooper;
+    uint8_t mHandlerData[sizeof(T)] __attribute__((aligned (8)));
+    T* mHandler;
+    Condition mCondition;
+    bool mIsDone;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(LooperThread)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(LooperThread)
 };
 
 } /* namespace mindroid */

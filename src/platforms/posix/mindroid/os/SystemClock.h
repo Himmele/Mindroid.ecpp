@@ -24,15 +24,15 @@ namespace mindroid {
 
 class SystemClock {
 public:
-	static uint64_t monotonicTime(); // milliseconds
+    static uint64_t monotonicTime(); // milliseconds
 
-	static uint64_t realTime(); // milliseconds
+    static uint64_t realTime(); // milliseconds
 
 private:
-	SystemClock() {
-	}
+    SystemClock() {
+    }
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(SystemClock)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(SystemClock)
 };
 
 } /* namespace mindroid */

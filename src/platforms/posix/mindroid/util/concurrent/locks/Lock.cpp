@@ -22,11 +22,11 @@ namespace mindroid {
 pthread_mutex_t Lock::sLock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
 bool Lock::lock() {
-	return (pthread_mutex_lock(&sLock) == 0);
+    return (pthread_mutex_lock(&sLock) == 0);
 }
 
 void Lock::unlock() {
-	pthread_mutex_unlock(&sLock);
+    pthread_mutex_unlock(&sLock);
 }
 
 } /* namespace mindroid */

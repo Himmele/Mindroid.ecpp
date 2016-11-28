@@ -22,11 +22,11 @@ extern uint64_t osSystemTime();
 namespace mindroid {
 
 uint64_t SystemClock::monotonicTime() {
-	return osSystemTime();
+    return osSystemTime();
 }
 
 uint64_t SystemClock::realTime() {
-	return osSystemTime();
+    return osSystemTime();
 }
 
 } /* namespace mindroid */

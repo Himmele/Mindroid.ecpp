@@ -21,23 +21,23 @@
 namespace mindroid {
 
 uint64_t SystemClock::monotonicTime() {
-	static uint32_t base = 0;
-	static uint32_t offset = 0;
+    static uint32_t base = 0;
+    static uint32_t offset = 0;
 
-	TickType counter;
-	GetCounterValue(counter_1_ms, &counter);
-	Lock::lock();
-	if (offset > counter) {
-		base++;
-	}
-	offset = counter;
-	uint64_t time = ((uint64_t) base << 32) | offset;
-	Lock::unlock();
-	return time;
+    TickType counter;
+    GetCounterValue(counter_1_ms, &counter);
+    Lock::lock();
+    if (offset > counter) {
+        base++;
+    }
+    offset = counter;
+    uint64_t time = ((uint64_t) base << 32) | offset;
+    Lock::unlock();
+    return time;
 }
 
 uint64_t SystemClock::realTime() {
-	return monotonicTime();
+    return monotonicTime();
 }
 
 } /* namespace mindroid */

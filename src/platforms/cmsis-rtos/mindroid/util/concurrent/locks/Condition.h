@@ -28,16 +28,16 @@ class Lock;
 
 class Condition {
 public:
-	Condition();
-	void await();
-	void await(uint32_t timeout);
-	void signal();
-	void signalAll();
+    Condition();
+    void await();
+    void await(uint32_t timeout);
+    void signal();
+    void signalAll();
 
 private:
-	Semaphore mSemaphore;
+    Semaphore mSemaphore;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Condition)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Condition)
 };
 
 } /* namespace mindroid */

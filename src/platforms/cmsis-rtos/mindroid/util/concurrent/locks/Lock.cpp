@@ -23,20 +23,20 @@ namespace mindroid {
 uint32_t Lock::sCounter = 0;
 
 bool Lock::lock() {
-	if (sCounter == 0) {
-		__disable_irq();
-	}
-	sCounter++;
-	return true;
+    if (sCounter == 0) {
+        __disable_irq();
+    }
+    sCounter++;
+    return true;
 }
 
 void Lock::unlock() {
-	Assert::assertTrue(sCounter != 0);
+    Assert::assertTrue(sCounter != 0);
 
-	sCounter--;
-	if (sCounter == 0) {
-		__enable_irq();
-	}
+    sCounter--;
+    if (sCounter == 0) {
+        __enable_irq();
+    }
 }
 
 } /* namespace mindroid */

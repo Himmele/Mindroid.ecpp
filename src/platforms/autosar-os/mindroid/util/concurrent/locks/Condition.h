@@ -27,22 +27,22 @@ class Lock;
 
 class Condition {
 public:
-	Condition(TaskType taskId, AlarmType alarmId, EventMaskType eventId);
-	void await();
-	void await(uint32_t timeout);
-	void signal();
-	void signalAll();
+    Condition(TaskType taskId, AlarmType alarmId, EventMaskType eventId);
+    void await();
+    void await(uint32_t timeout);
+    void signal();
+    void signalAll();
 
 private:
-	Condition();
+    Condition();
 
-	TaskType mTaskId;
-	AlarmType mAlarmId;
-	EventMaskType mEventId;
+    TaskType mTaskId;
+    AlarmType mAlarmId;
+    EventMaskType mEventId;
 
-	friend class MessageQueue;
+    friend class MessageQueue;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Condition)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Condition)
 };
 
 } /* namespace mindroid */

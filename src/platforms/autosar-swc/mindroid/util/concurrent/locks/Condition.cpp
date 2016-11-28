@@ -24,13 +24,13 @@ Condition::Condition() {
 }
 
 void Condition::await() {
-	bool runtimeException = true;
-	Assert::assertTrue(!runtimeException);
+    bool runtimeException = true;
+    Assert::assertTrue(!runtimeException);
 }
 
 void Condition::await(uint32_t timeout) {
-	bool runtimeException = true;
-	Assert::assertTrue(!runtimeException);
+    bool runtimeException = true;
+    Assert::assertTrue(!runtimeException);
 }
 
 void Condition::signal() {

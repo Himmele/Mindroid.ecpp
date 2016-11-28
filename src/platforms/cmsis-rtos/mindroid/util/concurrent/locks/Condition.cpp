@@ -25,25 +25,25 @@ Condition::Condition() {
 }
 
 void Condition::await() {
-	Lock::unlock();
-	mSemaphore.wait();
-	Lock::lock();
+    Lock::unlock();
+    mSemaphore.wait();
+    Lock::lock();
 }
 
 void Condition::await(uint32_t timeout) {
-	Lock::unlock();
-	Assert::assertTrue(timeout > 0);
-	mSemaphore.wait(timeout);
-	Lock::lock();
+    Lock::unlock();
+    Assert::assertTrue(timeout > 0);
+    mSemaphore.wait(timeout);
+    Lock::lock();
 }
 
 void Condition::signal() {
-	mSemaphore.signal();
+    mSemaphore.signal();
 }
 
 void Condition::signalAll() {
-	bool notYetImplemented = true;
-	Assert::assertTrue(!notYetImplemented);
+    bool notYetImplemented = true;
+    Assert::assertTrue(!notYetImplemented);
 }
 
 } /* namespace mindroid */

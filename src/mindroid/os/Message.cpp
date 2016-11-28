@@ -22,123 +22,123 @@
 namespace mindroid {
 
 Message::Message() :
-		what(0),
-		arg1(0),
-		arg2(0),
-		obj(NULL),
-		when(0xFFFFFFFFFFFFFFFF),
-		target(NULL),
-		nextMessage(NULL) {
+        what(0),
+        arg1(0),
+        arg2(0),
+        obj(NULL),
+        when(0xFFFFFFFFFFFFFFFF),
+        target(NULL),
+        nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler) :
-		what(0),
-		arg1(0),
-		arg2(0),
-		obj(NULL),
-		when(0xFFFFFFFFFFFFFFFF),
-		target(&handler),
-		nextMessage(NULL) {
+        what(0),
+        arg1(0),
+        arg2(0),
+        obj(NULL),
+        when(0xFFFFFFFFFFFFFFFF),
+        target(&handler),
+        nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler, const int32_t what) :
-		what(what),
-		arg1(0),
-		arg2(0),
-		obj(NULL),
-		when(0xFFFFFFFFFFFFFFFF),
-		target(&handler),
-		nextMessage(NULL) {
+        what(what),
+        arg1(0),
+        arg2(0),
+        obj(NULL),
+        when(0xFFFFFFFFFFFFFFFF),
+        target(&handler),
+        nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2) :
-		what(what),
-		arg1(arg1),
-		arg2(arg2),
-		obj(NULL),
-		when(0xFFFFFFFFFFFFFFFF),
-		target(&handler),
-		nextMessage(NULL) {
+        what(what),
+        arg1(arg1),
+        arg2(arg2),
+        obj(NULL),
+        when(0xFFFFFFFFFFFFFFFF),
+        target(&handler),
+        nextMessage(NULL) {
 }
 
 Message::Message(Handler& handler, const int32_t what, void* const obj) :
-		what(what),
-		arg1(0),
-		arg2(0),
-		obj(obj),
-		when(0xFFFFFFFFFFFFFFFF),
-		target(&handler),
-		nextMessage(NULL) {
+        what(what),
+        arg1(0),
+        arg2(0),
+        obj(obj),
+        when(0xFFFFFFFFFFFFFFFF),
+        target(&handler),
+        nextMessage(NULL) {
 }
 
 Message& Message::operator=(const Message& message) {
-	what = message.what;
-	arg1 = message.arg1;
-	arg2 = message.arg2;
-	obj = message.obj;
-	when = 0xFFFFFFFFFFFFFFFF;
-	target = message.target;
-	nextMessage = NULL;
-	return *this;
+    what = message.what;
+    arg1 = message.arg1;
+    arg2 = message.arg2;
+    obj = message.obj;
+    when = 0xFFFFFFFFFFFFFFFF;
+    target = message.target;
+    nextMessage = NULL;
+    return *this;
 }
 
 Message* Message::obtain(Message& message, Handler& handler) {
-	AutoLock autoLock;
-	if (!message.isInUse()) {
-		new (&message) Message(handler);
-		return &message;
-	} else {
-		return NULL;
-	}
+    AutoLock autoLock;
+    if (!message.isInUse()) {
+        new (&message) Message(handler);
+        return &message;
+    } else {
+        return NULL;
+    }
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what) {
-	AutoLock autoLock;
-	if (!message.isInUse()) {
-		new (&message) Message(handler, what);
-		return &message;
-	} else {
-		return NULL;
-	}
+    AutoLock autoLock;
+    if (!message.isInUse()) {
+        new (&message) Message(handler, what);
+        return &message;
+    } else {
+        return NULL;
+    }
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2) {
-	AutoLock autoLock;
-	if (!message.isInUse()) {
-		new (&message) Message(handler, what, arg1, arg2);
-		return &message;
-	} else {
-		return NULL;
-	}
+    AutoLock autoLock;
+    if (!message.isInUse()) {
+        new (&message) Message(handler, what, arg1, arg2);
+        return &message;
+    } else {
+        return NULL;
+    }
 }
 
 Message* Message::obtain(Message& message, Handler& handler, const int32_t what, void* const obj) {
-	AutoLock autoLock;
-	if (!message.isInUse()) {
-		new (&message) Message(handler, what, obj);
-		return &message;
-	} else {
-		return NULL;
-	}
+    AutoLock autoLock;
+    if (!message.isInUse()) {
+        new (&message) Message(handler, what, obj);
+        return &message;
+    } else {
+        return NULL;
+    }
 }
 
 void Message::clear() {
-	AutoLock autoLock;
-	what = 0;
-	arg1 = 0;
-	arg2 = 0;
-	obj = NULL;
-	when = 0xFFFFFFFFFFFFFFFF;
-	target = NULL;
-	nextMessage = NULL;
+    AutoLock autoLock;
+    what = 0;
+    arg1 = 0;
+    arg2 = 0;
+    obj = NULL;
+    when = 0xFFFFFFFFFFFFFFFF;
+    target = NULL;
+    nextMessage = NULL;
 }
 
 bool Message::sendToTarget() {
-	if (target != NULL) {
-		return target->sendMessage(*this);
-	} else {
-		return false;
-	}
+    if (target != NULL) {
+        return target->sendMessage(*this);
+    } else {
+        return false;
+    }
 }
 
 } /* namespace mindroid */

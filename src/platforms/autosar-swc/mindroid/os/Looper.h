@@ -28,27 +28,27 @@ class Runnable;
 
 class Looper {
 public:
-	Looper();
-	void loop(const uint32_t maxLoops);
-	static Looper* myLooper();
+    Looper();
+    void loop(const uint32_t maxLoops);
+    static Looper* myLooper();
 
-	MessageQueue& myMessageQueue() {
-		return mMessageQueue;
-	}
+    MessageQueue& myMessageQueue() {
+        return mMessageQueue;
+    }
 
 private:
-	RunnableQueue& myRunnableQueue() {
-		return mRunnableQueue;
-	}
+    RunnableQueue& myRunnableQueue() {
+        return mRunnableQueue;
+    }
 
-	static Looper* sInstance;
-	MessageQueue mMessageQueue;
-	RunnableQueue mRunnableQueue;
-	Message mMessage;
+    static Looper* sInstance;
+    MessageQueue mMessageQueue;
+    RunnableQueue mRunnableQueue;
+    Message mMessage;
 
-	friend class Handler;
+    friend class Handler;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Looper)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Looper)
 };
 
 } /* namespace mindroid */

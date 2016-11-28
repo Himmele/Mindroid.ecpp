@@ -30,38 +30,38 @@ class Runnable;
 
 class Looper {
 public:
-	static bool prepare();
-	static Looper* myLooper();
-	static void loop();
-	static void loop(uint32_t maxLoops);
-	void quit();
+    static bool prepare();
+    static Looper* myLooper();
+    static void loop();
+    static void loop(uint32_t maxLoops);
+    void quit();
 
-	MessageQueue& myMessageQueue() {
-		return mMessageQueue;
-	}
+    MessageQueue& myMessageQueue() {
+        return mMessageQueue;
+    }
 
 private:
-	Looper();
-	static void init();
-	static void finalize(void* looper);
+    Looper();
+    static void init();
+    static void finalize(void* looper);
 
-	RunnableQueue& myRunnableQueue() {
-		return mRunnableQueue;
-	}
+    RunnableQueue& myRunnableQueue() {
+        return mRunnableQueue;
+    }
 
-	static pthread_once_t sTlsOneTimeInitializer;
-	static pthread_key_t sTlsKey;
-	static uint8_t sLooperData[] __attribute__((aligned (8)));
-	static Looper* sLoopers[];
-	static int sNumLoopers;
+    static pthread_once_t sTlsOneTimeInitializer;
+    static pthread_key_t sTlsKey;
+    static uint8_t sLooperData[] __attribute__((aligned (8)));
+    static Looper* sLoopers[];
+    static int sNumLoopers;
 
-	MessageQueue mMessageQueue;
-	RunnableQueue mRunnableQueue;
-	Message mMessage;
+    MessageQueue mMessageQueue;
+    RunnableQueue mRunnableQueue;
+    Message mMessage;
 
-	friend class Handler;
+    friend class Handler;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Looper)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Looper)
 };
 
 } /* namespace mindroid */

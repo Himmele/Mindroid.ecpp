@@ -22,7 +22,7 @@ namespace mindroid {
 const char Logger::PRIORITIES[] = { 'V', 'D', 'I', 'W', 'E', 'A' };
 
 int Logger::println(int bufferId, uint8_t priority, const char* tag, const char* msg) {
-	return printf("%c/%s: %s\r\n", PRIORITIES[priority], tag, msg);
+    return printf("%c/%s: %s\r\n", PRIORITIES[priority], tag, msg);
 }
 
 } /* namespace mindroid */

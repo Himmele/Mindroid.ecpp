@@ -32,76 +32,76 @@ class RunnableQueue;
 
 class Handler {
 public:
-	Handler();
-	Handler(Looper& looper);
-	virtual ~Handler() {
-	}
+    Handler();
+    Handler(Looper& looper);
+    virtual ~Handler() {
+    }
 
-	Message* obtainMessage(Message& message) {
-		return Message::obtain(message, *this);
-	}
+    Message* obtainMessage(Message& message) {
+        return Message::obtain(message, *this);
+    }
 
-	Message* obtainMessage(Message& message, const int32_t what) {
-		return Message::obtain(message, *this, what);
-	}
+    Message* obtainMessage(Message& message, const int32_t what) {
+        return Message::obtain(message, *this, what);
+    }
 
-	Message* obtainMessage(Message& message, const int32_t what, const int32_t arg1, const int32_t arg2) {
-		return Message::obtain(message, *this, what, arg1, arg2);
-	}
+    Message* obtainMessage(Message& message, const int32_t what, const int32_t arg1, const int32_t arg2) {
+        return Message::obtain(message, *this, what, arg1, arg2);
+    }
 
-	Message* obtainMessage(Message& message, const int32_t what, void* const obj) {
-		return Message::obtain(message, *this, what, obj);
-	}
+    Message* obtainMessage(Message& message, const int32_t what, void* const obj) {
+        return Message::obtain(message, *this, what, obj);
+    }
 
-	Message& grabMessage(Message& message) {
-		AutoLock autoLock;
-		removeMessage(message);
-		Assert::assertNotNull(Message::obtain(message, *this));
-		return message;
-	}
+    Message& grabMessage(Message& message) {
+        AutoLock autoLock;
+        removeMessage(message);
+        Assert::assertNotNull(Message::obtain(message, *this));
+        return message;
+    }
 
-	Message& grabMessage(Message& message, const int32_t what) {
-		AutoLock autoLock;
-		removeMessage(message);
-		Assert::assertNotNull(Message::obtain(message, *this, what));
-		return message;
-	}
+    Message& grabMessage(Message& message, const int32_t what) {
+        AutoLock autoLock;
+        removeMessage(message);
+        Assert::assertNotNull(Message::obtain(message, *this, what));
+        return message;
+    }
 
-	Message& grabMessage(Message& message, const int32_t what, const int32_t arg1, const int32_t arg2) {
-		AutoLock autoLock;
-		removeMessage(message);
-		Assert::assertNotNull(Message::obtain(message, *this, what, arg1, arg2));
-		return message;
-	}
+    Message& grabMessage(Message& message, const int32_t what, const int32_t arg1, const int32_t arg2) {
+        AutoLock autoLock;
+        removeMessage(message);
+        Assert::assertNotNull(Message::obtain(message, *this, what, arg1, arg2));
+        return message;
+    }
 
-	Message& grabMessage(Message& message, const int32_t what, void* const obj) {
-		AutoLock autoLock;
-		removeMessage(message);
-		Assert::assertNotNull(Message::obtain(message, *this, what, obj));
-		return message;
-	}
+    Message& grabMessage(Message& message, const int32_t what, void* const obj) {
+        AutoLock autoLock;
+        removeMessage(message);
+        Assert::assertNotNull(Message::obtain(message, *this, what, obj));
+        return message;
+    }
 
-	void dispatchMessage(Message& message) {
-		handleMessage(message);
-	}
+    void dispatchMessage(Message& message) {
+        handleMessage(message);
+    }
 
-	virtual void handleMessage(const Message& message);
-	bool sendMessage(Message& message);
-	bool sendMessageDelayed(Message& message, uint32_t delay);
-	bool sendMessageAtTime(Message& message, uint64_t uptimeMillis);
-	bool post(Runnable& runnable);
-	bool postDelayed(Runnable& runnable, uint32_t delay);
-	bool postAtTime(Runnable& runnable, uint64_t uptimeMillis);
-	bool removeMessages();
-	bool removeMessages(int32_t what);
-	bool removeMessage(const Message& message);
-	bool removeCallbacks(const Runnable& runnable);
+    virtual void handleMessage(const Message& message);
+    bool sendMessage(Message& message);
+    bool sendMessageDelayed(Message& message, uint32_t delay);
+    bool sendMessageAtTime(Message& message, uint64_t uptimeMillis);
+    bool post(Runnable& runnable);
+    bool postDelayed(Runnable& runnable, uint32_t delay);
+    bool postAtTime(Runnable& runnable, uint64_t uptimeMillis);
+    bool removeMessages();
+    bool removeMessages(int32_t what);
+    bool removeMessage(const Message& message);
+    bool removeCallbacks(const Runnable& runnable);
 
 private:
-	MessageQueue* mMessageQueue;
-	RunnableQueue* mRunnableQueue;
+    MessageQueue* mMessageQueue;
+    RunnableQueue* mRunnableQueue;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Handler)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Handler)
 };
 
 } /* namespace mindroid */

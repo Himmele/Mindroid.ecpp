@@ -29,85 +29,85 @@ Looper* Looper::sLoopers[MAX_NUM_LOOPERS] = { NULL };
 int Looper::sNumLoopers = 0;
 
 Looper::Looper() :
-		mMessageQueue(),
-		mRunnableQueue(*this) {
+        mMessageQueue(),
+        mRunnableQueue(*this) {
 }
 
 void Looper::init() {
-	pthread_key_create(&sTlsKey, Looper::finalize);
+    pthread_key_create(&sTlsKey, Looper::finalize);
 }
 
 void Looper::finalize(void* looper) {
 }
 
 bool Looper::prepare() {
-	pthread_once(&sTlsOneTimeInitializer, Looper::init);
-	Looper* looper = (Looper*) pthread_getspecific(sTlsKey);
-	if (looper == NULL) {
-		AutoLock autoLock;
-		Assert::assertTrue(sNumLoopers < MAX_NUM_LOOPERS);
-		int i = sNumLoopers;
-		Looper* looper = reinterpret_cast<Looper*>(sLooperData + i * sizeof(Looper));
-		new (looper) Looper();
-		if (looper == NULL) {
-			return false;
-		} else {
-			if (pthread_setspecific(sTlsKey, looper) != 0) {
-				return false;
-			} else {
-				sLoopers[i] = looper;
-				sNumLoopers++;
-				return true;
-			}
-		}
-	} else {
-		// There should be only one Looper per thread.
-		return false;
-	}
+    pthread_once(&sTlsOneTimeInitializer, Looper::init);
+    Looper* looper = (Looper*) pthread_getspecific(sTlsKey);
+    if (looper == NULL) {
+        AutoLock autoLock;
+        Assert::assertTrue(sNumLoopers < MAX_NUM_LOOPERS);
+        int i = sNumLoopers;
+        Looper* looper = reinterpret_cast<Looper*>(sLooperData + i * sizeof(Looper));
+        new (looper) Looper();
+        if (looper == NULL) {
+            return false;
+        } else {
+            if (pthread_setspecific(sTlsKey, looper) != 0) {
+                return false;
+            } else {
+                sLoopers[i] = looper;
+                sNumLoopers++;
+                return true;
+            }
+        }
+    } else {
+        // There should be only one Looper per thread.
+        return false;
+    }
 }
 
 Looper* Looper::myLooper() {
-	pthread_once(&sTlsOneTimeInitializer, Looper::init);
-	Looper* looper = (Looper*) pthread_getspecific(sTlsKey);
-	return looper;
+    pthread_once(&sTlsOneTimeInitializer, Looper::init);
+    Looper* looper = (Looper*) pthread_getspecific(sTlsKey);
+    return looper;
 }
 
 void Looper::loop() {
-	Looper* me = myLooper();
-	if (me != NULL) {
-		MessageQueue& mq = me->mMessageQueue;
-		while (true) {
-			Message* message = mq.dequeueMessage(me->mMessage);
-			if (message == NULL) {
-				return;
-			}
-			Handler* handler = message->target;
-			message->target = NULL;
-			handler->dispatchMessage(*message);
-		}
-	}
+    Looper* me = myLooper();
+    if (me != NULL) {
+        MessageQueue& mq = me->mMessageQueue;
+        while (true) {
+            Message* message = mq.dequeueMessage(me->mMessage);
+            if (message == NULL) {
+                return;
+            }
+            Handler* handler = message->target;
+            message->target = NULL;
+            handler->dispatchMessage(*message);
+        }
+    }
 }
 
 void Looper::loop(uint32_t maxLoops) {
-	Looper* me = myLooper();
-	if (me != NULL) {
-		MessageQueue& mq = me->mMessageQueue;
-		uint32_t i = 0;
-		while (i < maxLoops) {
-			Message* message = mq.dequeueMessage(me->mMessage, false);
-			if (message == NULL) {
-				return;
-			}
-			Handler* handler = message->target;
-			message->target = NULL;
-			handler->dispatchMessage(*message);
-			i++;
-		}
-	}
+    Looper* me = myLooper();
+    if (me != NULL) {
+        MessageQueue& mq = me->mMessageQueue;
+        uint32_t i = 0;
+        while (i < maxLoops) {
+            Message* message = mq.dequeueMessage(me->mMessage, false);
+            if (message == NULL) {
+                return;
+            }
+            Handler* handler = message->target;
+            message->target = NULL;
+            handler->dispatchMessage(*message);
+            i++;
+        }
+    }
 }
 
 void Looper::quit() {
-	mMessageQueue.quit();
+    mMessageQueue.quit();
 }
 
 } /* namespace mindroid */

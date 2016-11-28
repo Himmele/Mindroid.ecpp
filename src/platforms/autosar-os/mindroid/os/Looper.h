@@ -30,35 +30,35 @@ class Runnable;
 
 class Looper {
 public:
-	static bool prepare(TaskType taskId, AlarmType alarmId, EventMaskType eventId);
-	static Looper* myLooper();
-	static void loop();
-	static void loop(uint32_t maxLoops);
-	void quit();
+    static bool prepare(TaskType taskId, AlarmType alarmId, EventMaskType eventId);
+    static Looper* myLooper();
+    static void loop();
+    static void loop(uint32_t maxLoops);
+    void quit();
 
-	MessageQueue& myMessageQueue() {
-		return mMessageQueue;
-	}
+    MessageQueue& myMessageQueue() {
+        return mMessageQueue;
+    }
 
 private:
-	Looper(TaskType taskId, AlarmType alarmId, EventMaskType eventId);
+    Looper(TaskType taskId, AlarmType alarmId, EventMaskType eventId);
 
-	RunnableQueue& myRunnableQueue() {
-		return mRunnableQueue;
-	}
+    RunnableQueue& myRunnableQueue() {
+        return mRunnableQueue;
+    }
 
-	static uint8_t sLooperData[];
-	static Looper* sLoopers[];
-	static TaskType sLooperThreadIds[];
-	static int sNumLoopers;
+    static uint8_t sLooperData[];
+    static Looper* sLoopers[];
+    static TaskType sLooperThreadIds[];
+    static int sNumLoopers;
 
-	MessageQueue mMessageQueue;
-	RunnableQueue mRunnableQueue;
-	Message mMessage;
+    MessageQueue mMessageQueue;
+    RunnableQueue mRunnableQueue;
+    Message mMessage;
 
-	friend class Handler;
+    friend class Handler;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Looper)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Looper)
 };
 
 } /* namespace mindroid */

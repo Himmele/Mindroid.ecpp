@@ -26,83 +26,83 @@ namespace mindroid {
 
 class Assert {
 public:
-	static void assertTrue(bool condition) {
-		assert(condition);
-	}
-	static void assertTrue(const char* message, bool condition);
+    static void assertTrue(bool condition) {
+        assert(condition);
+    }
+    static void assertTrue(const char* message, bool condition);
 
-	static void assertFalse(bool condition) {
-		assert(!condition);
-	}
-	static void assertFalse(const char* message, bool condition);
+    static void assertFalse(bool condition) {
+        assert(!condition);
+    }
+    static void assertFalse(const char* message, bool condition);
 
-	static void assertNull(void* ptr) {
-		assert(ptr == NULL);
-	}
-	static void assertNull(const char* message, void* ptr);
+    static void assertNull(void* ptr) {
+        assert(ptr == NULL);
+    }
+    static void assertNull(const char* message, void* ptr);
 
-	static void assertNotNull(void* ptr) {
-		assert(ptr != NULL);
-	}
-	static void assertNotNull(const char* message, void* ptr);
+    static void assertNotNull(void* ptr) {
+        assert(ptr != NULL);
+    }
+    static void assertNotNull(const char* message, void* ptr);
 
-	static void assertEquals(bool expected, bool actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, bool expected, bool actual);
+    static void assertEquals(bool expected, bool actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, bool expected, bool actual);
 
-	static void assertEquals(int8_t expected, int8_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, int8_t expected, int8_t actual);
+    static void assertEquals(int8_t expected, int8_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, int8_t expected, int8_t actual);
 
-	static void assertEquals(uint8_t expected, uint8_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, uint8_t expected, uint8_t actual);
+    static void assertEquals(uint8_t expected, uint8_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, uint8_t expected, uint8_t actual);
 
-	static void assertEquals(int16_t expected, int16_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, int16_t expected, int16_t actual);
+    static void assertEquals(int16_t expected, int16_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, int16_t expected, int16_t actual);
 
-	static void assertEquals(uint16_t expected, uint16_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, uint16_t expected, uint16_t actual);
+    static void assertEquals(uint16_t expected, uint16_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, uint16_t expected, uint16_t actual);
 
-	static void assertEquals(int32_t expected, int32_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, int32_t expected, int32_t actual);
+    static void assertEquals(int32_t expected, int32_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, int32_t expected, int32_t actual);
 
-	static void assertEquals(uint32_t expected, uint32_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, uint32_t expected, uint32_t actual);
+    static void assertEquals(uint32_t expected, uint32_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, uint32_t expected, uint32_t actual);
 
-	static void assertEquals(int64_t expected, int64_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, int64_t expected, int64_t actual);
+    static void assertEquals(int64_t expected, int64_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, int64_t expected, int64_t actual);
 
-	static void assertEquals(uint64_t expected, uint64_t actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, uint64_t expected, uint64_t actual);
+    static void assertEquals(uint64_t expected, uint64_t actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, uint64_t expected, uint64_t actual);
 
-	static void assertEquals(void* expected, void* actual) {
-		assert(expected == actual);
-	}
-	static void assertEquals(const char* message, void* expected, void* actual);
+    static void assertEquals(void* expected, void* actual) {
+        assert(expected == actual);
+    }
+    static void assertEquals(const char* message, void* expected, void* actual);
 
 private:
-	Assert() {
-	}
+    Assert() {
+    }
 
-	static const char* const LOG_TAG;
+    static const char* const LOG_TAG;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Assert)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Assert)
 };
 
 } /* namespace mindroid */

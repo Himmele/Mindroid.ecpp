@@ -25,21 +25,21 @@ namespace mindroid {
 
 class Semaphore {
 public:
-	Semaphore(uint32_t value = 0);
-	~Semaphore();
-	void signal();
-	bool wait();
-	bool wait(uint32_t timeout);
+    Semaphore(uint32_t value = 0);
+    ~Semaphore();
+    void signal();
+    bool wait();
+    bool wait(uint32_t timeout);
 
 private:
-	osSemaphoreId mSemaphoreId;
-	// osSemaphoreDef macro in cmsis_os.h
-	uint32_t mSemaphoreData[2];
-	osSemaphoreDef_t mSemaphore;
+    osSemaphoreId mSemaphoreId;
+    // osSemaphoreDef macro in cmsis_os.h
+    uint32_t mSemaphoreData[2];
+    osSemaphoreDef_t mSemaphore;
 
-	friend class Condition;
+    friend class Condition;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Semaphore)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Semaphore)
 };
 
 } /* namespace mindroid */

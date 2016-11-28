@@ -19,24 +19,24 @@
 namespace mindroid {
 
 Semaphore::Semaphore(uint32_t value) {
-	mSemaphore.semaphore = mSemaphoreData;
-	mSemaphoreId = osSemaphoreCreate(&mSemaphore, value);
+    mSemaphore.semaphore = mSemaphoreData;
+    mSemaphoreId = osSemaphoreCreate(&mSemaphore, value);
 }
 
 Semaphore::~Semaphore() {
-	osSemaphoreDelete(mSemaphoreId);
+    osSemaphoreDelete(mSemaphoreId);
 }
 
 void Semaphore::signal() {
-	osSemaphoreRelease(mSemaphoreId);
+    osSemaphoreRelease(mSemaphoreId);
 }
 
 bool Semaphore::wait() {
-	return (osSemaphoreWait(mSemaphoreId, osWaitForever) != -1);
+    return (osSemaphoreWait(mSemaphoreId, osWaitForever) != -1);
 }
 
 bool Semaphore::wait(uint32_t timeout) {
-	return (osSemaphoreWait(mSemaphoreId, timeout) != -1);
+    return (osSemaphoreWait(mSemaphoreId, timeout) != -1);
 }
 
 } /* namespace mindroid */

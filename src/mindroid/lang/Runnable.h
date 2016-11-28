@@ -25,35 +25,35 @@ namespace mindroid {
 
 class Runnable {
 public:
-	Runnable() :
-			when(0xFFFFFFFFFFFFFFFF),
-			nextRunnable(NULL) {
-	}
+    Runnable() :
+            when(0xFFFFFFFFFFFFFFFF),
+            nextRunnable(NULL) {
+    }
 
-	virtual ~Runnable() {
-	}
+    virtual ~Runnable() {
+    }
 
-	virtual void run() = 0;
+    virtual void run() = 0;
 
-	inline bool isInUse() {
-		AutoLock autoLock;
-		return when != 0xFFFFFFFFFFFFFFFF;
-	}
+    inline bool isInUse() {
+        AutoLock autoLock;
+        return when != 0xFFFFFFFFFFFFFFFF;
+    }
 
 private:
-	inline void markInUse() {
-	}
+    inline void markInUse() {
+    }
 
-	inline void recycle() {
-		AutoLock autoLock;
-		when = 0xFFFFFFFFFFFFFFFF;
-		nextRunnable = NULL;
-	}
+    inline void recycle() {
+        AutoLock autoLock;
+        when = 0xFFFFFFFFFFFFFFFF;
+        nextRunnable = NULL;
+    }
 
-	uint64_t when; // milliseconds
-	Runnable* nextRunnable;
+    uint64_t when; // milliseconds
+    Runnable* nextRunnable;
 
-	friend class RunnableQueue;
+    friend class RunnableQueue;
 };
 
 } /* namespace mindroid */

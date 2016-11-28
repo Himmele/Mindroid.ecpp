@@ -10,34 +10,34 @@ static ServiceManager sServiceManager;
 static bool sRunning = false;
 
 void start(void) {
-	if (sRunning) {
-		return;
-	}
+    if (sRunning) {
+        return;
+    }
 
-	sProcess.startService(sServiceManager);
-	sRunning = true;
+    sProcess.startService(sServiceManager);
+    sRunning = true;
 
-	// Ensure ServiceManager::onCreate
-	sLooper.loop(42);
+    // Ensure ServiceManager::onCreate
+    sLooper.loop(42);
 }
 
 void shutdown(void) {
-	if (!sRunning) {
-		return;
-	}
+    if (!sRunning) {
+        return;
+    }
 
-	sProcess.stopService(sServiceManager);
-	sRunning = false;
+    sProcess.stopService(sServiceManager);
+    sRunning = false;
 
-	// Ensure ServiceManager::onDestroy
-	sLooper.loop(42);
+    // Ensure ServiceManager::onDestroy
+    sLooper.loop(42);
 }
 
 void cyclic_100ms(void) {
-	if (!sRunning) {
-		return;
-	}
+    if (!sRunning) {
+        return;
+    }
 
-	mindroid::Clock::tick(100);
-	sLooper.loop(42);
+    mindroid::Clock::tick(100);
+    sLooper.loop(42);
 }

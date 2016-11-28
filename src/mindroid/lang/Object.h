@@ -18,7 +18,7 @@
 #define MINDROID_OBJECT_H_
 
 #define NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Class) \
-	Class(const Class&);                                   \
-	void operator=(const Class&);
+    Class(const Class&);                                   \
+    void operator=(const Class&);
 
 #endif /* MINDROID_OBJECT_H_ */

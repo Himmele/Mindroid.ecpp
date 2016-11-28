@@ -22,17 +22,17 @@ namespace mindroid {
 uint64_t SystemClock::sMonotonicTime = 0;
 
 uint64_t SystemClock::monotonicTime() {
-	AutoLock autoLock;
-	return sMonotonicTime;
+    AutoLock autoLock;
+    return sMonotonicTime;
 }
 
 uint64_t SystemClock::realTime() {
-	return monotonicTime();
+    return monotonicTime();
 }
 
 void SystemClock::tick(uint32_t duration) {
-	AutoLock autoLock;
-	sMonotonicTime += duration;
+    AutoLock autoLock;
+    sMonotonicTime += duration;
 }
 
 } /* namespace mindroid */

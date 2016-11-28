@@ -28,54 +28,54 @@ class Runnable;
 
 class Message {
 public:
-	Message();
-	Message(Handler& handler);
-	Message(Handler& handler, const int32_t what);
-	Message(Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
-	Message(Handler& handler, const int32_t what, void* const obj);
+    Message();
+    Message(Handler& handler);
+    Message(Handler& handler, const int32_t what);
+    Message(Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
+    Message(Handler& handler, const int32_t what, void* const obj);
 
-	Message& operator=(const Message& message);
+    Message& operator=(const Message& message);
 
-	static Message* obtain(Message& message, Handler& handler);
-	static Message* obtain(Message& message, Handler& handler, const int32_t what);
-	static Message* obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
-	static Message* obtain(Message& message, Handler& handler, const int32_t what, void* const obj);
+    static Message* obtain(Message& message, Handler& handler);
+    static Message* obtain(Message& message, Handler& handler, const int32_t what);
+    static Message* obtain(Message& message, Handler& handler, const int32_t what, const int32_t arg1, const int32_t arg2);
+    static Message* obtain(Message& message, Handler& handler, const int32_t what, void* const obj);
 
-	Handler* getTarget() const {
-		return target;
-	}
+    Handler* getTarget() const {
+        return target;
+    }
 
-	bool sendToTarget();
+    bool sendToTarget();
 
-	inline bool isInUse() {
-		AutoLock autoLock;
-		return when != 0xFFFFFFFFFFFFFFFF;
-	}
+    inline bool isInUse() {
+        AutoLock autoLock;
+        return when != 0xFFFFFFFFFFFFFFFF;
+    }
 
-	int32_t what;
-	int32_t arg1;
-	int32_t arg2;
-	void* obj;
+    int32_t what;
+    int32_t arg1;
+    int32_t arg2;
+    void* obj;
 
 private:
-	inline void markInUse() {
-	}
+    inline void markInUse() {
+    }
 
-	inline void recycle() {
-		AutoLock autoLock;
-		when = 0xFFFFFFFFFFFFFFFF;
-		nextMessage = NULL;
-	}
+    inline void recycle() {
+        AutoLock autoLock;
+        when = 0xFFFFFFFFFFFFFFFF;
+        nextMessage = NULL;
+    }
 
-	void clear();
+    void clear();
 
-	uint64_t when; // milliseconds
-	Handler* target;
-	Message* nextMessage;
+    uint64_t when; // milliseconds
+    Handler* target;
+    Message* nextMessage;
 
-	friend class MessageQueue;
-	friend class RunnableQueue;
-	friend class Looper;
+    friend class MessageQueue;
+    friend class RunnableQueue;
+    friend class Looper;
 };
 
 } /* namespace mindroid */

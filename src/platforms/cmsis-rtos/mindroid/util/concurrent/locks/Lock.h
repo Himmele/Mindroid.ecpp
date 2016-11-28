@@ -24,30 +24,30 @@ namespace mindroid {
 
 class Lock {
 public:
-	static bool lock();
-	static void unlock();
+    static bool lock();
+    static void unlock();
 
 private:
-	Lock() {
-	}
+    Lock() {
+    }
 
-	static uint32_t sCounter;
+    static uint32_t sCounter;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Lock)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Lock)
 };
 
 class AutoLock {
 public:
-	AutoLock() {
-		Lock::lock();
-	}
+    AutoLock() {
+        Lock::lock();
+    }
 
-	~AutoLock() {
-		Lock::unlock();
-	}
+    ~AutoLock() {
+        Lock::unlock();
+    }
 
 private:
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(AutoLock)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(AutoLock)
 };
 
 } /* namespace mindroid */

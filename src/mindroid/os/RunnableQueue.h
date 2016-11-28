@@ -30,25 +30,25 @@ class Runnable;
 
 class RunnableQueue : public Handler {
 public:
-	RunnableQueue(Looper& looper);
-	virtual ~RunnableQueue() {
-	}
+    RunnableQueue(Looper& looper);
+    virtual ~RunnableQueue() {
+    }
 
-	bool enqueueRunnable(Runnable& runnable, uint64_t when);
-	bool removeRunnable(const Runnable* runnable);
-	virtual void handleMessage(const Message& message);
+    bool enqueueRunnable(Runnable& runnable, uint64_t when);
+    bool removeRunnable(const Runnable* runnable);
+    virtual void handleMessage(const Message& message);
 
 private:
-	Runnable* dequeueRunnable();
+    Runnable* dequeueRunnable();
 
-	MessageQueue& mMessageQueue;
-	Message mMessage;
+    MessageQueue& mMessageQueue;
+    Message mMessage;
 
-	static const int32_t MSG_RUNNABLE = 1;
+    static const int32_t MSG_RUNNABLE = 1;
 
-	friend class Looper;
+    friend class Looper;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(RunnableQueue)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(RunnableQueue)
 };
 
 } /* namespace mindroid */

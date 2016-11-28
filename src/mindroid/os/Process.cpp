@@ -22,126 +22,126 @@
 namespace mindroid {
 
 Process::Process(Looper& looper) :
-		mLooper(looper),
-		mMainHandler(*this) {
-	memset(mServices, 0, sizeof(mServices));
+        mLooper(looper),
+        mMainHandler(*this) {
+    memset(mServices, 0, sizeof(mServices));
 }
 
 void Process::startService(Service& service) {
-	int32_t id = -1;
-	bool running;
+    int32_t id = -1;
+    bool running;
 
-	{
-		AutoLock autoLock;
+    {
+        AutoLock autoLock;
 
-		for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
-			if ((id < 0) && (mServices[i].service == NULL)) {
-				id = i;
-			} else if (mServices[i].service == &service) {
-				id = i;
-				break;
-			}
-		}
-		Assert::assertTrue(id >= 0);
+        for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
+            if ((id < 0) && (mServices[i].service == NULL)) {
+                id = i;
+            } else if (mServices[i].service == &service) {
+                id = i;
+                break;
+            }
+        }
+        Assert::assertTrue(id >= 0);
 
-		if (mServices[id].service == NULL) {
-			mServices[id].service = &service;
-		}
+        if (mServices[id].service == NULL) {
+            mServices[id].service = &service;
+        }
 
-		running = mServices[id].running;
-		if (!running) {
-			mServices[id].running = true;
-		}
-	}
+        running = mServices[id].running;
+        if (!running) {
+            mServices[id].running = true;
+        }
+    }
 
-	if (!running) {
-		Message& message = mMessages[id];
-		if (mMainHandler.obtainMessage(message, MainHandler::START_SERVICE)) {
-			message.arg1 = id;
-			message.obj = &service;
-			mMainHandler.sendMessage(message);
-		}
-	}
+    if (!running) {
+        Message& message = mMessages[id];
+        if (mMainHandler.obtainMessage(message, MainHandler::START_SERVICE)) {
+            message.arg1 = id;
+            message.obj = &service;
+            mMainHandler.sendMessage(message);
+        }
+    }
 }
 
 void Process::stopService(Service& service) {
-	int32_t id = -1;
-	bool running;
+    int32_t id = -1;
+    bool running;
 
-	{
-		AutoLock autoLock;
+    {
+        AutoLock autoLock;
 
-		for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
-			if ((id < 0) && (mServices[i].service == NULL)) {
-				id = i;
-			} else if (mServices[i].service == &service) {
-				id = i;
-				break;
-			}
-		}
-		Assert::assertTrue((id >= 0) && (mServices[id].service != NULL));
+        for (int32_t i = 0; i < MAX_NUM_SERVICES; i++) {
+            if ((id < 0) && (mServices[i].service == NULL)) {
+                id = i;
+            } else if (mServices[i].service == &service) {
+                id = i;
+                break;
+            }
+        }
+        Assert::assertTrue((id >= 0) && (mServices[id].service != NULL));
 
-		running = mServices[id].running;
-		if (running) {
-			mServices[id].running = false;
-		}
-	}
+        running = mServices[id].running;
+        if (running) {
+            mServices[id].running = false;
+        }
+    }
 
-	if (running) {
-		Message& message = mMessages[id];
-		if (mMainHandler.obtainMessage(message, MainHandler::STOP_SERVICE)) {
-			message.arg1 = id;
-			message.obj = &service;
-			mMainHandler.sendMessage(message);
-		}
-	}
+    if (running) {
+        Message& message = mMessages[id];
+        if (mMainHandler.obtainMessage(message, MainHandler::STOP_SERVICE)) {
+            message.arg1 = id;
+            message.obj = &service;
+            mMainHandler.sendMessage(message);
+        }
+    }
 }
 
 void Process::MainHandler::handleMessage(const Message& message) {
-	switch (message.what) {
-	case START_SERVICE: {
-		Service* service = (Service*) message.obj;
-		service->onCreate();
+    switch (message.what) {
+    case START_SERVICE: {
+        Service* service = (Service*) message.obj;
+        service->onCreate();
 
-		int32_t id = message.arg1;
-		bool running;
-		{
-			AutoLock autoLock;
-			running = mProcess.mServices[id].running;
-		}
+        int32_t id = message.arg1;
+        bool running;
+        {
+            AutoLock autoLock;
+            running = mProcess.mServices[id].running;
+        }
 
-		if (!running) {
-			Message& msg = mProcess.mMessages[id];
-			removeMessage(msg);
-			Assert::assertNotNull(obtainMessage(msg, MainHandler::STOP_SERVICE));
-			msg.arg1 = id;
-			msg.obj = &service;
-			sendMessage(msg);
-		}
-		break;
-	}
-	case STOP_SERVICE: {
-		Service* service = (Service*) message.obj;
-		service->onDestroy();
+        if (!running) {
+            Message& msg = mProcess.mMessages[id];
+            removeMessage(msg);
+            Assert::assertNotNull(obtainMessage(msg, MainHandler::STOP_SERVICE));
+            msg.arg1 = id;
+            msg.obj = &service;
+            sendMessage(msg);
+        }
+        break;
+    }
+    case STOP_SERVICE: {
+        Service* service = (Service*) message.obj;
+        service->onDestroy();
 
-		int32_t id = message.arg1;
-		bool running;
-		{
-			AutoLock autoLock;
-			running = mProcess.mServices[id].running;
-		}
+        int32_t id = message.arg1;
+        bool running;
+        {
+            AutoLock autoLock;
+            running = mProcess.mServices[id].running;
+        }
 
-		if (running) {
-			Message& msg = mProcess.mMessages[id];
-			removeMessage(msg);
-			Assert::assertNotNull(obtainMessage(msg, MainHandler::START_SERVICE));
-			msg.arg1 = id;
-			msg.obj = &service;
-			sendMessage(msg);
-		}
-		break;
-	}
-	}
+        if (running) {
+            Message& msg = mProcess.mMessages[id];
+            removeMessage(msg);
+            Assert::assertNotNull(obtainMessage(msg, MainHandler::START_SERVICE));
+            msg.arg1 = id;
+            msg.obj = &service;
+            sendMessage(msg);
+        }
+        break;
+    }
+    }
 }
 
 } /* namespace mindroid */

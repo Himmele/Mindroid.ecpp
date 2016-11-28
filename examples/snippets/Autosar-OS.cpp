@@ -10,23 +10,23 @@ static uint8_t sProcessData[sizeof(Process)];
 static uint8_t sServiceManagerData[sizeof(ServiceManager)];
 
 TASK(mainTask) {
-	Looper::prepare(mainTask, mainTaskAlarm, mainTaskEvent);
+    Looper::prepare(mainTask, mainTaskAlarm, mainTaskEvent);
 
-	Process* process = new (sProcessData) Process(*Looper::myLooper());
-	ServiceManager* serviceManager = new (sServiceManagerData) ServiceManager();
+    Process* process = new (sProcessData) Process(*Looper::myLooper());
+    ServiceManager* serviceManager = new (sServiceManagerData) ServiceManager();
 
-	process->startService(*serviceManager);
+    process->startService(*serviceManager);
 
-	Looper::loop();
+    Looper::loop();
 
-	process->stopService(*serviceManager);
+    process->stopService(*serviceManager);
 
-	TerminateTask();
+    TerminateTask();
 }
 
 int main(void) {
-	StartOS(OSDEFAULTAPPMODE);
+    StartOS(OSDEFAULTAPPMODE);
 
-	while (true) {
-	}
+    while (true) {
+    }
 }

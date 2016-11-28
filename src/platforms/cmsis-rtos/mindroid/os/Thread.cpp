@@ -20,52 +20,52 @@
 namespace mindroid {
 
 Thread::Thread() :
-		mRunnable(this),
-		mThreadId(NULL),
-		mInterrupted(false) {
-	mThread.pthread = &Thread::exec;
-	mThread.tpriority = osPriorityNormal;
-	mThread.instances = 1;
-	mThread.stacksize = 0;
+        mRunnable(this),
+        mThreadId(NULL),
+        mInterrupted(false) {
+    mThread.pthread = &Thread::exec;
+    mThread.tpriority = osPriorityNormal;
+    mThread.instances = 1;
+    mThread.stacksize = 0;
 }
 
 Thread::Thread(Runnable* runnable) :
-		mRunnable(runnable),
-		mThreadId(NULL),
-		mInterrupted(false) {
-	mThread.pthread = &Thread::exec;
-	mThread.tpriority = osPriorityNormal;
-	mThread.instances = 1;
-	mThread.stacksize = 0;
+        mRunnable(runnable),
+        mThreadId(NULL),
+        mInterrupted(false) {
+    mThread.pthread = &Thread::exec;
+    mThread.tpriority = osPriorityNormal;
+    mThread.instances = 1;
+    mThread.stacksize = 0;
 }
 
 bool Thread::start() {
-	if (mRunnable != NULL) {
-		mThreadId = osThreadCreate(&mThread, this);
-	}
-	return (mThreadId != NULL);
+    if (mRunnable != NULL) {
+        mThreadId = osThreadCreate(&mThread, this);
+    }
+    return (mThreadId != NULL);
 }
 
 void Thread::sleep(uint32_t milliseconds) {
-	osDelay(milliseconds);
+    osDelay(milliseconds);
 }
 
 void Thread::join() const {
-	bool notYetImplemented = true;
-	Assert::assertTrue(!notYetImplemented);
+    bool notYetImplemented = true;
+    Assert::assertTrue(!notYetImplemented);
 }
 
 void Thread::exec(const void* args) {
-	Thread* const self = (Thread*) args;
-	self->mRunnable->run();
+    Thread* const self = (Thread*) args;
+    self->mRunnable->run();
 }
 
 void Thread::interrupt() {
-	mInterrupted = true;
+    mInterrupted = true;
 }
 
 bool Thread::isInterrupted() const {
-	return mInterrupted;
+    return mInterrupted;
 }
 
 } /* namespace mindroid */

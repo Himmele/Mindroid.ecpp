@@ -21,47 +21,47 @@
 namespace mindroid {
 
 Condition::Condition() :
-		mTaskId(NULL),
-		mAlarmId(NULL),
-		mEventId(NULL) {
+        mTaskId(NULL),
+        mAlarmId(NULL),
+        mEventId(NULL) {
 }
 
 Condition::Condition(TaskType taskId, AlarmType alarmId, EventMaskType eventId) :
-		mTaskId(taskId),
-		mAlarmId(alarmId),
-		mEventId(eventId) {
+        mTaskId(taskId),
+        mAlarmId(alarmId),
+        mEventId(eventId) {
 }
 
 void Condition::await() {
-	Lock::unlock();
-	Schedule();
-	WaitEvent(mEventId);
-	EventMaskType event;
-	GetEvent(mTaskId, &event);
-	ClearEvent(event);
-	Lock::lock();
+    Lock::unlock();
+    Schedule();
+    WaitEvent(mEventId);
+    EventMaskType event;
+    GetEvent(mTaskId, &event);
+    ClearEvent(event);
+    Lock::lock();
 }
 
 void Condition::await(uint32_t timeout) {
-	Lock::unlock();
-	Assert::assertTrue(timeout > 0);
-	SetRelAlarm(mAlarmId, timeout, 0);
-	Schedule();
-	WaitEvent(mEventId);
-	CancelAlarm(mAlarmId);
-	EventMaskType event;
-	GetEvent(mTaskId, &event);
-	ClearEvent(event);
-	Lock::lock();
+    Lock::unlock();
+    Assert::assertTrue(timeout > 0);
+    SetRelAlarm(mAlarmId, timeout, 0);
+    Schedule();
+    WaitEvent(mEventId);
+    CancelAlarm(mAlarmId);
+    EventMaskType event;
+    GetEvent(mTaskId, &event);
+    ClearEvent(event);
+    Lock::lock();
 }
 
 void Condition::signal() {
-	SetEvent(mTaskId, mEventId);
+    SetEvent(mTaskId, mEventId);
 }
 
 void Condition::signalAll() {
-	bool notYetImplemented = true;
-	Assert::assertTrue(!notYetImplemented);
+    bool notYetImplemented = true;
+    Assert::assertTrue(!notYetImplemented);
 }
 
 } /* namespace mindroid */

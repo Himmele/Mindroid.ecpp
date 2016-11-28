@@ -26,62 +26,62 @@
 namespace mindroid {
 
 Handler::Handler() {
-	Looper* looper = Looper::myLooper();
-	Assert::assertNotNull(looper);
-	mMessageQueue = &looper->myMessageQueue();
-	mRunnableQueue = &looper->myRunnableQueue();
+    Looper* looper = Looper::myLooper();
+    Assert::assertNotNull(looper);
+    mMessageQueue = &looper->myMessageQueue();
+    mRunnableQueue = &looper->myRunnableQueue();
 }
 
 Handler::Handler(Looper& looper) {
-	mMessageQueue = &looper.myMessageQueue();
-	mRunnableQueue = &looper.myRunnableQueue();
+    mMessageQueue = &looper.myMessageQueue();
+    mRunnableQueue = &looper.myRunnableQueue();
 }
 
 void Handler::handleMessage(const Message& message) {
 }
 
 bool Handler::sendMessage(Message& message) {
-	return sendMessageAtTime(message, SystemClock::monotonicTime());
+    return sendMessageAtTime(message, SystemClock::monotonicTime());
 }
 
 bool Handler::sendMessageDelayed(Message& message, uint32_t delay) {
-	return sendMessageAtTime(message, SystemClock::monotonicTime() + delay);
+    return sendMessageAtTime(message, SystemClock::monotonicTime() + delay);
 }
 
 bool Handler::sendMessageAtTime(Message& message, uint64_t uptimeMillis) {
-	if (message.getTarget() == this) {
-		return mMessageQueue->enqueueMessage(message, uptimeMillis);
-	} else {
-		return false;
-	}
+    if (message.getTarget() == this) {
+        return mMessageQueue->enqueueMessage(message, uptimeMillis);
+    } else {
+        return false;
+    }
 }
 
 bool Handler::post(Runnable& runnable) {
-	return postAtTime(runnable, SystemClock::monotonicTime());
+    return postAtTime(runnable, SystemClock::monotonicTime());
 }
 
 bool Handler::postDelayed(Runnable& runnable, uint32_t delay) {
-	return postAtTime(runnable, SystemClock::monotonicTime() + delay);
+    return postAtTime(runnable, SystemClock::monotonicTime() + delay);
 }
 
 bool Handler::postAtTime(Runnable& runnable, uint64_t uptimeMillis) {
-	return mRunnableQueue->enqueueRunnable(runnable, uptimeMillis);
+    return mRunnableQueue->enqueueRunnable(runnable, uptimeMillis);
 }
 
 bool Handler::removeMessages() {
-	return mMessageQueue->removeMessages(this);
+    return mMessageQueue->removeMessages(this);
 }
 
 bool Handler::removeMessages(int32_t what) {
-	return mMessageQueue->removeMessages(this, what);
+    return mMessageQueue->removeMessages(this, what);
 }
 
 bool Handler::removeMessage(const Message& message) {
-	return mMessageQueue->removeMessage(this, &message);
+    return mMessageQueue->removeMessage(this, &message);
 }
 
 bool Handler::removeCallbacks(const Runnable& runnable) {
-	return mRunnableQueue->removeRunnable(&runnable);
+    return mRunnableQueue->removeRunnable(&runnable);
 }
 
 } /* namespace mindroid */

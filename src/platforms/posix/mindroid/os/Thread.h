@@ -25,27 +25,27 @@ namespace mindroid {
 
 class Thread : public Runnable {
 public:
-	Thread();
-	Thread(Runnable* runnable);
-	virtual ~Thread() {
-	}
-	virtual void run() {
-	}
-	bool start();
-	static void sleep(uint32_t millis);
-	void interrupt();
-	bool isInterrupted() const;
-	void join() const;
-	void setSchedulingParams(int32_t policy, int32_t priority);
+    Thread();
+    Thread(Runnable* runnable);
+    virtual ~Thread() {
+    }
+    virtual void run() {
+    }
+    bool start();
+    static void sleep(uint32_t millis);
+    void interrupt();
+    bool isInterrupted() const;
+    void join() const;
+    void setSchedulingParams(int32_t policy, int32_t priority);
 
 private:
-	static void* exec(void* args);
+    static void* exec(void* args);
 
-	Runnable* mRunnable;
-	pthread_t mThread;
-	bool mInterrupted;
+    Runnable* mRunnable;
+    pthread_t mThread;
+    bool mInterrupted;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Thread)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Thread)
 };
 
 } /* namespace mindroid */

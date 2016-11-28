@@ -24,19 +24,19 @@ namespace mindroid {
 
 class Logger {
 public:
-	Logger() {
-	}
+    Logger() {
+    }
 
-	virtual ~Logger() {
-	}
+    virtual ~Logger() {
+    }
 
-	virtual int println(int bufferId, uint8_t priority, const char* tag, const char* msg);
+    virtual int println(int bufferId, uint8_t priority, const char* tag, const char* msg);
 
 protected:
-	static const char PRIORITIES[];
+    static const char PRIORITIES[];
 
 private:
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Logger)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Logger)
 };
 
 } /* namespace mindroid */

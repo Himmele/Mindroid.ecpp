@@ -20,17 +20,17 @@
 namespace mindroid {
 
 uint64_t SystemClock::monotonicTime() {
-	timespec now;
-	clock_gettime(CLOCK_MONOTONIC, &now);
-	uint64_t ns = (((uint64_t) now.tv_sec * 1000000000LL) + now.tv_nsec);
-	return ns / 1000000;
+    timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    uint64_t ns = (((uint64_t) now.tv_sec * 1000000000LL) + now.tv_nsec);
+    return ns / 1000000;
 }
 
 uint64_t SystemClock::realTime() {
-	timespec now;
-	clock_gettime(CLOCK_REALTIME, &now);
-	uint64_t ns = (((uint64_t) now.tv_sec * 1000000000LL) + now.tv_nsec);
-	return ns / 1000000;
+    timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
+    uint64_t ns = (((uint64_t) now.tv_sec * 1000000000LL) + now.tv_nsec);
+    return ns / 1000000;
 }
 
 

@@ -9,15 +9,15 @@ static uint8_t sProcessData[sizeof(Process)] __attribute__((aligned (8)));
 static uint8_t sServiceManagerData[sizeof(ServiceManager)] __attribute__((aligned (8)));
 
 int main() {
-	Looper::prepare();
-	Process* process = new (sProcessData) Process(*Looper::myLooper());
-	ServiceManager* serviceManager = new (sServiceManagerData) ServiceManager();
+    Looper::prepare();
+    Process* process = new (sProcessData) Process(*Looper::myLooper());
+    ServiceManager* serviceManager = new (sServiceManagerData) ServiceManager();
 
-	process->startService(*serviceManager);
+    process->startService(*serviceManager);
 
-	Looper::loop();
+    Looper::loop();
 
-	process->stopService(*serviceManager);
+    process->stopService(*serviceManager);
 
-	return 0;
+    return 0;
 }

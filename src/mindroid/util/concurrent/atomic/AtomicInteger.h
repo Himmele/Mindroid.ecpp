@@ -25,52 +25,52 @@ namespace mindroid {
 
 class AtomicShort {
 public:
-	AtomicShort() : mValue(0) {
-	}
-	AtomicShort(uint16_t initialValue) : mValue(initialValue) {
-	}
+    AtomicShort() : mValue(0) {
+    }
+    AtomicShort(uint16_t initialValue) : mValue(initialValue) {
+    }
 
-	inline uint16_t get() const {
-		return mValue;
-	}
+    inline uint16_t get() const {
+        return mValue;
+    }
 
-	inline uint16_t unsafeGet() const {
-		return mValue;
-	}
+    inline uint16_t unsafeGet() const {
+        return mValue;
+    }
 
-	inline void set(uint16_t newValue) {
-		mValue = newValue;
-	}
+    inline void set(uint16_t newValue) {
+        mValue = newValue;
+    }
 
 private:
-	volatile uint16_t mValue;
+    volatile uint16_t mValue;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(AtomicShort)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(AtomicShort)
 };
 
 class AtomicInteger {
 public:
-	AtomicInteger() : mValue(0) {
-	}
-	AtomicInteger(uint32_t initialValue) : mValue(initialValue) {
-	}
+    AtomicInteger() : mValue(0) {
+    }
+    AtomicInteger(uint32_t initialValue) : mValue(initialValue) {
+    }
 
-	inline uint32_t get() const {
-		return mValue;
-	}
+    inline uint32_t get() const {
+        return mValue;
+    }
 
-	inline uint32_t unsafeGet() const {
-		return mValue;
-	}
+    inline uint32_t unsafeGet() const {
+        return mValue;
+    }
 
-	inline void set(uint32_t newValue) {
-		mValue = newValue;
-	}
+    inline void set(uint32_t newValue) {
+        mValue = newValue;
+    }
 
 private:
-	volatile uint32_t mValue;
+    volatile uint32_t mValue;
 
-	NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(AtomicInteger)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(AtomicInteger)
 };
 
 } /* namespace mindroid */

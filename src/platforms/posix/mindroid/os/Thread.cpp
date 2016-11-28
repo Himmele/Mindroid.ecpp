@@ -22,51 +22,51 @@
 namespace mindroid {
 
 Thread::Thread() :
-		mRunnable(this),
-		mInterrupted(false) {
+        mRunnable(this),
+        mInterrupted(false) {
 }
 
 Thread::Thread(Runnable* runnable) :
-		mRunnable(runnable),
-		mInterrupted(false) {
+        mRunnable(runnable),
+        mInterrupted(false) {
 }
 
 bool Thread::start() {
-	int32_t errorCode = -1;
-	if (mRunnable != NULL) {
-		errorCode = pthread_create(&mThread, NULL, &Thread::exec, this);
-	}
-	return (errorCode == 0);
+    int32_t errorCode = -1;
+    if (mRunnable != NULL) {
+        errorCode = pthread_create(&mThread, NULL, &Thread::exec, this);
+    }
+    return (errorCode == 0);
 }
 
 void Thread::sleep(uint32_t millis) {
-	::usleep((millis % 1000) * 1000);
-	::sleep(millis / 1000);
+    ::usleep((millis % 1000) * 1000);
+    ::sleep(millis / 1000);
 }
 
 void Thread::join() const {
-	pthread_join(mThread, NULL);
+    pthread_join(mThread, NULL);
 }
 
 void* Thread::exec(void* args) {
-	Thread* const self = (Thread*) args;
-	self->mRunnable->run();
-	return NULL;
+    Thread* const self = (Thread*) args;
+    self->mRunnable->run();
+    return NULL;
 }
 
 void Thread::interrupt() {
-	mInterrupted = true;
+    mInterrupted = true;
 }
 
 bool Thread::isInterrupted() const {
-	return mInterrupted;
+    return mInterrupted;
 }
 
 void Thread::setSchedulingParams(int32_t policy, int32_t priority) {
-	sched_param schedulingParameters;
-	memset(&schedulingParameters, 0, sizeof(schedulingParameters));
-	schedulingParameters.sched_priority = priority;
-	pthread_setschedparam(mThread, policy, &schedulingParameters);
+    sched_param schedulingParameters;
+    memset(&schedulingParameters, 0, sizeof(schedulingParameters));
+    schedulingParameters.sched_priority = priority;
+    pthread_setschedparam(mThread, policy, &schedulingParameters);
 }
 
 } /* namespace mindroid */
