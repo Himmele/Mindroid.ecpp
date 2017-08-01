@@ -30,7 +30,7 @@ int Log::v(const char* tag, const char* format, ...) {
     vsnprintf(msg, LOG_RECORD_SIZE, format, args);
     va_end(args);
 
-    return sLogger->println(DEFAULT_LOG_ID, VERBOSE, tag, msg);
+    return println(LOG_ID_MAIN, VERBOSE, tag, msg);
 }
 
 int Log::d(const char* tag, const char* format, ...) {
@@ -40,7 +40,7 @@ int Log::d(const char* tag, const char* format, ...) {
     vsnprintf(msg, LOG_RECORD_SIZE, format, args);
     va_end(args);
 
-    return sLogger->println(DEFAULT_LOG_ID, DEBUG, tag, msg);
+    return println(LOG_ID_MAIN, DEBUG, tag, msg);
 }
 
 int Log::i(const char* tag, const char* format, ...) {
@@ -50,7 +50,7 @@ int Log::i(const char* tag, const char* format, ...) {
     vsnprintf(msg, LOG_RECORD_SIZE, format, args);
     va_end(args);
 
-    return sLogger->println(DEFAULT_LOG_ID, INFO, tag, msg);
+    return println(LOG_ID_MAIN, INFO, tag, msg);
 }
 
 int Log::w(const char* tag, const char* format, ...) {
@@ -60,7 +60,7 @@ int Log::w(const char* tag, const char* format, ...) {
     vsnprintf(msg, LOG_RECORD_SIZE, format, args);
     va_end(args);
 
-    return sLogger->println(DEFAULT_LOG_ID, WARN, tag, msg);
+    return println(LOG_ID_MAIN, WARN, tag, msg);
 }
 
 int Log::e(const char* tag, const char* format, ...) {
@@ -70,7 +70,7 @@ int Log::e(const char* tag, const char* format, ...) {
     vsnprintf(msg, LOG_RECORD_SIZE, format, args);
     va_end(args);
 
-    return sLogger->println(DEFAULT_LOG_ID, ERROR, tag, msg);
+    return println(LOG_ID_MAIN, ERROR, tag, msg);
 }
 
 int Log::wtf(const char* tag, const char* format, ...) {
@@ -80,7 +80,11 @@ int Log::wtf(const char* tag, const char* format, ...) {
     vsnprintf(msg, LOG_RECORD_SIZE, format, args);
     va_end(args);
 
-    return sLogger->println(DEFAULT_LOG_ID, WTF, tag, msg);
+    return println(LOG_ID_MAIN, WTF, tag, msg);
+}
+
+int Log::println(int logId, int priority, const char* tag, const char* msg) {
+    return sLogger->println(logId, priority, tag, msg);
 }
 
 void Log::setLogger(Logger& logger) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Daniel Himmelein
+ * Copyright (C) 2017 Daniel Himmelein
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-#ifndef MINDROID_LOG_H_
-#define MINDROID_LOG_H_
+#ifndef MINDROID_EVENT_LOG_H_
+#define MINDROID_EVENT_LOG_H_
 
 #include <stdio.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include "mindroid/lang/Object.h"
-#include "mindroid/util/Logger.h"
 
 namespace mindroid {
 
-class Log {
+class EventLog {
 public:
     /**
      * Send a {@link #VERBOSE} log message.
@@ -78,31 +77,13 @@ public:
      */
     static int wtf(const char* tag, const char* format, ...);
 
-    static int println(int logId, int priority, const char* tag, const char* msg);
-
-    static void setLogger(Logger& logger);
-
-    static const uint8_t VERBOSE = 0;
-    static const uint8_t DEBUG = 1;
-    static const uint8_t INFO = 2;
-    static const uint8_t WARN = 3;
-    static const uint8_t ERROR = 4;
-    static const uint8_t WTF = 5;
-
-    static const int LOG_ID_MAIN = 0;
-    static const int LOG_ID_EVENTS = 1;
-    static const int LOG_RECORD_SIZE = 128;
-
 private:
-    static Logger DEFAULT_LOGGER;
-    static Logger* sLogger;
-
-    Log() {
+    EventLog() {
     }
 
-    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(Log)
+    NO_COPY_CONSTRUCTOR_AND_ASSIGNMENT_OPERATOR(EventLog)
 };
 
 } /* namespace mindroid */
 
-#endif /* MINDROID_LOG_H_ */
+#endif /* MINDROID_EVENT_LOG_H_ */
