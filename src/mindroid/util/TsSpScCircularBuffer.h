@@ -41,10 +41,13 @@ public:
     int32_t popv(const struct iovec* iov, uint16_t iovcnt);
     bool push(const void* data, uint16_t size);
     bool pushv(const struct iovec* iov, uint16_t iovcnt);
-    uint16_t capacity() {
+
+    uint16_t capacity() const {
         return SIZE;
     }
-    uint16_t size();
+
+    uint16_t size() const;
+
     uint16_t peakSize() const {
         return mPeakSize;
     }
@@ -79,7 +82,7 @@ private:
 };
 
 template<uint16_t SIZE>
-uint16_t TsSpScCircularBuffer<SIZE>::size() {
+uint16_t TsSpScCircularBuffer<SIZE>::size() const {
     const uint16_t readIndex = mReadIndex.get();
     const uint16_t writeIndex = mWriteIndex.get();
 
